@@ -27,13 +27,46 @@ public class ChannelCommands extends Executor {
 		
 //		final Darmok darmok = (Darmok) plugin;
 	
+		/**
+		 * /ch join 
+		 */
+		addSub("join", "darmok.chat")
+		.allowConsole()
+		.setHandler(new SubHandler(){
+            public void handle(CallInfo call){
+            	
+            	if( call.getArgs().length != 2 ){
+            		call.getPlayer().sendMessage( Darmok.messenger.playerError( "You must provide a channel to join, like /ch leave g" ) );
+            		return;
+            	}
+            	
+            	// Get the channel
+            	Channel channel = Darmok.getChannelRegistry().getChannel( call.getArg(1) );
+            	if( channel == null ){
+            		call.getPlayer().sendMessage( Darmok.messenger.playerError( "Channel '"+call.getArg(1)+"' does not exist." ) );
+            		return;
+            	}
+            	
+            	if( ! Darmok.getPlayerRegistry().getPlayerChannels( call.getPlayer() ).addChannel( channel ) ){
+            		call.getPlayer().sendMessage( Darmok.messenger.playerError( "You may not join this channel." ) );
+            		return;
+            	}
+            	
+            	call.getPlayer().sendMessage( Darmok.messenger.playerHeaderMsg( "Joined "+channel.getName()+" channel." ) );
+        		return;
+            	
+            	// @todo alert other players in this channel that they joined
+            	
+            }
+		});
+		
 		
 		/**
 		 * /ch leave 
 		 */
 		addSub("leave", "darmok.chat")
 		.allowConsole()
-		.setHandler(new SubHandler() {
+		.setHandler(new SubHandler(){
             public void handle(CallInfo call){
             	
             	if( call.getArgs().length != 2 ){
@@ -60,6 +93,39 @@ public class ChannelCommands extends Executor {
             	
             }
 		});
+		
+		
+//		/**
+//		 * /ch mute 
+//		 */
+//		addSub("mute", "darmok.chat")
+//		.allowConsole()
+//		.setHandler(new SubHandler(){
+//            public void handle(CallInfo call){
+//            	
+//            	if( call.getArgs().length != 3 ){
+//            		call.getPlayer().sendMessage( Darmok.messenger.playerError( "You must provide a player name and channel, like /ch mute viveleroi g" ) );
+//            		return;
+//            	}
+//            	
+//            	// @todo verify we know the player
+//            	
+//            	// Get the channel
+//            	Channel channel = Darmok.getChannelRegistry().getChannel( call.getArg(2) );
+//            	if( channel == null ){
+//            		call.getPlayer().sendMessage( Darmok.messenger.playerError( "Channel '"+call.getArg(1)+"' does not exist." ) );
+//            		return;
+//            	}
+//            	
+//            	//@todo mute the player for the channel, but directly in settings so they can be offline
+//            	
+//            	call.getPlayer().sendMessage( Darmok.messenger.playerHeaderMsg( "Player has been muted in "+channel.getName()+" channel." ) );
+//        		return;
+//            	
+//            	// @todo alert other players in this channel that they left
+//            	
+//            }
+//		});
 
 		
 		/**
@@ -70,11 +136,8 @@ public class ChannelCommands extends Executor {
 		.setHandler(new SubHandler() {
             public void handle(CallInfo call) {
             	call.getSender().sendMessage( Darmok.messenger.playerHeaderMsg( "Welcome to Darmok - By Viveleroi" ) );
-            	call.getSender().sendMessage( Darmok.messenger.playerHelp("order","[quant] [item] [price]", "Order [quant] items for payment of [price]."));
-            	call.getSender().sendMessage( Darmok.messenger.playerHelp("order","cancel [id]", "Cancel an order that has no delivery"));
-            	call.getSender().sendMessage( Darmok.messenger.playerHelp("order","deliver [id]", "Deliver items requested by an order."));
-            	call.getSender().sendMessage( Darmok.messenger.playerHelp("order","claim [id]", "Claim delivered items if you were offline"));
-            	call.getSender().sendMessage( Darmok.messenger.playerHelp("order","list", "List all unfulfilled orders"));
+            	call.getSender().sendMessage( Darmok.messenger.playerHelp("join","(channel)", "Join a channel."));
+            	call.getSender().sendMessage( Darmok.messenger.playerHelp("leave","(channel)", "Leave a channel."));
             }
 		});
 	}
