@@ -1,5 +1,9 @@
 package me.botsko.darmok;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.Map.Entry;
@@ -10,7 +14,9 @@ import me.botsko.darmok.channels.ChannelRegistry;
 import me.botsko.darmok.chatter.Chatter;
 import me.botsko.darmok.commands.ChannelCommands;
 import me.botsko.darmok.listeners.DarmokPlayerListener;
+import me.botsko.darmok.players.PlayerChannels;
 import me.botsko.darmok.players.PlayerRegistry;
+import me.botsko.darmok.settings.Settings;
 import net.milkbowl.vault.chat.Chat;
 
 import org.bukkit.command.CommandExecutor;
@@ -87,6 +93,8 @@ public class Darmok extends JavaPlugin {
 
 		if(isEnabled()){
 			
+			setupDb();
+			
 			channelRegistry = new ChannelRegistry();
 			chatter = new Chatter(this);
 			playerRegistry = new PlayerRegistry();
@@ -122,6 +130,64 @@ public class Darmok extends JavaPlugin {
 		config = mc.getConfig();
 		// Load language files
 //		language = new Language( mc.getLang() );
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public static Connection getDb(){
+		try {
+        	Class.forName("org.sqlite.JDBC");
+            String url = "jdbc:sqlite:plugins/darmok/darmok.db";
+            return DriverManager.getConnection(url);
+		} catch (ClassNotFoundException e){
+			System.out.print("Error: SQLite database connection was not established. " + e.getMessage());
+			e.printStackTrace();
+		} catch (SQLException e){
+			System.out.print("Error: SQLite database connection was not established. " + e.getMessage());
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public void setupDb(){
+		
+		Connection conn = getDb();
+		
+		try {
+			 String query = "CREATE TABLE IF NOT EXISTS `darmok_player_channels` (" +
+		        		"id INT PRIMARY KEY," +
+		        		"player TEXT," +
+		        		"channel TEXT," +
+		        		"isDefault INT" +
+		        		")";
+				Statement st = conn.createStatement();
+				st.executeUpdate(query);
+				st.executeUpdate("CREATE INDEX IF NOT EXISTS player ON darmok_player_channels (player ASC)");
+				
+				query = "CREATE TABLE IF NOT EXISTS `darmok_player_channel_perms` (" +
+		        		"id INT PRIMARY KEY," +
+		        		"player TEXT," +
+		        		"channel TEXT" +
+		        		"banned INT" +
+		        		"muted INT" +
+		        		")";
+				st.executeUpdate(query);
+				st.close();
+				conn.close();
+
+		 }
+		 catch(SQLException e){
+			 log("Database connection error: " + e.getMessage());
+		     e.printStackTrace();
+		 }
+		
 	}
 	
 	
@@ -184,7 +250,12 @@ public class Darmok extends JavaPlugin {
 	 * @param player
 	 */
 	public static void loadChannelSettingsForPlayer( Player player ){
-		// @todo load existing channel settings for player
+
+		PlayerChannels existingChannels = Settings.getPlayerChannels(player);
+		if( !existingChannels.getChannels().isEmpty() ){
+			getPlayerRegistry().setPlayerChannels( player, existingChannels );
+			return;
+		}
 		
 		// If player has no channel settings, load defaults
 		HashMap<String,Channel> channels = getChannelRegistry().getChannels();

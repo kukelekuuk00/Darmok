@@ -3,15 +3,32 @@ package me.botsko.darmok.players;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import org.bukkit.entity.Player;
+
 import me.botsko.darmok.channels.Channel;
+import me.botsko.darmok.settings.Settings;
 
 public class PlayerChannels {
+	
+	/**
+	 * 
+	 */
+	private Player player;
 	
 	
 	/**
 	 * 
 	 */
 	private HashMap<String,Channel> channels = new HashMap<String,Channel>();
+	
+	
+	/**
+	 * 
+	 * @param player
+	 */
+	public PlayerChannels( Player player ){
+		this.player = player;
+	}
 	
 	
 	/**
@@ -38,7 +55,6 @@ public class PlayerChannels {
 	 * @param c
 	 */
 	public boolean addChannel( Channel c ){
-		// @todo can they even add a channel?
 		channels.put(c.getCommand(), c);
 		return true;
 	}
@@ -70,6 +86,7 @@ public class PlayerChannels {
 			entry.getValue().setDefault( false );
 			if( entry.getValue().getName().equals( channel.getName() ) ){
 				entry.getValue().setDefault( true );
+				Settings.setDefaultChannelForPlayer( player, entry.getValue() );
 				channelUpdated = true;
 			}
 		}
@@ -84,6 +101,18 @@ public class PlayerChannels {
 	 */
 	public boolean inChannel( Channel channel ){
 		return channels.containsKey( channel.getCommand() );
+	}
+	
+	
+	/**
+	 * 
+	 * @param c
+	 */
+	public boolean joinChannel( Channel c ){
+		// @todo can they even add a channel?
+		addChannel(c);
+		Settings.addChannelToPlayer( player, c );
+		return true;
 	}
 	
 	

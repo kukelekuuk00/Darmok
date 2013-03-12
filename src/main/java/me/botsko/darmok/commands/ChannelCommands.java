@@ -47,7 +47,7 @@ public class ChannelCommands extends Executor {
             		return;
             	}
             	
-            	if( ! Darmok.getPlayerRegistry().getPlayerChannels( call.getPlayer() ).addChannel( channel ) ){
+            	if( ! Darmok.getPlayerRegistry().getPlayerChannels( call.getPlayer() ).joinChannel( channel ) ){
             		call.getPlayer().sendMessage( Darmok.messenger.playerError( "You may not join this channel." ) );
             		return;
             	}

@@ -29,9 +29,20 @@ public class PlayerRegistry {
 	public PlayerChannels getPlayerChannels( Player player ){
 		String name = player.getName();
 		if( ! players.containsKey( name ) ){
-			players.put( name, new PlayerChannels() );
+			players.put( name, new PlayerChannels( player ) );
 		}
 		return players.get( name );
+	}
+	
+	
+	/**
+	 * 
+	 * @param player
+	 * @return
+	 */
+	public void setPlayerChannels( Player player, PlayerChannels channels ){
+		String name = player.getName();
+		players.put( name, channels );
 	}
 	
 	
