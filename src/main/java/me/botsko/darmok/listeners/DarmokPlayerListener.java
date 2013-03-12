@@ -8,9 +8,36 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 public class DarmokPlayerListener implements Listener {
+	
+	
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.LOW)
+	public void onPlayerJoin(final PlayerJoinEvent event) {
+//		Player player = event.getPlayer();
+		
+		// @todo load the channels they should be in
+		// if we've never seen them, use defaults
+	
+	}
+
+	
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.LOW)
+	public void onPlayerQuit(final PlayerQuitEvent event) {
+		// @todo unload channel settings for the player
+	}
 
 	
 	/**
@@ -40,9 +67,9 @@ public class DarmokPlayerListener implements Listener {
 				}
 				
 				String message = StringUtils.join(messageArgs);
-			
-				// @todo send message to channel
-				player.sendMessage( channel.formatMessage( message ) );
+				
+				// Chat!
+				Darmok.getChatter().send( player, channel, message );
 			
 			} else {
 				// @todo set perma channel mode
@@ -53,5 +80,25 @@ public class DarmokPlayerListener implements Listener {
 			
 		}
 		// it's not our command, ignore it
+	}
+	
+	
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.LOW)
+	public void onPlayerChat(AsyncPlayerChatEvent event){
+		
+		Player player = event.getPlayer();
+		
+		// Get the current default channel
+		// @todo this is fake, needs to actually work
+		Channel channel = Darmok.getChannelRegistry().getChannel("g");
+		
+		Darmok.getChatter().send( player, channel, event.getMessage() );
+		
+		event.setCancelled(true);
+		
 	}
 }

@@ -5,6 +5,7 @@ import java.util.logging.Logger;
 
 import me.botsko.darmok.channels.Channel;
 import me.botsko.darmok.channels.ChannelRegistry;
+import me.botsko.darmok.chatter.Chatter;
 import me.botsko.darmok.listeners.DarmokPlayerListener;
 
 import org.bukkit.configuration.ConfigurationSection;
@@ -26,6 +27,7 @@ public class Darmok extends JavaPlugin {
 //	private Language language;
 	private Logger log = Logger.getLogger("Minecraft");
 	private static ChannelRegistry channelRegistry;
+	private static Chatter chatter;
 	
 	/**
 	 * Public
@@ -70,6 +72,7 @@ public class Darmok extends JavaPlugin {
 		if(isEnabled()){
 			
 			channelRegistry = new ChannelRegistry();
+			chatter = new Chatter(this);
 
 			// Plugins we use
 			checkPluginDependancies();
@@ -78,10 +81,10 @@ public class Darmok extends JavaPlugin {
 			registerChannels();
 			
 			// Assign event listeners
-			getServer().getPluginManager().registerEvents(new DarmokPlayerListener( ), this);
+			getServer().getPluginManager().registerEvents(new DarmokPlayerListener(), this);
 			
 			// Add commands
-//			getCommand("darmok").setExecutor( (CommandExecutor) new PrismCommands(this) );
+//			getCommand("darmok").setExecutor( (CommandExecutor) new DarmokCommands(this) );
 			
 			// Init re-used classes
 			
@@ -120,7 +123,14 @@ public class Darmok extends JavaPlugin {
 			
 			debug("CHANNEL: " + channelName + " f: " +  channel.getString("format"));
 
-			channelRegistry.registerChannel( new Channel( channelName, channel.getString("command"), channel.getString("color"), channel.getString("format") ) );
+			channelRegistry.registerChannel( 
+					new Channel( 
+							channelName,
+							channel.getString("command"),
+							channel.getString("color"),
+							channel.getString("format"),
+							channel.getInt("range")
+						) );
 			
 		}
 	}
@@ -132,6 +142,14 @@ public class Darmok extends JavaPlugin {
 	 */
 	public static ChannelRegistry getChannelRegistry(){
 		return channelRegistry;
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public static Chatter getChatter(){
+		return chatter;
 	}
 	
 

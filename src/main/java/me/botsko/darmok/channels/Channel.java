@@ -3,23 +3,27 @@ package me.botsko.darmok.channels;
 import java.util.Hashtable;
 import java.util.Map.Entry;
 
+import org.bukkit.entity.Player;
+
 public class Channel {
 
 	private final String name;
 	private final String command;
 	private final String color;
 	private final String format;
+	private final int range;
 	
 	
 	/**
 	 * 
 	 * @param command
 	 */
-	public Channel( String name, String command, String color, String format ){
+	public Channel( String name, String command, String color, String format, int range ){
 		this.name = name;
 		this.command = command;
 		this.color = color;
 		this.format = format;
+		this.range = range;
 	}
 	
 	
@@ -61,13 +65,23 @@ public class Channel {
 	
 	/**
 	 * 
+	 * @return
+	 */
+	public int getRange(){
+		return range;
+	}
+	
+	
+	/**
+	 * 
 	 * @param msg
 	 * @return
 	 */
-	public String formatMessage( String msg ){
+	public String formatMessage( Player player, String msg ){
 		Hashtable<String,String> headVal = new Hashtable<String,String>();
 		headVal.put("command", command );
 		headVal.put("msg", msg );
+		headVal.put("player", player.getDisplayName() );
 		return getString( format, headVal );
 	}
 	
