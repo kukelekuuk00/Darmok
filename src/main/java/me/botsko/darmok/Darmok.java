@@ -7,6 +7,7 @@ import me.botsko.darmok.channels.Channel;
 import me.botsko.darmok.channels.ChannelRegistry;
 import me.botsko.darmok.chatter.Chatter;
 import me.botsko.darmok.listeners.DarmokPlayerListener;
+import me.botsko.darmok.players.PlayerRegistry;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -28,6 +29,7 @@ public class Darmok extends JavaPlugin {
 	private Logger log = Logger.getLogger("Minecraft");
 	private static ChannelRegistry channelRegistry;
 	private static Chatter chatter;
+	private static PlayerRegistry playerRegistry;
 	
 	/**
 	 * Public
@@ -73,6 +75,7 @@ public class Darmok extends JavaPlugin {
 			
 			channelRegistry = new ChannelRegistry();
 			chatter = new Chatter(this);
+			playerRegistry = new PlayerRegistry();
 
 			// Plugins we use
 			checkPluginDependancies();
@@ -150,6 +153,15 @@ public class Darmok extends JavaPlugin {
 	 */
 	public static Chatter getChatter(){
 		return chatter;
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public static PlayerRegistry getPlayerRegistry(){
+		return playerRegistry;
 	}
 	
 

@@ -13,6 +13,8 @@ public class Channel {
 	private final String format;
 	private final int range;
 	
+	private boolean isDefault = false;
+	
 	
 	/**
 	 * 
@@ -69,6 +71,24 @@ public class Channel {
 	 */
 	public int getRange(){
 		return range;
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean isDefault(){
+		return isDefault;
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public void setDefault( boolean isDefault ){
+		this.isDefault = isDefault;
 	}
 	
 	

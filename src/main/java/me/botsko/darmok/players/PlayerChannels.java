@@ -1,8 +1,11 @@
-package me.botsko.darmok.channels;
+package me.botsko.darmok.players;
 
 import java.util.HashMap;
+import java.util.Map.Entry;
 
-public class ChannelRegistry {
+import me.botsko.darmok.channels.Channel;
+
+public class PlayerChannels {
 	
 	
 	/**
@@ -34,7 +37,21 @@ public class ChannelRegistry {
 	 * 
 	 * @param c
 	 */
-	public void registerChannel( Channel c ){
+	public void addChannel( Channel c ){
 		channels.put(c.getCommand(), c);
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public Channel getDefault(){
+		for (Entry<String,Channel> entry : channels.entrySet()){
+		    if( entry.getValue().isDefault() ){
+		    	return entry.getValue();
+		    }
+		}
+		return null;
 	}
 }

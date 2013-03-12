@@ -1,5 +1,8 @@
 package me.botsko.darmok.listeners;
 
+import java.util.HashMap;
+import java.util.Map.Entry;
+
 import me.botsko.darmok.Darmok;
 import me.botsko.darmok.channels.Channel;
 
@@ -21,12 +24,23 @@ public class DarmokPlayerListener implements Listener {
 	 * @param event
 	 */
 	@EventHandler(priority = EventPriority.LOW)
-	public void onPlayerJoin(final PlayerJoinEvent event) {
-//		Player player = event.getPlayer();
+	public void onPlayerJoin(final PlayerJoinEvent event){
 		
-		// @todo load the channels they should be in
-		// if we've never seen them, use defaults
-	
+		Player player = event.getPlayer();
+		
+		// @todo load existing channel settings for player
+		
+		// If player has no channel settings, load defaults
+		HashMap<String,Channel> channels = Darmok.getChannelRegistry().getChannels();
+		for(Entry<String,Channel> entry : channels.entrySet()){
+		    if( player.hasPermission("darmok.channel."+entry.getKey()+".autojoin") ){
+		    	Channel channel = entry.getValue();
+		    	if( player.hasPermission("darmok.channel."+entry.getKey()+".default") ){
+		    		channel.setDefault( true );
+		    	}
+		    	Darmok.getPlayerRegistry().addChannel( player, channel );
+		    }
+		}
 	}
 
 	
@@ -36,7 +50,7 @@ public class DarmokPlayerListener implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.LOW)
 	public void onPlayerQuit(final PlayerQuitEvent event) {
-		// @todo unload channel settings for the player
+		Darmok.getPlayerRegistry().removePlayer( event.getPlayer() );
 	}
 
 	
@@ -49,9 +63,6 @@ public class DarmokPlayerListener implements Listener {
 		
 		Player player = event.getPlayer();
 
-		// Does player have known settings?
-		// @todo
-		
 		String cmdArgs[] = event.getMessage().split("\\ ");
 		String primaryCmd = cmdArgs[0].trim().toLowerCase().replace("/", "");
 		
@@ -93,12 +104,11 @@ public class DarmokPlayerListener implements Listener {
 		Player player = event.getPlayer();
 		
 		// Get the current default channel
-		// @todo this is fake, needs to actually work
-		Channel channel = Darmok.getChannelRegistry().getChannel("g");
+		Channel channel = Darmok.getPlayerRegistry().getDefaultChannel( player );
 		
-		Darmok.getChatter().send( player, channel, event.getMessage() );
-		
-		event.setCancelled(true);
-		
+		if( channel != null ){
+			Darmok.getChatter().send( player, channel, event.getMessage() );
+			event.setCancelled(true);
+		}
 	}
 }
