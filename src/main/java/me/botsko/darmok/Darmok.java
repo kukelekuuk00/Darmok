@@ -1,7 +1,13 @@
 package me.botsko.darmok;
 
+import java.util.Set;
 import java.util.logging.Logger;
 
+import me.botsko.darmok.channels.Channel;
+import me.botsko.darmok.channels.ChannelRegistry;
+import me.botsko.darmok.listeners.DarmokPlayerListener;
+
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -19,11 +25,12 @@ public class Darmok extends JavaPlugin {
 	private String plugin_version;
 //	private Language language;
 	private Logger log = Logger.getLogger("Minecraft");
+	private static ChannelRegistry channelRegistry;
 	
 	/**
 	 * Public
 	 */
-	public Darmok prism;
+	public Darmok darmok;
 	public static Messenger messenger;
 	public static FileConfiguration config;
 
@@ -37,7 +44,7 @@ public class Darmok extends JavaPlugin {
 		plugin_name = this.getDescription().getName();
 		plugin_version = this.getDescription().getVersion();
 
-		prism = this;
+		darmok = this;
 		
 		this.log("Initializing " + plugin_name + " " + plugin_version + ". By Viveleroi.");
 		
@@ -61,15 +68,20 @@ public class Darmok extends JavaPlugin {
 //		}
 
 		if(isEnabled()){
+			
+			channelRegistry = new ChannelRegistry();
 
 			// Plugins we use
 			checkPluginDependancies();
 			
+			// Register channels
+			registerChannels();
+			
 			// Assign event listeners
-//			getServer().getPluginManager().registerEvents(new test( this ), this);
+			getServer().getPluginManager().registerEvents(new DarmokPlayerListener( ), this);
 			
 			// Add commands
-//			getCommand("prism").setExecutor( (CommandExecutor) new PrismCommands(this) );
+//			getCommand("darmok").setExecutor( (CommandExecutor) new PrismCommands(this) );
 			
 			// Init re-used classes
 			
@@ -90,6 +102,36 @@ public class Darmok extends JavaPlugin {
 		config = mc.getConfig();
 		// Load language files
 //		language = new Language( mc.getLang() );
+	}
+	
+	
+	/**
+	 * 
+	 */
+	private void registerChannels(){
+		
+		ConfigurationSection channelList = getConfig().getConfigurationSection("darmok.channels");
+		
+		Set<String> channels = channelList.getKeys(false);
+		for(String channelName : channels){
+
+			ConfigurationSection channel = channelList.getConfigurationSection(channelName);
+			if(channel == null) continue;
+			
+			debug("CHANNEL: " + channelName + " f: " +  channel.getString("format"));
+
+			channelRegistry.registerChannel( new Channel( channelName, channel.getString("command"), channel.getString("color"), channel.getString("format") ) );
+			
+		}
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public static ChannelRegistry getChannelRegistry(){
+		return channelRegistry;
 	}
 	
 
