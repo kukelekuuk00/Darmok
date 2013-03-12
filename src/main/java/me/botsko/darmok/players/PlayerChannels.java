@@ -51,7 +51,8 @@ public class PlayerChannels {
 
 	
 	/**
-	 * 
+	 * Does not register the channel in the db, use this only when the user
+	 * already has joined the channel.
 	 * @param c
 	 */
 	public boolean addChannel( Channel c ){
@@ -125,6 +126,7 @@ public class PlayerChannels {
 		if( channel != null ){
 			// @todo check that they may leave
 			channels.remove( channel.getCommand() );
+			Settings.removeChannelFromPlayer( player, channel );
 			return true;
 		}
 		return false;

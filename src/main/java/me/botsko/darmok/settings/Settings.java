@@ -94,6 +94,27 @@ public class Settings {
 	 * @param value
 	 * @return
 	 */
+	public static void removeChannelFromPlayer( Player player, Channel channel ){
+		try {
+			Connection conn = Darmok.getDb();
+			PreparedStatement s = conn.prepareStatement ("DELETE FROM darmok_player_channels WHERE player = ? AND channel = ?");
+			s.setString(1, player.getName());
+			s.setString(2, channel.getCommand());
+			s.executeUpdate();
+			s.close();
+			conn.close();
+		} catch (SQLException e) {
+//			plugin.logDbError( e );
+		}
+	}
+	
+	
+	/**
+	 * 
+	 * @param key
+	 * @param value
+	 * @return
+	 */
 	public static void setDefaultChannelForPlayer( Player player, Channel channel ){
 		try {
 			Connection conn = Darmok.getDb();

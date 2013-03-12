@@ -1,10 +1,16 @@
 package me.botsko.darmok.commands;
 
+import java.util.HashMap;
+import java.util.Map.Entry;
+
+import org.bukkit.entity.Player;
+
 import me.botsko.darmok.Darmok;
 import me.botsko.darmok.channels.Channel;
 import me.botsko.darmok.commandlibs.CallInfo;
 import me.botsko.darmok.commandlibs.Executor;
 import me.botsko.darmok.commandlibs.SubHandler;
+import me.botsko.darmok.players.PlayerChannels;
 
 
 public class ChannelCommands extends Executor {
@@ -14,7 +20,7 @@ public class ChannelCommands extends Executor {
 	 * 
 	 * @param prism
 	 */
-	public ChannelCommands(Darmok darmok) {
+	public ChannelCommands(Darmok darmok){
 		super( darmok, "subcommand", "darmok" );
 		setupCommands();
 	}
@@ -23,7 +29,7 @@ public class ChannelCommands extends Executor {
 	/**
 	 * 
 	 */
-	private void setupCommands() {
+	private void setupCommands(){
 		
 //		final Darmok darmok = (Darmok) plugin;
 	
@@ -91,6 +97,49 @@ public class ChannelCommands extends Executor {
             	
             	// @todo alert other players in this channel that they left
             	
+            }
+		});
+		
+		
+		/**
+		 * /ch list 
+		 */
+		addSub("list", "darmok.list")
+		.allowConsole()
+		.setHandler(new SubHandler(){
+            public void handle(CallInfo call){
+            	
+            	Player limitTo = null;
+            	if( call.getArgs().length == 2 && call.getArg(1).equals("mine") ){
+            		limitTo= call.getPlayer();
+            	}
+            	
+            	HashMap<String,Channel> channels;
+            	
+            	// Load the channels
+            	if( limitTo != null ){
+            		// @todo we should load from the db, so we can list offline players
+            		PlayerChannels playerChannels = Darmok.getPlayerRegistry().getPlayerChannels( limitTo );
+    				if( playerChannels == null ){
+    					call.getPlayer().sendMessage( Darmok.messenger.playerError( "This player has no active channel subscriptions." ) );
+                		return;
+    				}
+    				channels = playerChannels.getChannels();
+            	} else {
+            		channels = Darmok.getChannelRegistry().getChannels();
+            	}
+            	
+            	if( channels.isEmpty() ){
+            		call.getPlayer().sendMessage( Darmok.messenger.playerError( "There are no channels." ) );
+            		return;
+            	}
+            	
+            	// List them
+            	call.getPlayer().sendMessage( Darmok.messenger.playerHeaderMsg( "-- Available Channels --" ) );
+            	for (Entry<String,Channel> entry : channels.entrySet()){
+            		Channel c = entry.getValue();
+            		call.getPlayer().sendMessage( Darmok.messenger.playerMsg( c.getName() + " /" + c.getCommand() + " Default: " + c.isDefault() ) );
+            	}
             }
 		});
 		

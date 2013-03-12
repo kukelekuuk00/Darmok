@@ -66,7 +66,7 @@ public class DarmokPlayerListener implements Listener {
 			
 			// Are they in the channel?
 			if( ! Darmok.getPlayerRegistry().getPlayerChannels( player ).inChannel( channel ) ){
-				if( ! Darmok.getPlayerRegistry().getPlayerChannels( player ).addChannel( channel ) ){
+				if( ! Darmok.getPlayerRegistry().getPlayerChannels( player ).joinChannel( channel ) ){
 					player.sendMessage( Darmok.messenger.playerError("Failed joining channel. Are you allowed?") );
 					return;
 				}
