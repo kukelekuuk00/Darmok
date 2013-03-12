@@ -54,4 +54,23 @@ public class PlayerChannels {
 		}
 		return null;
 	}
+	
+	
+	/**
+	 * 
+	 * @param channel
+	 * @return
+	 */
+	public boolean setDefault( Channel channel ){
+		// @todo ensure player can even be here
+		boolean channelUpdated = false;
+		for (Entry<String,Channel> entry : channels.entrySet()){
+			entry.getValue().setDefault( false );
+			if( entry.getValue().getName().equals( channel.getName() ) ){
+				entry.getValue().setDefault( true );
+				channelUpdated = true;
+			}
+		}
+		return channelUpdated;
+	}
 }

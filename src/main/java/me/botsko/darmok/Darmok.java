@@ -1,6 +1,8 @@
 package me.botsko.darmok;
 
+import java.util.HashMap;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.logging.Logger;
 
 import me.botsko.darmok.channels.Channel;
@@ -11,6 +13,7 @@ import me.botsko.darmok.players.PlayerRegistry;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Darmok extends JavaPlugin {
@@ -76,6 +79,7 @@ public class Darmok extends JavaPlugin {
 			channelRegistry = new ChannelRegistry();
 			chatter = new Chatter(this);
 			playerRegistry = new PlayerRegistry();
+			messenger = new Messenger( plugin_name );
 
 			// Plugins we use
 			checkPluginDependancies();
@@ -84,18 +88,16 @@ public class Darmok extends JavaPlugin {
 			registerChannels();
 			
 			// Assign event listeners
-			getServer().getPluginManager().registerEvents(new DarmokPlayerListener(), this);
+			getServer().getPluginManager().registerEvents(new DarmokPlayerListener(this), this);
 			
 			// Add commands
 //			getCommand("darmok").setExecutor( (CommandExecutor) new DarmokCommands(this) );
 			
-			// Init re-used classes
 			
-			// Init async tasks
-			
-			// Init scheduled events
-
-			
+			// Load all channels for any online players (on reload)
+			for( Player pl : getServer().getOnlinePlayers() ){
+				loadChannelSettingsForPlayer( pl );
+			}
 		}
 	}
 
@@ -162,6 +164,41 @@ public class Darmok extends JavaPlugin {
 	 */
 	public static PlayerRegistry getPlayerRegistry(){
 		return playerRegistry;
+	}
+	
+	
+	/**
+	 * 
+	 * @param player
+	 */
+	public static void loadChannelSettingsForPlayer( Player player ){
+		// @todo load existing channel settings for player
+		
+		// If player has no channel settings, load defaults
+		HashMap<String,Channel> channels = getChannelRegistry().getChannels();
+		for(Entry<String,Channel> entry : channels.entrySet()){
+		    if( player.hasPermission("darmok.channel."+entry.getKey()+".autojoin") ){
+		    	Channel channel;
+				try {
+					channel = entry.getValue().clone();
+					if( player.hasPermission("darmok.channel."+entry.getKey()+".default") ){
+			    		channel.setDefault( true );
+			    	}
+			    	getPlayerRegistry().addChannel( player, channel );
+				} catch (CloneNotSupportedException e) {
+					e.printStackTrace();
+				}
+		    }
+		}
+	}
+	
+	
+	/**
+	 * 
+	 * @param player
+	 */
+	public static void unloadChannelSettingsForPlayer( Player player ){
+		getPlayerRegistry().removePlayer( player );
 	}
 	
 
@@ -271,6 +308,12 @@ public class Darmok extends JavaPlugin {
 	 */
 	@Override
 	public void onDisable(){
+		
+		// Unload all channels for any online players
+		for( Player pl : getServer().getOnlinePlayers() ){
+			unloadChannelSettingsForPlayer( pl );
+		}
+					
 		this.log("Closing plugin.");	
 	}
 }

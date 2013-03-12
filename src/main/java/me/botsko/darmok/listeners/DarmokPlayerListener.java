@@ -1,8 +1,5 @@
 package me.botsko.darmok.listeners;
 
-import java.util.HashMap;
-import java.util.Map.Entry;
-
 import me.botsko.darmok.Darmok;
 import me.botsko.darmok.channels.Channel;
 
@@ -18,6 +15,17 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 public class DarmokPlayerListener implements Listener {
 	
+	protected Darmok plugin;
+	
+	
+	/**
+	 * 
+	 * @param plugin
+	 */
+	public DarmokPlayerListener( Darmok plugin ){
+		this.plugin = plugin;
+	}
+	
 	
 	/**
 	 * 
@@ -25,22 +33,8 @@ public class DarmokPlayerListener implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.LOW)
 	public void onPlayerJoin(final PlayerJoinEvent event){
-		
 		Player player = event.getPlayer();
-		
-		// @todo load existing channel settings for player
-		
-		// If player has no channel settings, load defaults
-		HashMap<String,Channel> channels = Darmok.getChannelRegistry().getChannels();
-		for(Entry<String,Channel> entry : channels.entrySet()){
-		    if( player.hasPermission("darmok.channel."+entry.getKey()+".autojoin") ){
-		    	Channel channel = entry.getValue();
-		    	if( player.hasPermission("darmok.channel."+entry.getKey()+".default") ){
-		    		channel.setDefault( true );
-		    	}
-		    	Darmok.getPlayerRegistry().addChannel( player, channel );
-		    }
-		}
+		Darmok.loadChannelSettingsForPlayer( player );
 	}
 
 	
@@ -49,8 +43,8 @@ public class DarmokPlayerListener implements Listener {
 	 * @param event
 	 */
 	@EventHandler(priority = EventPriority.LOW)
-	public void onPlayerQuit(final PlayerQuitEvent event) {
-		Darmok.getPlayerRegistry().removePlayer( event.getPlayer() );
+	public void onPlayerQuit(final PlayerQuitEvent event){
+		Darmok.unloadChannelSettingsForPlayer( event.getPlayer() );
 	}
 
 	
@@ -59,7 +53,7 @@ public class DarmokPlayerListener implements Listener {
 	 * @param event
 	 */
 	@EventHandler(priority = EventPriority.LOWEST)
-	public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
+	public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event){
 		
 		Player player = event.getPlayer();
 
@@ -77,17 +71,21 @@ public class DarmokPlayerListener implements Listener {
 					messageArgs[ (i-1) ] = cmdArgs[i];
 				}
 				
-				String message = StringUtils.join(messageArgs);
+				String message = StringUtils.join( messageArgs, " ");
 				
 				// Chat!
 				Darmok.getChatter().send( player, channel, message );
 			
 			} else {
-				// @todo set perma channel mode
+				plugin.debug( "Setting " + player.getName() + "'s default channel to " + channel.getName() );
+				if( Darmok.getPlayerRegistry().getPlayerChannels( player ).setDefault( channel ) ){
+					player.sendMessage( Darmok.messenger.playerHeaderMsg("Default channel switched to " + channel.getName() ) );
+				} else {
+					player.sendMessage( Darmok.messenger.playerError("Failed setting channel as default. Are you allowed?") );
+				}
 			}
 			
 			event.setCancelled(true);
-			
 			
 		}
 		// it's not our command, ignore it

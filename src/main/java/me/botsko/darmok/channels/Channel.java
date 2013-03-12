@@ -5,7 +5,7 @@ import java.util.Map.Entry;
 
 import org.bukkit.entity.Player;
 
-public class Channel {
+public class Channel implements Cloneable {
 
 	private final String name;
 	private final String command;
@@ -131,4 +131,12 @@ public class Channel {
         String colorized = text.replaceAll("(&([a-f0-9A-F]))", "\u00A7$2");
         return colorized;
     }
+	
+	
+	/**
+	 * 
+	 */
+	public Channel clone() throws CloneNotSupportedException {
+		return (Channel) super.clone();
+	}
 }

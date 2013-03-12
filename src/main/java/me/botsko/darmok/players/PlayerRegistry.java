@@ -38,6 +38,15 @@ public class PlayerRegistry {
 	
 	/**
 	 * 
+	 * @return
+	 */
+	public HashMap<String,PlayerChannels> getPlayers(){
+		return players;
+	}
+	
+	
+	/**
+	 * 
 	 * @param player
 	 * @return
 	 */
@@ -50,6 +59,20 @@ public class PlayerRegistry {
 			if( channels != null ){
 				return channels.getDefault();
 			}
+		}
+		return null;
+	}
+	
+	
+	/**
+	 * 
+	 * @param player
+	 * @return
+	 */
+	public PlayerChannels getPlayerChannels( Player player ){
+		String name = player.getName();
+		if( players.containsKey( name ) ){
+			return players.get( name );
 		}
 		return null;
 	}
