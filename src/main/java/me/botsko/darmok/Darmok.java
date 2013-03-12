@@ -8,13 +8,20 @@ import java.util.logging.Logger;
 import me.botsko.darmok.channels.Channel;
 import me.botsko.darmok.channels.ChannelRegistry;
 import me.botsko.darmok.chatter.Chatter;
+import me.botsko.darmok.commands.ChannelCommands;
 import me.botsko.darmok.listeners.DarmokPlayerListener;
 import me.botsko.darmok.players.PlayerRegistry;
+import net.milkbowl.vault.chat.Chat;
 
+import org.bukkit.command.CommandExecutor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import com.earth2me.essentials.Essentials;
 
 public class Darmok extends JavaPlugin {
 	
@@ -33,6 +40,10 @@ public class Darmok extends JavaPlugin {
 	private static ChannelRegistry channelRegistry;
 	private static Chatter chatter;
 	private static PlayerRegistry playerRegistry;
+	
+	// Plugins
+	private static Essentials essentials = null;
+	private static Chat chat = null;
 	
 	/**
 	 * Public
@@ -92,6 +103,7 @@ public class Darmok extends JavaPlugin {
 			
 			// Add commands
 //			getCommand("darmok").setExecutor( (CommandExecutor) new DarmokCommands(this) );
+			getCommand("ch").setExecutor( (CommandExecutor) new ChannelCommands(this) );
 			
 			
 			// Load all channels for any online players (on reload)
@@ -126,14 +138,14 @@ public class Darmok extends JavaPlugin {
 			ConfigurationSection channel = channelList.getConfigurationSection(channelName);
 			if(channel == null) continue;
 			
-			debug("CHANNEL: " + channelName + " f: " +  channel.getString("format"));
+			String format = config.getString("darmok.channel.default-format");
 
-			channelRegistry.registerChannel( 
-					new Channel( 
+			channelRegistry.registerChannel(
+					new Channel(
 							channelName,
 							channel.getString("command"),
 							channel.getString("color"),
-							channel.getString("format"),
+							( channel.getString("format").isEmpty() ? format : channel.getString("format") ),
 							channel.getInt("range")
 						) );
 			
@@ -184,7 +196,7 @@ public class Darmok extends JavaPlugin {
 					if( player.hasPermission("darmok.channel."+entry.getKey()+".default") ){
 			    		channel.setDefault( true );
 			    	}
-			    	getPlayerRegistry().addChannel( player, channel );
+			    	getPlayerRegistry().getPlayerChannels(player).addChannel( channel );
 				} catch (CloneNotSupportedException e) {
 					e.printStackTrace();
 				}
@@ -216,7 +228,36 @@ public class Darmok extends JavaPlugin {
 	 */
 	public void checkPluginDependancies(){
 		
-		
+		Plugin tmp = getServer().getPluginManager().getPlugin("Essentials");
+		if (tmp != null){
+			log("Connected with Essentials, using mute settings.");
+			essentials = (Essentials) tmp;
+		}
+	
+		// Vault permissions
+		RegisteredServiceProvider<Chat> chatProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.chat.Chat.class);
+        if (chatProvider != null) {
+        	log("Connected with Vault.");
+            chat = chatProvider.getProvider();
+        }
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public static Essentials getEssentials(){
+		return essentials;
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public static Chat getVaultChat(){
+		return chat;
 	}
 	
 	

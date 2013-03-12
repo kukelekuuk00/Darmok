@@ -2,8 +2,6 @@ package me.botsko.darmok.players;
 
 import java.util.HashMap;
 
-import me.botsko.darmok.channels.Channel;
-
 import org.bukkit.entity.Player;
 
 public class PlayerRegistry {
@@ -13,29 +11,7 @@ public class PlayerRegistry {
 	 */
 	private HashMap<String,PlayerChannels> players = new HashMap<String,PlayerChannels>();
 	
-	
-	/**
-	 * 
-	 * @param channel
-	 * @param player
-	 */
-	public void addChannel( Player player, Channel channel ){
-		
-		String name = player.getName();
-		PlayerChannels channels = null;
-		
-		if( players.containsKey( name ) ){
-			channels = players.get( name );
-		} else {
-			channels = new PlayerChannels();
-		}
-		if( channels != null ){
-			channels.addChannel( channel );
-			players.put( name, channels );
-		}
-	}
-	
-	
+
 	/**
 	 * 
 	 * @return
@@ -50,31 +26,12 @@ public class PlayerRegistry {
 	 * @param player
 	 * @return
 	 */
-	public Channel getDefaultChannel( Player player ){
-		
-		String name = player.getName();
-		
-		if( players.containsKey( name ) ){
-			PlayerChannels channels = players.get( name );
-			if( channels != null ){
-				return channels.getDefault();
-			}
-		}
-		return null;
-	}
-	
-	
-	/**
-	 * 
-	 * @param player
-	 * @return
-	 */
 	public PlayerChannels getPlayerChannels( Player player ){
 		String name = player.getName();
-		if( players.containsKey( name ) ){
-			return players.get( name );
+		if( ! players.containsKey( name ) ){
+			players.put( name, new PlayerChannels() );
 		}
-		return null;
+		return players.get( name );
 	}
 	
 	

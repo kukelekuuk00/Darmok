@@ -5,6 +5,8 @@ import me.botsko.darmok.channels.Channel;
 
 import org.bukkit.entity.Player;
 
+import com.earth2me.essentials.User;
+
 public class Chatter {
 	
 	protected Darmok plugin;
@@ -99,8 +101,13 @@ public class Chatter {
 	 * @return
 	 */
 	private boolean isPlayerMuted( Player player ){
-		// @todo implement me
+		if( Darmok.getEssentials() != null ){
+			User user = Darmok.getEssentials().getUser(player);
+			if( user != null && user.isMuted() ){
+				return true;
+			}
+		}
+		// @todo add-per channel muting
 		return false;
-		// @todo hook into essentials.getUser(player).isMuted()
 	}
 }

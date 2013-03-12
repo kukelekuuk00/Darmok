@@ -10,11 +10,20 @@
 			<artifactId>bukkit</artifactId>
 			<version>1.4.7-R1.0</version>
 		</dependency>
+		<dependency>
+			<groupId>net.milkbowl.vault</groupId>
+			<artifactId>Vault</artifactId>
+			<version>1.2.24-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 	<repositories>
 		<repository>
 			<id>repobo-snap</id>
 			<url>http://repo.bukkit.org/content/groups/public</url>
+		</repository>
+		<repository>
+			<id>vault-repo</id>
+			<url>http://ci.herocraftonline.com/plugin/repository/everything</url>
 		</repository>
 	</repositories>
 </project>

@@ -79,8 +79,8 @@ public class Messenger {
 	 * @param cmd
 	 * @param help
 	 */
-	public String playerHelp( String cmd, String help ){
-		return ChatColor.GRAY + "/prism " + ChatColor.LIGHT_PURPLE + cmd + ChatColor.WHITE + " - " + help;
+	public String playerHelp( String base_command, String subCmdOrArgs, String help ){
+		return ChatColor.GRAY + "/"+base_command + " " + ChatColor.AQUA + subCmdOrArgs + ChatColor.WHITE + " - " + help;
 	}
 
 	

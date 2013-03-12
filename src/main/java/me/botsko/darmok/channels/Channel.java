@@ -3,6 +3,8 @@ package me.botsko.darmok.channels;
 import java.util.Hashtable;
 import java.util.Map.Entry;
 
+import me.botsko.darmok.Darmok;
+
 import org.bukkit.entity.Player;
 
 public class Channel implements Cloneable {
@@ -98,11 +100,19 @@ public class Channel implements Cloneable {
 	 * @return
 	 */
 	public String formatMessage( Player player, String msg ){
+		
+		String prefix = Darmok.getVaultChat().getPlayerPrefix(player);
+		String suffix = Darmok.getVaultChat().getPlayerSuffix(player);
+
 		Hashtable<String,String> headVal = new Hashtable<String,String>();
+		headVal.put("color", color );
+		headVal.put("prefix", prefix );
+		headVal.put("suffix", suffix );
 		headVal.put("command", command );
 		headVal.put("msg", msg );
 		headVal.put("player", player.getDisplayName() );
 		return getString( format, headVal );
+		
 	}
 	
 	

@@ -28,6 +28,8 @@ public class Config extends ConfigBase {
 		config.addDefault("darmok.language", "en-us");
 //		config.addDefault("darmok.notify-newer-versions", true);
 		
+		config.addDefault("darmok.channel.default-format", "%(color)[%(command)] %(prefix) &f%(player) %(suffix)%(color): %(msg)");
+		
 		
 		// Build channels
 		ConfigurationSection channels = config.createSection("darmok.channels");
@@ -37,35 +39,35 @@ public class Config extends ConfigBase {
 		admin.addDefault("command", "a");
 		admin.addDefault("range", -1);
 		admin.addDefault("color", "&e");
-		admin.addDefault("format", "&e[%(command)] &f%(player)&e: %(msg)");
+		admin.addDefault("format", "");
 		
 		// Default Channel: GLOBAL
 		ConfigurationSection global = channels.createSection("global");
 		global.addDefault("command", "g");
 		global.addDefault("range", -1);
 		global.addDefault("color", "&6");
-		global.addDefault("format", "&6[%(command)] &f%(player)&6: %(msg)");
+		global.addDefault("format", "");
 		
 		// Default Channel: HELP
 		ConfigurationSection help = channels.createSection("help");
 		help.addDefault("command", "h");
 		help.addDefault("range", -1);
 		help.addDefault("color", "&b");
-		help.addDefault("format", "&b[%(command)] &f%(player)&b: %(msg)");
+		help.addDefault("format", "");
 		
 		// Default Channel: LOCAL
 		ConfigurationSection local = channels.createSection("local");
 		local.addDefault("command", "l");
 		local.addDefault("range", 100);
 		local.addDefault("color", "&f");
-		local.addDefault("format", "&f[%(command)] %(player): %(msg)");
+		local.addDefault("format", "");
 		
 		// Default Channel: STAFF
 		ConfigurationSection staff = channels.createSection("staff");
 		staff.addDefault("command", "s");
 		staff.addDefault("range", -1);
 		staff.addDefault("color", "&a");
-		staff.addDefault("format", "&a[%(command)] &f%(player)&a: %(msg)");
+		staff.addDefault("format", "");
 		
 		// Copy defaults
 		config.options().copyDefaults(true);

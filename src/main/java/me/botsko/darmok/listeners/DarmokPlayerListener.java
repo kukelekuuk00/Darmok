@@ -63,6 +63,16 @@ public class DarmokPlayerListener implements Listener {
 		// Does channel exist?
 		Channel channel = Darmok.getChannelRegistry().getChannel( primaryCmd );
 		if( channel != null ){
+			
+			// Are they in the channel?
+			if( ! Darmok.getPlayerRegistry().getPlayerChannels( player ).inChannel( channel ) ){
+				if( ! Darmok.getPlayerRegistry().getPlayerChannels( player ).addChannel( channel ) ){
+					player.sendMessage( Darmok.messenger.playerError("Failed joining channel. Are you allowed?") );
+					return;
+				}
+				player.sendMessage( Darmok.messenger.playerSubduedHeaderMsg("Auto-joining channel " + channel.getName() + "..." ) );
+			}
+			
 			// if message actually sent
 			if( cmdArgs.length > 1 ){
 				
@@ -102,7 +112,7 @@ public class DarmokPlayerListener implements Listener {
 		Player player = event.getPlayer();
 		
 		// Get the current default channel
-		Channel channel = Darmok.getPlayerRegistry().getDefaultChannel( player );
+		Channel channel = Darmok.getPlayerRegistry().getPlayerChannels(player).getDefault();
 		
 		if( channel != null ){
 			Darmok.getChatter().send( player, channel, event.getMessage() );

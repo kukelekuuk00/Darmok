@@ -1,8 +1,11 @@
 name: darmok
 main: me.botsko.darmok.Darmok
 version: 1.0
-softdepend: [Vault]
+softdepend: [Vault,Essentials]
 commands:
    darmok:
       description: Darmok
       usage: /darmok ?
+   ch:
+      description: Channel commands
+      usage: /ch ?
