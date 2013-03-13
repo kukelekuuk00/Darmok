@@ -2,6 +2,7 @@ package me.botsko.darmok.chatter;
 
 import me.botsko.darmok.Darmok;
 import me.botsko.darmok.channels.Channel;
+import me.botsko.darmok.channels.ChannelPermissions;
 
 import org.bukkit.entity.Player;
 
@@ -36,7 +37,7 @@ public class Chatter {
 		}
 		
 		// Verify player has permission to SPEAK
-		if( ! player.hasPermission( "darmok.channel." + channel.getName() + ".speak" ) ){
+		if( !ChannelPermissions.playerCanSpeak( player, channel ) ){
 			player.sendMessage( Darmok.messenger.playerError("You don't have permission to speak in this channel.") );
 			return;
 		}
@@ -47,12 +48,8 @@ public class Chatter {
 			return;
 		}
 		
-		// @todo is player in channel? we should auto-join them if not
-
-		// @todo find all players meant to receive this message
-		// - are they in the channel
-		
-		for( Player pl : plugin.getServer().getOnlinePlayers() ){
+		// Only pull players in this channel
+		for( Player pl : Darmok.getPlayerRegistry().getPlayersInChannel(channel) ){
 			
 			int range = channel.getRange();
 			
@@ -71,12 +68,11 @@ public class Chatter {
 			// Player is in range.
 			
 			// Ensure they have permission to READ
-			if( ! player.hasPermission( "darmok.channel." + channel.getName() + ".read" ) ){
+			if( ! ChannelPermissions.playerCanRead( player, channel ) ){
+				plugin.debug("PERM: darmok.channel." + channel.getName().toLowerCase() + ".read");
 				return;
 			}
-			
-			
-			
+
 			// All checks are GO for launch
 			pl.sendMessage( channel.formatMessage( player, msg ) );
 			

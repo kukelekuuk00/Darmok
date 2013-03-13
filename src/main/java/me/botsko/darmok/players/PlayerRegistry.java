@@ -1,6 +1,11 @@
 package me.botsko.darmok.players;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map.Entry;
+
+import me.botsko.darmok.channels.Channel;
+import me.botsko.darmok.channels.ChannelPermissions;
 
 import org.bukkit.entity.Player;
 
@@ -9,14 +14,14 @@ public class PlayerRegistry {
 	/**
 	 * 
 	 */
-	private HashMap<String,PlayerChannels> players = new HashMap<String,PlayerChannels>();
+	private HashMap<Player,PlayerChannels> players = new HashMap<Player,PlayerChannels>();
 	
 
 	/**
 	 * 
 	 * @return
 	 */
-	public HashMap<String,PlayerChannels> getPlayers(){
+	public HashMap<Player,PlayerChannels> getPlayers(){
 		return players;
 	}
 	
@@ -27,11 +32,31 @@ public class PlayerRegistry {
 	 * @return
 	 */
 	public PlayerChannels getPlayerChannels( Player player ){
-		String name = player.getName();
-		if( ! players.containsKey( name ) ){
-			players.put( name, new PlayerChannels( player ) );
+		if( ! players.containsKey( player ) ){
+			players.put( player, new PlayerChannels( player ) );
 		}
-		return players.get( name );
+		return players.get( player );
+	}
+	
+	
+	/**
+	 * 
+	 * @param player
+	 * @return
+	 */
+	public ArrayList<Player> getPlayersInChannel( Channel channel ){
+		ArrayList<Player> inChannel = new  ArrayList<Player>();
+		for (Entry<Player,PlayerChannels> entry : players.entrySet()){
+		    if( entry.getValue().inChannel(channel) ){
+		    	if( ChannelPermissions.playerCanRead( entry.getKey(), channel ) ){
+		    		inChannel.add( entry.getKey() );
+		    	} else {
+		    		// remove player from channel, permissions must have changed
+		    		players.get( entry.getKey() ).leaveChannel(channel);
+		    	}
+		    }
+		}
+		return inChannel;
 	}
 	
 	
@@ -41,8 +66,7 @@ public class PlayerRegistry {
 	 * @return
 	 */
 	public void setPlayerChannels( Player player, PlayerChannels channels ){
-		String name = player.getName();
-		players.put( name, channels );
+		players.put( player, channels );
 	}
 	
 	
@@ -51,9 +75,8 @@ public class PlayerRegistry {
 	 * @param player
 	 */
 	public void removePlayer( Player player ){
-		String name = player.getName();
-		if( players.containsKey( name ) ){
-			players.remove( name );
+		if( players.containsKey( player ) ){
+			players.remove( player );
 		}
 	}
 }

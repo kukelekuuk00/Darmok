@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import java.util.logging.Logger;
 
 import me.botsko.darmok.channels.Channel;
+import me.botsko.darmok.channels.ChannelPermissions;
 import me.botsko.darmok.channels.ChannelRegistry;
 import me.botsko.darmok.chatter.Chatter;
 import me.botsko.darmok.commands.ChannelCommands;
@@ -260,7 +261,7 @@ public class Darmok extends JavaPlugin {
 		// If player has no channel settings, load defaults
 		HashMap<String,Channel> channels = getChannelRegistry().getChannels();
 		for(Entry<String,Channel> entry : channels.entrySet()){
-		    if( player.hasPermission("darmok.channel."+entry.getKey()+".autojoin") ){
+		    if( ChannelPermissions.playerCanAutoJoin( player, entry.getValue() ) ){
 		    	Channel channel;
 				try {
 					channel = entry.getValue().clone();

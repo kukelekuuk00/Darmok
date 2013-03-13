@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 import org.bukkit.entity.Player;
 
 import me.botsko.darmok.channels.Channel;
+import me.botsko.darmok.channels.ChannelPermissions;
 import me.botsko.darmok.settings.Settings;
 
 public class PlayerChannels {
@@ -81,14 +82,15 @@ public class PlayerChannels {
 	 * @return
 	 */
 	public boolean setDefault( Channel channel ){
-		// @todo ensure player can even be here
 		boolean channelUpdated = false;
-		for (Entry<String,Channel> entry : channels.entrySet()){
-			entry.getValue().setDefault( false );
-			if( entry.getValue().getName().equals( channel.getName() ) ){
-				entry.getValue().setDefault( true );
-				Settings.setDefaultChannelForPlayer( player, entry.getValue() );
-				channelUpdated = true;
+		if( ChannelPermissions.playerCanDefaultTo(player, channel) ){
+			for (Entry<String,Channel> entry : channels.entrySet()){
+				entry.getValue().setDefault( false );
+				if( entry.getValue().getName().equals( channel.getName() ) ){
+					entry.getValue().setDefault( true );
+					Settings.setDefaultChannelForPlayer( player, entry.getValue() );
+					channelUpdated = true;
+				}
 			}
 		}
 		return channelUpdated;
@@ -110,10 +112,12 @@ public class PlayerChannels {
 	 * @param c
 	 */
 	public boolean joinChannel( Channel c ){
-		// @todo can they even add a channel?
-		addChannel(c);
-		Settings.addChannelToPlayer( player, c );
-		return true;
+		if( ChannelPermissions.playerCanJoin( player, c ) ){
+			addChannel(c);
+			Settings.addChannelToPlayer( player, c );
+			return true;
+		}
+		return false;
 	}
 	
 	
@@ -124,10 +128,11 @@ public class PlayerChannels {
 	 */
 	public boolean leaveChannel( Channel channel ){
 		if( channel != null ){
-			// @todo check that they may leave
-			channels.remove( channel.getCommand() );
-			Settings.removeChannelFromPlayer( player, channel );
-			return true;
+			if( ChannelPermissions.playerCanLeave( player, channel ) ){
+				channels.remove( channel.getCommand() );
+				Settings.removeChannelFromPlayer( player, channel );
+				return true;
+			}
 		}
 		return false;
 	}
