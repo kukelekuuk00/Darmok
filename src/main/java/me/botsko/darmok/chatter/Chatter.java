@@ -4,6 +4,7 @@ import me.botsko.darmok.Darmok;
 import me.botsko.darmok.channels.Channel;
 import me.botsko.darmok.channels.ChannelPermissions;
 
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import com.earth2me.essentials.User;
@@ -77,6 +78,14 @@ public class Chatter {
 			}
 		}
 		
+		// Do they have permission to use colors?
+		if( !player.hasPermission("darmok.chatcolor") ){
+			msg = ChatColor.stripColor(msg);
+		}
+		
+		// Format the final message
+		msg = channel.formatMessage( player, msg );
+		
 		// Only pull players in this channel
 		for( Player pl : Darmok.getPlayerRegistry().getPlayersInChannel(channel) ){
 			
@@ -98,12 +107,11 @@ public class Chatter {
 			
 			// Ensure they have permission to READ
 			if( ! ChannelPermissions.playerCanRead( player, channel ) ){
-				plugin.debug("PERM: darmok.channel." + channel.getName().toLowerCase() + ".read");
 				return;
 			}
 
 			// All checks are GO for launch
-			pl.sendMessage( channel.formatMessage( player, msg ) );
+			pl.sendMessage( msg );
 			
 		}
 	}
