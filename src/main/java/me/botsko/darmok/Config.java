@@ -30,7 +30,6 @@ public class Config extends ConfigBase {
 		
 		config.addDefault("darmok.channel.default-format", "%(color)[%(command)] %(prefix) &f%(player) %(suffix)%(color): %(msg)");
 		
-		
 		// Build channels
 		ConfigurationSection channels = config.createSection("darmok.channels");
 		
@@ -68,6 +67,15 @@ public class Config extends ConfigBase {
 		staff.addDefault("range", -1);
 		staff.addDefault("color", "&a");
 		staff.addDefault("format", "");
+		
+		config.addDefault("darmok.censors.caps.enabled", true);
+		config.addDefault("darmok.censors.caps.min-length", 15);
+		config.addDefault("darmok.censors.min-percentage", 30);
+		
+		config.addDefault("darmok.censors.profanity.enabled", true);
+		
+//		config.addDefault("darmok.censors.fakecensor.enabled", true);
+//		config.addDefault("darmok.censors.fakecensor.string", "***");
 		
 		// Copy defaults
 		config.options().copyDefaults(true);

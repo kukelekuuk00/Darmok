@@ -48,6 +48,35 @@ public class Chatter {
 			return;
 		}
 		
+		/**
+		 * Apply censors
+		 */
+		// Caps limits
+		if( plugin.getConfig().getBoolean("darmok.censors.caps.enabled") ){
+			msg = Darmok.getCensor().filterCaps( msg, plugin.getConfig().getInt("darmok.censors.caps.min-length"), plugin.getConfig().getInt("darmok.censors.caps.min-percentage") );
+		}
+//		// Fake censor
+//		if( plugin.getConfig().getBoolean("darmok.censors.fakecensor.enabled") && Darmok.getCensor().isFakeCensor( msg, plugin.getConfig().getString("darmok.censors.fakecensor.string") ) ){
+//			player.sendMessage( Darmok.messenger.playerError("Sorry but we do not allow stars instead of curse words.") );
+//			return;
+//		}
+		// Profanity
+		if( plugin.getConfig().getBoolean("darmok.censors.profanity.enabled") ){
+			if( Darmok.getCensor().containsSuspectedProfanity( msg ) ){
+				
+				player.sendMessage( Darmok.messenger.playerError("Profanity or trying to bypass the censor is not allowed. Sorry if this is a false catch.") );
+				
+//				String alert_msg = player.getName() + "'s message was blocked for profanity.";
+//				plugin.alertPlayers(alert_msg);
+//				plugin.log( player.getName()+"'s message was blocked for profanity. Original was: " + event.getMessage() );
+				
+				return;
+			} else {
+				// scan for words we censor
+				msg = Darmok.getCensor().replaceCensoredWords( msg );
+			}
+		}
+		
 		// Only pull players in this channel
 		for( Player pl : Darmok.getPlayerRegistry().getPlayersInChannel(channel) ){
 			

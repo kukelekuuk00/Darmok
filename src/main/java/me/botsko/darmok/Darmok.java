@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
@@ -12,6 +13,7 @@ import java.util.logging.Logger;
 import me.botsko.darmok.channels.Channel;
 import me.botsko.darmok.channels.ChannelPermissions;
 import me.botsko.darmok.channels.ChannelRegistry;
+import me.botsko.darmok.chatter.Censor;
 import me.botsko.darmok.chatter.Chatter;
 import me.botsko.darmok.commands.ChannelCommands;
 import me.botsko.darmok.listeners.DarmokPlayerListener;
@@ -47,6 +49,8 @@ public class Darmok extends JavaPlugin {
 	private static ChannelRegistry channelRegistry;
 	private static Chatter chatter;
 	private static PlayerRegistry playerRegistry;
+	private static Censor censor;
+	private FileConfiguration profanity;
 	
 	// Plugins
 	private static Essentials essentials = null;
@@ -126,11 +130,16 @@ public class Darmok extends JavaPlugin {
 	/**
 	 * Load configuration and language files
 	 */
+	@SuppressWarnings("unchecked")
 	public void loadConfig(){
 		Config mc = new Config( this );
 		config = mc.getConfig();
 		// Load language files
 //		language = new Language( mc.getLang() );
+		if(getConfig().getBoolean("censors.censor_profanity")){
+			profanity = mc.getProfanityConfig();
+			censor = new Censor( (List<String>) profanity.getList("reject-words"), (List<String>) profanity.getList("censor-words") );
+		}
 	}
 	
 	
@@ -243,6 +252,15 @@ public class Darmok extends JavaPlugin {
 	 */
 	public static PlayerRegistry getPlayerRegistry(){
 		return playerRegistry;
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public static Censor getCensor(){
+		return censor;
 	}
 	
 	

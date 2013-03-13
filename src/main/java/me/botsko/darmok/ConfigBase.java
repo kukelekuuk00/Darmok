@@ -61,12 +61,20 @@ public class ConfigBase {
 	
 	
 	/**
-	 * Loads item database
+	 * Loads language configuration
 	 * @return
 	 */
-	public FileConfiguration getItems(){
-		config = loadConfig( "", "items" );
+	public FileConfiguration getProfanityConfig(){
+		
+		// Read the base config
+		FileConfiguration config = loadConfig( "defaults/", "profanity" );
+		
+		// copy defaults and save config
+		config.options().copyDefaults(true);
+		write( "profanity", config );
+		
 		return config;
+		
 	}
 	
 	
