@@ -233,6 +233,14 @@ public class Darmok extends JavaPlugin {
 			for(String channelCommand : channels.getKeys(false)){
 				Channel channel = Darmok.getChannelRegistry().getChannel( channelCommand );
 				if( channel != null ){
+					
+					// Load default
+					ConfigurationSection channelConfig = channels.getConfigurationSection(channelCommand);
+					if( channelConfig.getBoolean("default") ){
+						debug("Setting default channel to " + channel.getName());
+			    		channel.setDefault( true );
+					}
+					
 					getPlayerRegistry().getPlayerChannels(player).addChannel( channel );
 				}
 			}
@@ -267,7 +275,7 @@ public class Darmok extends JavaPlugin {
 		
 		if( ! playerChannels.getChannels().isEmpty() ){
 			for (Entry<String,Channel> entry : playerChannels.getChannels().entrySet()){
-				debug("Saving player's active channel " + entry.getValue().getName());
+				debug("Saving "+player.getName()+"'s active channel " + entry.getValue().getName() + " isDefault: " + entry.getValue().isDefault());
 				ConfigurationSection channelConfig = configChannels.createSection( entry.getKey() );
 				channelConfig.set( "default", entry.getValue().isDefault() );
 				channelConfig.set( "muted", entry.getValue().isMuted() );
