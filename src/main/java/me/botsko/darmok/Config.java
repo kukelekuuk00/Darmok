@@ -68,7 +68,7 @@ public class Config extends ConfigBase {
 		staff.addDefault("color", "&a");
 		staff.addDefault("format", "");
 		
-		config.addDefault("darmok.censors.caps.enabled", true);
+		config.addDefault("darmok.censors.caps.enabled", false);
 		config.addDefault("darmok.censors.caps.min-length", 15);
 		config.addDefault("darmok.censors.min-percentage", 30);
 		

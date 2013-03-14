@@ -134,4 +134,54 @@ public class Settings {
 //			plugin.logDbError( e );
 		}
 	}
+	
+	
+	/**
+	 * 
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public static void banPlayerFromChannel( Player player, Channel channel ){
+		try {
+			
+			Connection conn = Darmok.getDb();
+			
+			PreparedStatement s = conn.prepareStatement ("INSERT INTO darmok_player_channel_perms (player,channel,banned) VALUES (?,?,1)");
+			s.setString(1, player.getName());
+			s.setString(2, channel.getCommand());
+			s.executeUpdate();
+			
+			s.close();
+			conn.close();
+	
+		} catch (SQLException e) {
+//			plugin.logDbError( e );
+		}
+	}
+	
+	
+	/**
+	 * 
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public static void unbanPlayerFromChannel( Player player, Channel channel ){
+		try {
+			
+			Connection conn = Darmok.getDb();
+			
+			PreparedStatement s = conn.prepareStatement ("DELETE FROM darmok_player_channel_perms  WHERE player = ? AND channel = ? AND banned = 1");
+			s.setString(1, player.getName());
+			s.setString(2, channel.getCommand());
+			s.executeUpdate();
+			
+			s.close();
+			conn.close();
+	
+		} catch (SQLException e) {
+//			plugin.logDbError( e );
+		}
+	}
 }

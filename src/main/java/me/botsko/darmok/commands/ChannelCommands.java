@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 
 import me.botsko.darmok.Darmok;
 import me.botsko.darmok.channels.Channel;
+import me.botsko.darmok.channels.ChannelPermissions;
 import me.botsko.darmok.commandlibs.CallInfo;
 import me.botsko.darmok.commandlibs.Executor;
 import me.botsko.darmok.commandlibs.SubHandler;
@@ -31,7 +32,55 @@ public class ChannelCommands extends Executor {
 	 */
 	private void setupCommands(){
 		
-//		final Darmok darmok = (Darmok) plugin;
+		final Darmok darmok = (Darmok) plugin;
+		
+		
+		/**
+		 * /ch ban (player) (channel) 
+		 */
+		addSub("ban", "darmok.chat")
+		.allowConsole()
+		.setHandler(new SubHandler(){
+            public void handle(CallInfo call){
+
+            	if( call.getArgs().length != 3 ){
+            		call.getPlayer().sendMessage( Darmok.messenger.playerError( "You must provide a player name and channel, like /ch ban viveleroi g" ) );
+            		return;
+            	}
+            	
+            	// Get the player
+            	Player player = darmok.getServer().getPlayer( call.getArg(1) );
+            	if( player == null ){
+            		call.getPlayer().sendMessage( Darmok.messenger.playerError( "Can't find a player with that name." ) );
+            		return;
+            	}
+            	
+            	// Get the channel
+            	Channel channel = Darmok.getChannelRegistry().getChannel( call.getArg(2) );
+            	if( channel == null ){
+            		call.getPlayer().sendMessage( Darmok.messenger.playerError( "Channel '"+call.getArg(1)+"' does not exist." ) );
+            		return;
+            	}
+            	
+            	// Do they have permission to ban
+            	if( !ChannelPermissions.playerCanBan( call.getPlayer(), channel ) ){
+            		call.getPlayer().sendMessage( Darmok.messenger.playerError( "You do not have permission to ban players from this channel." ) );
+            		return;
+            	}
+            	
+            	Darmok.getPlayerRegistry().getPlayerChannels( player ).removeChannel( channel );
+            	
+            	// save ban
+            	
+            	
+            	player.sendMessage( Darmok.messenger.playerError( "You have been banned from the "+channel.getName()+" channel." ) );
+            	call.getPlayer().sendMessage( Darmok.messenger.playerHeaderMsg( "You have banned "+player.getName()+" from the "+channel.getName()+" channel." ) );
+            	
+            	// @todo alert other players in this channel that they left
+            	
+            }
+		});
+		
 	
 		/**
 		 * /ch join 
@@ -62,6 +111,50 @@ public class ChannelCommands extends Executor {
         		return;
             	
             	// @todo alert other players in this channel that they joined
+            	
+            }
+		});
+		
+		
+		/**
+		 * /ch kick (player) (channel) 
+		 */
+		addSub("kick", "darmok.chat")
+		.allowConsole()
+		.setHandler(new SubHandler(){
+            public void handle(CallInfo call){
+
+            	if( call.getArgs().length != 3 ){
+            		call.getPlayer().sendMessage( Darmok.messenger.playerError( "You must provide a player name and channel, like /ch kick viveleroi g" ) );
+            		return;
+            	}
+            	
+            	// Get the player
+            	Player player = darmok.getServer().getPlayer( call.getArg(1) );
+            	if( player == null ){
+            		call.getPlayer().sendMessage( Darmok.messenger.playerError( "Can't find a player with that name." ) );
+            		return;
+            	}
+            	
+            	// Get the channel
+            	Channel channel = Darmok.getChannelRegistry().getChannel( call.getArg(2) );
+            	if( channel == null ){
+            		call.getPlayer().sendMessage( Darmok.messenger.playerError( "Channel '"+call.getArg(1)+"' does not exist." ) );
+            		return;
+            	}
+            	
+            	// Do they have permission to kick
+            	if( !ChannelPermissions.playerCanKick( call.getPlayer(), channel ) ){
+            		call.getPlayer().sendMessage( Darmok.messenger.playerError( "You do not have permission to kick players from this channel." ) );
+            		return;
+            	}
+            	
+            	Darmok.getPlayerRegistry().getPlayerChannels( player ).removeChannel( channel );
+            	
+            	player.sendMessage( Darmok.messenger.playerError( "You have been kicked from the "+channel.getName()+" channel." ) );
+            	call.getPlayer().sendMessage( Darmok.messenger.playerHeaderMsg( "You have kicked "+player.getName()+" from the "+channel.getName()+" channel." ) );
+            	
+            	// @todo alert other players in this channel that they left
             	
             }
 		});
@@ -175,6 +268,48 @@ public class ChannelCommands extends Executor {
 //            	
 //            }
 //		});
+		
+		
+		/**
+		 * /ch unban (player) (channel) 
+		 */
+		addSub("unban", "darmok.chat")
+		.allowConsole()
+		.setHandler(new SubHandler(){
+            public void handle(CallInfo call){
+
+            	if( call.getArgs().length != 3 ){
+            		call.getPlayer().sendMessage( Darmok.messenger.playerError( "You must provide a player name and channel, like /ch unban viveleroi g" ) );
+            		return;
+            	}
+            	
+            	// Get the player
+            	Player player = darmok.getServer().getPlayer( call.getArg(1) );
+            	if( player == null ){
+            		call.getPlayer().sendMessage( Darmok.messenger.playerError( "Can't find a player with that name." ) );
+            		return;
+            	}
+            	
+            	// Get the channel
+            	Channel channel = Darmok.getChannelRegistry().getChannel( call.getArg(2) );
+            	if( channel == null ){
+            		call.getPlayer().sendMessage( Darmok.messenger.playerError( "Channel '"+call.getArg(1)+"' does not exist." ) );
+            		return;
+            	}
+            	
+            	// Do they have permission to unban
+            	if( !ChannelPermissions.playerCanBan( call.getPlayer(), channel ) ){
+            		call.getPlayer().sendMessage( Darmok.messenger.playerError( "You do not have permission to unban players from this channel." ) );
+            		return;
+            	}
+            	
+            	Darmok.getPlayerRegistry().getPlayerChannels( player ).removeChannel( channel );
+
+            	player.sendMessage( Darmok.messenger.playerError( "You have been unbanned from the "+channel.getName()+" channel." ) );
+            	call.getPlayer().sendMessage( Darmok.messenger.playerHeaderMsg( "You have unbanned "+player.getName()+" from the "+channel.getName()+" channel." ) );
+            	
+            }
+		});
 
 		
 		/**

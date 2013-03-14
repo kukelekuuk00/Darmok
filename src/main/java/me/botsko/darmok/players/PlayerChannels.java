@@ -129,11 +129,52 @@ public class PlayerChannels {
 	public boolean leaveChannel( Channel channel ){
 		if( channel != null ){
 			if( ChannelPermissions.playerCanLeave( player, channel ) ){
-				channels.remove( channel.getCommand() );
-				Settings.removeChannelFromPlayer( player, channel );
+				removeChannel( channel );
 				return true;
 			}
 		}
 		return false;
+	}
+	
+	
+	/**
+	 * 
+	 * @param player
+	 * @return
+	 */
+	public boolean banFromChannel( Channel channel ){
+		if( channel != null ){
+			removeChannel( channel );
+			Settings.banPlayerFromChannel( player, channel );
+			return true;
+		}
+		return false;
+	}
+	
+	
+	/**
+	 * 
+	 * @param player
+	 * @return
+	 */
+	public boolean unbanFromChannel( Channel channel ){
+		if( channel != null ){
+			Settings.unbanPlayerFromChannel( player, channel );
+			return true;
+		}
+		return false;
+	}
+	
+	
+	/**
+	 * 
+	 * @param player
+	 * @return
+	 */
+	public void removeChannel( Channel channel ){
+		if( channel != null ){
+			channels.remove( channel.getCommand() );
+			Settings.removeChannelFromPlayer( player, channel );
+		}
 	}
 }

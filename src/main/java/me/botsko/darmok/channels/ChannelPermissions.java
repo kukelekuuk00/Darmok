@@ -26,9 +26,39 @@ public class ChannelPermissions {
 	 * @param channel
 	 * @return
 	 */
+	public static boolean playerCanBan( Player player, Channel channel ){
+		String permPrefix = "darmok.channel." + channel.getName().toLowerCase() + ".";
+		if( player.hasPermission( permPrefix + "ban" ) || player.hasPermission( "darmok.mod" ) ){
+			return true;
+		}
+		return false;
+	}
+	
+	
+	/**
+	 * 
+	 * @param player
+	 * @param channel
+	 * @return
+	 */
 	public static boolean playerCanDefaultTo( Player player, Channel channel ){
 		String permPrefix = "darmok.channel." + channel.getName().toLowerCase() + ".";
 		if( player.hasPermission( permPrefix + "default" ) || player.hasPermission( permPrefix + "read" ) || player.hasPermission( permPrefix + "speak" ) ){
+			return true;
+		}
+		return false;
+	}
+	
+	
+	/**
+	 * 
+	 * @param player
+	 * @param channel
+	 * @return
+	 */
+	public static boolean playerCanJoin( Player player, Channel channel ){
+		String permPrefix = "darmok.channel." + channel.getName().toLowerCase() + ".";
+		if( player.hasPermission( permPrefix + "read" ) || player.hasPermission( permPrefix + "speak" ) ){
 			return true;
 		}
 		return false;
@@ -41,9 +71,9 @@ public class ChannelPermissions {
 	 * @param channel
 	 * @return
 	 */
-	public static boolean playerCanJoin( Player player, Channel channel ){
+	public static boolean playerCanKick( Player player, Channel channel ){
 		String permPrefix = "darmok.channel." + channel.getName().toLowerCase() + ".";
-		if( player.hasPermission( permPrefix + "read" ) || player.hasPermission( permPrefix + "speak" ) ){
+		if( player.hasPermission( permPrefix + "kick" ) || player.hasPermission( permPrefix + "ban" ) || player.hasPermission( "darmok.mod" ) ){
 			return true;
 		}
 		return false;

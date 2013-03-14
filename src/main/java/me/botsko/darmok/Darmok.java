@@ -136,10 +136,8 @@ public class Darmok extends JavaPlugin {
 		config = mc.getConfig();
 		// Load language files
 //		language = new Language( mc.getLang() );
-		if(getConfig().getBoolean("censors.censor_profanity")){
-			profanity = mc.getProfanityConfig();
-			censor = new Censor( (List<String>) profanity.getList("reject-words"), (List<String>) profanity.getList("censor-words") );
-		}
+		profanity = mc.getProfanityConfig();
+		censor = new Censor( (List<String>) profanity.getList("reject-words"), (List<String>) profanity.getList("censor-words") );
 	}
 	
 	
