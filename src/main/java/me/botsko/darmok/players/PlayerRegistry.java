@@ -79,6 +79,20 @@ public class PlayerRegistry {
 	/**
 	 * 
 	 * @param player
+	 * @param channel
+	 */
+	public void unbanFromChannel( Player player, Channel channel ){
+		if( channelBans.containsKey( player ) ){
+			ArrayList<String> bannedin = channelBans.get( player );
+			bannedin.remove( channel.getCommand() );
+			channelBans.put( player, bannedin );
+		}
+	}
+	
+	
+	/**
+	 * 
+	 * @param player
 	 * @param alias
 	 */
 	public void setChannelBanForPlayer( Player player, String alias ){

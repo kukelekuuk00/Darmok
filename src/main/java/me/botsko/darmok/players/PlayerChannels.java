@@ -136,35 +136,6 @@ public class PlayerChannels {
 	
 	
 	/**
-	 * Sets a ban flag for this player on this channel
-	 * @param player
-	 * @return
-	 */
-	public boolean banFromChannel( Channel channel ){
-		if( channel != null ){
-			removeChannel( channel );
-			// @todo fix this
-			return true;
-		}
-		return false;
-	}
-	
-	
-	/**
-	 * Removes a ban flag for this player on this channel
-	 * @param player
-	 * @return
-	 */
-	public boolean unbanFromChannel( Channel channel ){
-		if( channel != null ){
-			// @todo fix this
-			return true;
-		}
-		return false;
-	}
-	
-	
-	/**
 	 * Removes a channel from a player without unsubscribing
 	 * @param player
 	 * @return

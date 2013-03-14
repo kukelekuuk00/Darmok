@@ -302,7 +302,7 @@ public class ChannelCommands extends Executor {
             		return;
             	}
             	
-            	Darmok.getPlayerRegistry().getPlayerChannels( player ).unbanFromChannel( channel );
+            	Darmok.getPlayerRegistry().unbanFromChannel( player, channel );
 
             	player.sendMessage( Darmok.messenger.playerError( "You have been unbanned from the "+channel.getName()+" channel." ) );
             	call.getPlayer().sendMessage( Darmok.messenger.playerHeaderMsg( "You have unbanned "+player.getName()+" from the "+channel.getName()+" channel." ) );
