@@ -96,6 +96,7 @@ public class DarmokPlayerListener implements Listener {
 			}
 			
 			event.setCancelled(true);
+			return;
 			
 		}
 		// it's not our command, ignore it

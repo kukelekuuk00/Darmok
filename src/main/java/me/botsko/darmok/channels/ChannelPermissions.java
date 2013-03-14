@@ -1,5 +1,7 @@
 package me.botsko.darmok.channels;
 
+import me.botsko.darmok.settings.Settings;
+
 import org.bukkit.entity.Player;
 
 public class ChannelPermissions {
@@ -44,7 +46,9 @@ public class ChannelPermissions {
 	public static boolean playerCanDefaultTo( Player player, Channel channel ){
 		String permPrefix = "darmok.channel." + channel.getName().toLowerCase() + ".";
 		if( player.hasPermission( permPrefix + "default" ) || player.hasPermission( permPrefix + "read" ) || player.hasPermission( permPrefix + "speak" ) ){
-			return true;
+			if( ! Settings.isPlayerBannedFromChannel(player, channel) ){
+				return true;
+			}
 		}
 		return false;
 	}
@@ -59,7 +63,9 @@ public class ChannelPermissions {
 	public static boolean playerCanJoin( Player player, Channel channel ){
 		String permPrefix = "darmok.channel." + channel.getName().toLowerCase() + ".";
 		if( player.hasPermission( permPrefix + "read" ) || player.hasPermission( permPrefix + "speak" ) ){
-			return true;
+			if( ! Settings.isPlayerBannedFromChannel(player, channel) ){
+				return true;
+			}
 		}
 		return false;
 	}

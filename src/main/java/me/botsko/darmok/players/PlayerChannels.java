@@ -53,7 +53,8 @@ public class PlayerChannels {
 	
 	/**
 	 * Does not register the channel in the db, use this only when the user
-	 * already has joined the channel.
+	 * already has joined the channel. Primarily used when re/loading
+	 * channel settings for a player.
 	 * @param c
 	 */
 	public boolean addChannel( Channel c ){
@@ -108,7 +109,7 @@ public class PlayerChannels {
 	
 	
 	/**
-	 * 
+	 * Subscribes a player to a channel.
 	 * @param c
 	 */
 	public boolean joinChannel( Channel c ){
@@ -122,7 +123,7 @@ public class PlayerChannels {
 	
 	
 	/**
-	 * 
+	 * Removes a channel from the player's subscriptions.
 	 * @param player
 	 * @return
 	 */
@@ -138,7 +139,7 @@ public class PlayerChannels {
 	
 	
 	/**
-	 * 
+	 * Sets a ban flag for this player on this channel
 	 * @param player
 	 * @return
 	 */
@@ -153,7 +154,7 @@ public class PlayerChannels {
 	
 	
 	/**
-	 * 
+	 * Removes a ban flag for this player on this channel
 	 * @param player
 	 * @return
 	 */
@@ -167,7 +168,7 @@ public class PlayerChannels {
 	
 	
 	/**
-	 * 
+	 * Removes a channel from a player without unsubscribing
 	 * @param player
 	 * @return
 	 */

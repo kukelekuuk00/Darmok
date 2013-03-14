@@ -172,7 +172,7 @@ public class Settings {
 			
 			Connection conn = Darmok.getDb();
 			
-			PreparedStatement s = conn.prepareStatement ("DELETE FROM darmok_player_channel_perms  WHERE player = ? AND channel = ? AND banned = 1");
+			PreparedStatement s = conn.prepareStatement ("DELETE FROM darmok_player_channel_perms WHERE player = ? AND channel = ? AND banned = 1");
 			s.setString(1, player.getName());
 			s.setString(2, channel.getCommand());
 			s.executeUpdate();
@@ -183,5 +183,38 @@ public class Settings {
 		} catch (SQLException e) {
 //			plugin.logDbError( e );
 		}
+	}
+	
+	
+	/**
+	 * 
+	 * @param key
+	 * @return
+	 */
+	public static boolean isPlayerBannedFromChannel( Player player, Channel channel ){
+		try {
+
+			Connection conn = Darmok.getDb();
+            PreparedStatement s;
+    		s = conn.prepareStatement ("SELECT * FROM darmok_player_channel_perms WHERE player = ? AND channel = ? AND banned = 1");
+    		s.setString(1, player.getName());
+    		s.setString(2, channel.getCommand());
+    		ResultSet rs = s.executeQuery();
+
+    		if(rs.next()){
+    			System.out.println("PLAYER IS BANNED");
+    			
+    			return true;
+			}
+    		
+    		rs.close();
+    		s.close();
+    		conn.close();
+            
+        } catch (SQLException e) {
+//        	plugin.logDbError( e );
+        }
+		System.out.println("PLAYER IS NOT BANNED");
+		return false;
 	}
 }

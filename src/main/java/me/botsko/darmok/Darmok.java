@@ -182,8 +182,8 @@ public class Darmok extends JavaPlugin {
 				query = "CREATE TABLE IF NOT EXISTS `darmok_player_channel_perms` (" +
 		        		"id INT PRIMARY KEY," +
 		        		"player TEXT," +
-		        		"channel TEXT" +
-		        		"banned INT" +
+		        		"channel TEXT," +
+		        		"banned INT," +
 		        		"muted INT" +
 		        		")";
 				st.executeUpdate(query);
@@ -284,7 +284,7 @@ public class Darmok extends JavaPlugin {
 					if( player.hasPermission("darmok.channel."+entry.getKey()+".default") ){
 			    		channel.setDefault( true );
 			    	}
-			    	getPlayerRegistry().getPlayerChannels(player).addChannel( channel );
+			    	getPlayerRegistry().getPlayerChannels(player).joinChannel( channel );
 				} catch (CloneNotSupportedException e) {
 					e.printStackTrace();
 				}
