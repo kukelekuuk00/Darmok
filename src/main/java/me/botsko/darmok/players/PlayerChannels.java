@@ -7,7 +7,6 @@ import org.bukkit.entity.Player;
 
 import me.botsko.darmok.channels.Channel;
 import me.botsko.darmok.channels.ChannelPermissions;
-import me.botsko.darmok.settings.Settings;
 
 public class PlayerChannels {
 	
@@ -89,7 +88,6 @@ public class PlayerChannels {
 				entry.getValue().setDefault( false );
 				if( entry.getValue().getName().equals( channel.getName() ) ){
 					entry.getValue().setDefault( true );
-					Settings.setDefaultChannelForPlayer( player, entry.getValue() );
 					channelUpdated = true;
 				}
 			}
@@ -115,7 +113,6 @@ public class PlayerChannels {
 	public boolean joinChannel( Channel c ){
 		if( ChannelPermissions.playerCanJoin( player, c ) ){
 			addChannel(c);
-			Settings.addChannelToPlayer( player, c );
 			return true;
 		}
 		return false;
@@ -146,7 +143,7 @@ public class PlayerChannels {
 	public boolean banFromChannel( Channel channel ){
 		if( channel != null ){
 			removeChannel( channel );
-			Settings.banPlayerFromChannel( player, channel );
+			// @todo fix this
 			return true;
 		}
 		return false;
@@ -160,7 +157,7 @@ public class PlayerChannels {
 	 */
 	public boolean unbanFromChannel( Channel channel ){
 		if( channel != null ){
-			Settings.unbanPlayerFromChannel( player, channel );
+			// @todo fix this
 			return true;
 		}
 		return false;
@@ -175,7 +172,6 @@ public class PlayerChannels {
 	public void removeChannel( Channel channel ){
 		if( channel != null ){
 			channels.remove( channel.getCommand() );
-			Settings.removeChannelFromPlayer( player, channel );
 		}
 	}
 }

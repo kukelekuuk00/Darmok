@@ -16,6 +16,11 @@ public class PlayerRegistry {
 	 */
 	private HashMap<Player,PlayerChannels> players = new HashMap<Player,PlayerChannels>();
 	
+	/**
+	 * 
+	 */
+	private HashMap<Player,ArrayList<String>> channelBans = new HashMap<Player,ArrayList<String>>();
+	
 
 	/**
 	 * 
@@ -63,10 +68,59 @@ public class PlayerRegistry {
 	/**
 	 * 
 	 * @param player
+	 * @param channel
+	 */
+	public void banFromChannel( Player player, Channel channel ){
+		getPlayerChannels( player ).removeChannel(channel);
+		setChannelBanForPlayer( player, channel.getName() );
+	}
+	
+	
+	/**
+	 * 
+	 * @param player
+	 * @param alias
+	 */
+	public void setChannelBanForPlayer( Player player, String alias ){
+		ArrayList<String> bannedin;
+		if( channelBans.containsKey( player ) ){
+			bannedin = channelBans.get( player );
+		} else {
+			bannedin = new ArrayList<String>();
+		}
+		bannedin.add( alias );
+		channelBans.put( player, bannedin );
+	}
+	
+	
+	/**
+	 * 
+	 * @param player
+	 * @param channel
 	 * @return
 	 */
-	public void setPlayerChannels( Player player, PlayerChannels channels ){
-		players.put( player, channels );
+	public boolean isPlayerBannedFromChannel( Player player, Channel channel ){
+		if( channelBans.containsKey( player ) ){
+			ArrayList<String> bannedin = channelBans.get( player );
+			if( bannedin.contains( channel.getCommand() ) ){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	
+	/**
+	 * 
+	 * @param player
+	 * @param channel
+	 * @return
+	 */
+	public ArrayList<String> getChannelBansForPlayer( Player player ){
+		if( channelBans.containsKey( player ) ){
+			return channelBans.get( player );
+		}
+		return null;
 	}
 	
 	

@@ -34,7 +34,7 @@ public class DarmokPlayerListener implements Listener {
 	@EventHandler(priority = EventPriority.LOW)
 	public void onPlayerJoin(final PlayerJoinEvent event){
 		Player player = event.getPlayer();
-		Darmok.loadChannelSettingsForPlayer( player );
+		plugin.loadChannelSettingsForPlayer( player );
 	}
 
 	
@@ -44,6 +44,7 @@ public class DarmokPlayerListener implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.LOW)
 	public void onPlayerQuit(final PlayerQuitEvent event){
+		plugin.saveChannelSettingsForPlayer( event.getPlayer() );
 		Darmok.unloadChannelSettingsForPlayer( event.getPlayer() );
 	}
 

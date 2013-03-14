@@ -8,6 +8,7 @@ import java.io.InputStream;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 public class ConfigBase {
@@ -71,7 +72,7 @@ public class ConfigBase {
 		
 		// copy defaults and save config
 		config.options().copyDefaults(true);
-		write( "profanity", config );
+		write( getFilename( "profanity" ).getAbsolutePath(), "profanity", config );
 		
 		return config;
 		
@@ -92,7 +93,7 @@ public class ConfigBase {
 	 * Returns chosen filename with directory
 	 * @return
 	 */
-	protected File getFilename( String filename ){
+	public File getFilename( String filename ){
 		File file = new File(getDirectory(), filename + ".yml");
 		return file;
 	}
@@ -100,7 +101,8 @@ public class ConfigBase {
 	
 	/**
 	 * 
-	 * @param player
+	 * @param default_folder
+	 * @param filename
 	 * @return
 	 */
 	protected FileConfiguration loadConfig( String default_folder, String filename ){
@@ -115,6 +117,21 @@ public class ConfigBase {
 		    }
 		    return null;
 		}
+	}
+	
+	
+	/**
+	 * 
+	 * @param player
+	 * @return
+	 */
+	public FileConfiguration loadPlayerConfig( Player player ){
+		String filename = "/players/"+player.getName();
+		File file = getFilename( filename );
+		if(file.exists()){
+			return YamlConfiguration.loadConfiguration(file);
+		}
+		return null;
 	}
 	
 	
@@ -136,9 +153,9 @@ public class ConfigBase {
 	/**
 	 * 
 	 */
-	protected void write( String filename, FileConfiguration config ){
+	protected void write( String dir, String filename, FileConfiguration config ){
 		try {
-			BufferedWriter bw = new BufferedWriter( new FileWriter( getFilename( filename ), true ) );
+			BufferedWriter bw = new BufferedWriter( new FileWriter( dir, true ) );
 			saveConfig( filename, config );
 			bw.flush();
 			bw.close();

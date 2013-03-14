@@ -68,10 +68,8 @@ public class ChannelCommands extends Executor {
             		return;
             	}
             	
-            	Darmok.getPlayerRegistry().getPlayerChannels( player ).banFromChannel( channel );
             	
-            	// save ban
-            	
+            	Darmok.getPlayerRegistry().banFromChannel( player, channel );
             	
             	player.sendMessage( Darmok.messenger.playerError( "You have been banned from the "+channel.getName()+" channel." ) );
             	call.getPlayer().sendMessage( Darmok.messenger.playerHeaderMsg( "You have banned "+player.getName()+" from the "+channel.getName()+" channel." ) );
@@ -231,7 +229,8 @@ public class ChannelCommands extends Executor {
             	call.getPlayer().sendMessage( Darmok.messenger.playerHeaderMsg( "-- Available Channels --" ) );
             	for (Entry<String,Channel> entry : channels.entrySet()){
             		Channel c = entry.getValue();
-            		call.getPlayer().sendMessage( Darmok.messenger.playerMsg( c.getName() + " /" + c.getCommand() + " Default: " + c.isDefault() ) );
+            		boolean youreBanned = Darmok.getPlayerRegistry().isPlayerBannedFromChannel(call.getPlayer(), c);
+            		call.getPlayer().sendMessage( Darmok.messenger.playerMsg( c.getName() + " /" + c.getCommand() + " Default: " + c.isDefault() + " Banned?:" + youreBanned ) );
             	}
             }
 		});

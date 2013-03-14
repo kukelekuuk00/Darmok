@@ -1,13 +1,11 @@
 package me.botsko.darmok;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import me.botsko.darmok.channels.Channel;
@@ -19,12 +17,12 @@ import me.botsko.darmok.commands.ChannelCommands;
 import me.botsko.darmok.listeners.DarmokPlayerListener;
 import me.botsko.darmok.players.PlayerChannels;
 import me.botsko.darmok.players.PlayerRegistry;
-import me.botsko.darmok.settings.Settings;
 import net.milkbowl.vault.chat.Chat;
 
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -34,17 +32,12 @@ import com.earth2me.essentials.Essentials;
 
 public class Darmok extends JavaPlugin {
 	
-//	/**
-//	 * Connection Pool
-//	 */
-//	private static DataSource pool = new DataSource();
 
 	/**
 	 * Protected/private
 	 */
 	private String plugin_name;
 	private String plugin_version;
-//	private Language language;
 	private Logger log = Logger.getLogger("Minecraft");
 	private static ChannelRegistry channelRegistry;
 	private static Chatter chatter;
@@ -62,6 +55,7 @@ public class Darmok extends JavaPlugin {
 	public Darmok darmok;
 	public static Messenger messenger;
 	public static FileConfiguration config;
+	public static Config configHandler;
 
 
     /**
@@ -77,13 +71,6 @@ public class Darmok extends JavaPlugin {
 		
 		this.log("Initializing " + plugin_name + " " + plugin_version + ". By Viveleroi.");
 		
-//		if(getConfig().getBoolean("darmok.notify-newer-versions")){
-//			String notice = UpdateNotification.checkForNewerBuild(plugin_version);
-//			if(notice != null){
-//				log(notice);
-//			}
-//		}
-		
 		// Load configuration, or install if new
 		loadConfig();
 
@@ -97,8 +84,6 @@ public class Darmok extends JavaPlugin {
 //		}
 
 		if(isEnabled()){
-			
-			setupDb();
 			
 			channelRegistry = new ChannelRegistry();
 			chatter = new Chatter(this);
@@ -132,70 +117,10 @@ public class Darmok extends JavaPlugin {
 	 */
 	@SuppressWarnings("unchecked")
 	public void loadConfig(){
-		Config mc = new Config( this );
-		config = mc.getConfig();
-		// Load language files
-//		language = new Language( mc.getLang() );
-		profanity = mc.getProfanityConfig();
+		configHandler = new Config( this );
+		config = configHandler.getConfig();
+		profanity = configHandler.getProfanityConfig();
 		censor = new Censor( (List<String>) profanity.getList("reject-words"), (List<String>) profanity.getList("censor-words") );
-	}
-	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public static Connection getDb(){
-		try {
-        	Class.forName("org.sqlite.JDBC");
-            String url = "jdbc:sqlite:plugins/darmok/darmok.db";
-            return DriverManager.getConnection(url);
-		} catch (ClassNotFoundException e){
-			System.out.print("Error: SQLite database connection was not established. " + e.getMessage());
-			e.printStackTrace();
-		} catch (SQLException e){
-			System.out.print("Error: SQLite database connection was not established. " + e.getMessage());
-			e.printStackTrace();
-		}
-		return null;
-	}
-	
-	
-	/**
-	 * 
-	 */
-	public void setupDb(){
-		
-		Connection conn = getDb();
-		
-		try {
-			 String query = "CREATE TABLE IF NOT EXISTS `darmok_player_channels` (" +
-		        		"id INT PRIMARY KEY," +
-		        		"player TEXT," +
-		        		"channel TEXT," +
-		        		"isDefault INT" +
-		        		")";
-				Statement st = conn.createStatement();
-				st.executeUpdate(query);
-				st.executeUpdate("CREATE INDEX IF NOT EXISTS player ON darmok_player_channels (player ASC)");
-				
-				query = "CREATE TABLE IF NOT EXISTS `darmok_player_channel_perms` (" +
-		        		"id INT PRIMARY KEY," +
-		        		"player TEXT," +
-		        		"channel TEXT," +
-		        		"banned INT," +
-		        		"muted INT" +
-		        		")";
-				st.executeUpdate(query);
-				st.close();
-				conn.close();
-
-		 }
-		 catch(SQLException e){
-			 log("Database connection error: " + e.getMessage());
-		     e.printStackTrace();
-		 }
-		
 	}
 	
 	
@@ -263,32 +188,99 @@ public class Darmok extends JavaPlugin {
 	
 	
 	/**
+	 * Load existing yaml channel settings for a player
+	 * when they join, or when the server reloads.
 	 * 
 	 * @param player
 	 */
-	public static void loadChannelSettingsForPlayer( Player player ){
+	public void loadChannelSettingsForPlayer( Player player ){
 
-		PlayerChannels existingChannels = Settings.getPlayerChannels(player);
-		if( !existingChannels.getChannels().isEmpty() ){
-			getPlayerRegistry().setPlayerChannels( player, existingChannels );
-			return;
+		FileConfiguration playerConfig = configHandler.loadPlayerConfig(player);
+		
+		// They have no config - set the default channels
+		if( playerConfig == null ){
+
+			// Load all channels
+			HashMap<String,Channel> channels = getChannelRegistry().getChannels();
+			for(Entry<String,Channel> entry : channels.entrySet()){
+				// Can the player join this?
+			    if( ChannelPermissions.playerCanAutoJoin( player, entry.getValue() ) ){
+			    	Channel channel;
+					try {
+						channel = entry.getValue().clone();
+						
+						debug("Creating first join in channel " + channel.getName());
+						// Set as the default channel
+						if( player.hasPermission("darmok.channel."+entry.getKey()+".default") ){
+							debug("Setting default channel to " + channel.getName());
+				    		channel.setDefault( true );
+				    	}
+						// Register the channels for this player
+				    	getPlayerRegistry().getPlayerChannels(player).joinChannel( channel );
+					} catch (CloneNotSupportedException e) {
+						e.printStackTrace();
+					}
+			    }
+			}
+		} else {
+
+			// Restore channel subscriptions
+			ConfigurationSection channels = playerConfig.getConfigurationSection("channels");
+			for(String channelCommand : channels.getKeys(false)){
+				Channel channel = Darmok.getChannelRegistry().getChannel( channelCommand );
+				if( channel != null ){
+					getPlayerRegistry().getPlayerChannels(player).addChannel( channel );
+				}
+			}
+			
+			// Restore channel bans
+			@SuppressWarnings("unchecked")
+			ArrayList<String> bannedIn = (ArrayList<String>) playerConfig.getList("banned-in");
+			// If player was banned in this channel, restore that
+			if( bannedIn != null && !bannedIn.isEmpty() ){
+				for( String channelAlias : bannedIn){
+					Darmok.getPlayerRegistry().setChannelBanForPlayer( player, channelAlias );
+				}
+			}
 		}
 		
-		// If player has no channel settings, load defaults
-		HashMap<String,Channel> channels = getChannelRegistry().getChannels();
-		for(Entry<String,Channel> entry : channels.entrySet()){
-		    if( ChannelPermissions.playerCanAutoJoin( player, entry.getValue() ) ){
-		    	Channel channel;
-				try {
-					channel = entry.getValue().clone();
-					if( player.hasPermission("darmok.channel."+entry.getKey()+".default") ){
-			    		channel.setDefault( true );
-			    	}
-			    	getPlayerRegistry().getPlayerChannels(player).joinChannel( channel );
-				} catch (CloneNotSupportedException e) {
-					e.printStackTrace();
-				}
-		    }
+		// re-save just in case server crashes, etc
+		saveChannelSettingsForPlayer( player );
+		
+	}
+	
+	
+	/**
+	 * Build a new player channel settings save file based on
+	 * current channels.
+	 */
+	public void saveChannelSettingsForPlayer( Player player ){
+		
+		FileConfiguration playerConfig = new YamlConfiguration();
+		ConfigurationSection configChannels = playerConfig.createSection("channels");
+		
+		PlayerChannels playerChannels = getPlayerRegistry().getPlayerChannels(player);
+		
+		if( ! playerChannels.getChannels().isEmpty() ){
+			for (Entry<String,Channel> entry : playerChannels.getChannels().entrySet()){
+				debug("Saving player's active channel " + entry.getValue().getName());
+				ConfigurationSection channelConfig = configChannels.createSection( entry.getKey() );
+				channelConfig.set( "default", entry.getValue().isDefault() );
+				channelConfig.set( "muted", entry.getValue().isMuted() );
+			}
+		}
+		
+		// Set their channel bans
+		ArrayList<String> bannedIn = getPlayerRegistry().getChannelBansForPlayer( player );
+		if( bannedIn != null && !bannedIn.isEmpty() ){
+			debug("Saving ban setting in " + bannedIn);
+			playerConfig.set( "banned-in", bannedIn );
+		}
+		
+		try {
+			playerConfig.save( this.getDataFolder() +"/players/"+player.getName()+".yml" );
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 	
@@ -300,15 +292,6 @@ public class Darmok extends JavaPlugin {
 	public static void unloadChannelSettingsForPlayer( Player player ){
 		getPlayerRegistry().removePlayer( player );
 	}
-	
-
-//	/**
-//	 * 
-//	 * @return
-//	 */
-//	public Language getLang(){
-//		return this.language;
-//	}
 	
 	
 	/**
@@ -346,46 +329,6 @@ public class Darmok extends JavaPlugin {
 	 */
 	public static Chat getVaultChat(){
 		return chat;
-	}
-	
-	
-	/**
-	 * 
-	 * @param msg
-	 * @return
-	 */
-	public String msgMissingArguments(){
-		return messenger.playerError("Missing arguments. Check /darmok ? for help.");
-	}
-	
-	
-	/**
-	 * 
-	 * @param msg
-	 * @return
-	 */
-	public String msgInvalidArguments(){
-		return messenger.playerError("Invalid arguments. Check /darmok ? for help.");
-	}
-	
-	
-	/**
-	 * 
-	 * @param msg
-	 * @return
-	 */
-	public String msgInvalidSubcommand(){
-		return messenger.playerError("Darmok doesn't have that command. Check /darmok ? for help.");
-	}
-	
-	
-	/**
-	 * 
-	 * @param msg
-	 * @return
-	 */
-	public String msgNoPermission(){
-		return messenger.playerError("You don't have permission to perform this action.");
 	}
 
 	
@@ -438,8 +381,9 @@ public class Darmok extends JavaPlugin {
 	@Override
 	public void onDisable(){
 		
-		// Unload all channels for any online players
+		// Save and unload all channels for any online players
 		for( Player pl : getServer().getOnlinePlayers() ){
+			saveChannelSettingsForPlayer( pl );
 			unloadChannelSettingsForPlayer( pl );
 		}
 					

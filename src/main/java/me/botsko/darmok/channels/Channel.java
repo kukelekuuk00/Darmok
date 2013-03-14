@@ -16,6 +16,7 @@ public class Channel implements Cloneable {
 	private final int range;
 	
 	private boolean isDefault = false;
+	private boolean isMuted = false;
 	
 	
 	/**
@@ -91,6 +92,24 @@ public class Channel implements Cloneable {
 	 */
 	public void setDefault( boolean isDefault ){
 		this.isDefault = isDefault;
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public void setMuted( boolean isMuted ){
+		this.isMuted = isMuted;
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean isMuted(){
+		return isMuted;
 	}
 	
 	
