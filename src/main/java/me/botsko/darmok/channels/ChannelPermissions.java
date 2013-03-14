@@ -139,11 +139,27 @@ public class ChannelPermissions {
 	 * @return
 	 */
 	public static boolean playerCanRead( Player player, Channel channel ){
+		
+		// Perms?
 		String permPrefix = "darmok.channel." + channel.getName().toLowerCase() + ".";
-		if( player.hasPermission( permPrefix + "read" ) || player.hasPermission( permPrefix + "speak" ) ){
-			return true;
+		if( !player.hasPermission( permPrefix + "read" ) && !player.hasPermission( permPrefix + "speak" ) ){
+			return false;
 		}
-		return false;
+		
+		// Banned?
+		if( Darmok.getPlayerRegistry().isPlayerBannedFromChannel(player, channel) ){
+			return false;
+		}
+		
+		// If a town channel, make sure they have a town
+		if( Darmok.getTowny() != null && channel.getContext() != null && channel.getContext().equals("towny-town") ){
+			if( !playerHasTown( player ) ){
+				return false;
+			}
+		}
+		
+		return true;
+		
 	}
 	
 	

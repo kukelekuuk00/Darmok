@@ -209,7 +209,6 @@ public class ChannelCommands extends Executor {
             	
             	// Load the channels
             	if( limitTo != null ){
-            		// @todo we should load from the db, so we can list offline players
             		PlayerChannels playerChannels = Darmok.getPlayerRegistry().getPlayerChannels( limitTo );
     				if( playerChannels == null ){
     					call.getPlayer().sendMessage( Darmok.messenger.playerError( "This player has no active channel subscriptions." ) );
@@ -226,11 +225,18 @@ public class ChannelCommands extends Executor {
             	}
             	
             	// List them
-            	call.getPlayer().sendMessage( Darmok.messenger.playerHeaderMsg( "-- Available Channels --" ) );
+            	call.getPlayer().sendMessage( Darmok.messenger.playerHeaderMsg( "-- All Channels --" ) );
             	for (Entry<String,Channel> entry : channels.entrySet()){
+            		
             		Channel c = entry.getValue();
             		boolean youreBanned = Darmok.getPlayerRegistry().isPlayerBannedFromChannel(call.getPlayer(), c);
-            		call.getPlayer().sendMessage( Darmok.messenger.playerMsg( c.getName() + " /" + c.getCommand() + " Default: " + c.isDefault() + " Banned?:" + youreBanned ) );
+        
+            		String list = c.getColor() + c.getName() + " /" + c.getCommand() + " &f" + (youreBanned ? "You're Banned" : "");
+            		list += " &7Read: " + ( ChannelPermissions.playerCanRead(call.getPlayer(), c) ? "&aY" : "&cN" ) ;
+            		list += " &7Speak: " + ( ChannelPermissions.playerCanSpeak(call.getPlayer(), c) ? "&aY" : "&cN" ) ;
+            		
+            		call.getPlayer().sendMessage( Darmok.messenger.playerMsg( c.colorize( list ) ) );
+            		
             	}
             }
 		});

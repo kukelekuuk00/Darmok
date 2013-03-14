@@ -168,7 +168,7 @@ public class Channel implements Cloneable {
 	 * @param text
 	 * @return
 	 */
-	protected String colorize(String text){
+	public String colorize(String text){
         String colorized = text.replaceAll("(&([a-f0-9A-F]))", "\u00A7$2");
         return colorized;
     }
