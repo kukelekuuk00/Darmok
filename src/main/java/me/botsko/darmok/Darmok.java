@@ -29,6 +29,8 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.earth2me.essentials.Essentials;
+import com.palmergames.bukkit.towny.Towny;
+import com.palmergames.bukkit.towny.object.TownyUniverse;
 
 public class Darmok extends JavaPlugin {
 	
@@ -48,6 +50,7 @@ public class Darmok extends JavaPlugin {
 	// Plugins
 	private static Essentials essentials = null;
 	private static Chat chat = null;
+	private static Towny towny = null;
 	
 	/**
 	 * Public
@@ -145,7 +148,8 @@ public class Darmok extends JavaPlugin {
 							channel.getString("command"),
 							channel.getString("color"),
 							( channel.getString("format").isEmpty() ? format : channel.getString("format") ),
-							channel.getInt("range")
+							channel.getInt("range"),
+							channel.getString("context")
 						) );
 			
 		}
@@ -299,18 +303,26 @@ public class Darmok extends JavaPlugin {
 	 */
 	public void checkPluginDependancies(){
 		
+		// Essentials
 		Plugin tmp = getServer().getPluginManager().getPlugin("Essentials");
 		if (tmp != null){
 			log("Connected with Essentials, using mute settings.");
 			essentials = (Essentials) tmp;
 		}
 	
-		// Vault permissions
+		// Vault chat settings
 		RegisteredServiceProvider<Chat> chatProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.chat.Chat.class);
         if (chatProvider != null) {
         	log("Connected with Vault.");
             chat = chatProvider.getProvider();
         }
+        
+        // Towny
+        Plugin townyTmp = getServer().getPluginManager().getPlugin("Towny");
+		if (townyTmp != null){
+			log("Connected with Towny");
+			towny = (Towny) townyTmp;
+		}
 	}
 	
 	
@@ -329,6 +341,18 @@ public class Darmok extends JavaPlugin {
 	 */
 	public static Chat getVaultChat(){
 		return chat;
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public static TownyUniverse getTowny(){
+		if( towny != null ){
+			return towny.getTownyUniverse();
+		}
+		return null;
 	}
 
 	

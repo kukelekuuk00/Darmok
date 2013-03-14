@@ -68,6 +68,14 @@ public class Config extends ConfigBase {
 		staff.addDefault("color", "&a");
 		staff.addDefault("format", "");
 		
+		// Default Channel: TOWN
+		ConfigurationSection town = channels.createSection("town");
+		town.addDefault("command", "tc");
+		town.addDefault("range", -1);
+		town.addDefault("color", "&b");
+		town.addDefault("format", "");
+		town.addDefault("context", "towny-town");
+		
 		config.addDefault("darmok.censors.caps.enabled", false);
 		config.addDefault("darmok.censors.caps.min-length", 15);
 		config.addDefault("darmok.censors.min-percentage", 30);

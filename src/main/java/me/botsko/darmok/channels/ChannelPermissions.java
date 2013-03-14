@@ -4,6 +4,10 @@ import me.botsko.darmok.Darmok;
 
 import org.bukkit.entity.Player;
 
+import com.palmergames.bukkit.towny.exceptions.NotRegisteredException;
+import com.palmergames.bukkit.towny.object.Resident;
+import com.palmergames.bukkit.towny.object.TownyUniverse;
+
 public class ChannelPermissions {
 	
 	
@@ -44,13 +48,27 @@ public class ChannelPermissions {
 	 * @return
 	 */
 	public static boolean playerCanDefaultTo( Player player, Channel channel ){
+		
+		// Perms?
 		String permPrefix = "darmok.channel." + channel.getName().toLowerCase() + ".";
-		if( player.hasPermission( permPrefix + "default" ) || player.hasPermission( permPrefix + "read" ) || player.hasPermission( permPrefix + "speak" ) ){
-			if( ! Darmok.getPlayerRegistry().isPlayerBannedFromChannel(player, channel) ){
-				return true;
+		if( !player.hasPermission( permPrefix + "read" ) && !player.hasPermission( permPrefix + "speak" ) ){
+			return false;
+		}
+		
+		// Banned?
+		if( Darmok.getPlayerRegistry().isPlayerBannedFromChannel(player, channel) ){
+			return false;
+		}
+		
+		// If a town channel, make sure they have a town
+		if( Darmok.getTowny() != null && channel.getContext() != null && channel.getContext().equals("towny-town") ){
+			if( !playerHasTown( player ) ){
+				return false;
 			}
 		}
-		return false;
+		
+		return true;
+		
 	}
 	
 	
@@ -61,13 +79,26 @@ public class ChannelPermissions {
 	 * @return
 	 */
 	public static boolean playerCanJoin( Player player, Channel channel ){
+		
+		// Perms?
 		String permPrefix = "darmok.channel." + channel.getName().toLowerCase() + ".";
-		if( player.hasPermission( permPrefix + "read" ) || player.hasPermission( permPrefix + "speak" ) ){
-			if( ! Darmok.getPlayerRegistry().isPlayerBannedFromChannel(player, channel) ){
-				return true;
+		if( !player.hasPermission( permPrefix + "read" ) && !player.hasPermission( permPrefix + "speak" ) ){
+			return false;
+		}
+		
+		// Banned?
+		if( Darmok.getPlayerRegistry().isPlayerBannedFromChannel(player, channel) ){
+			return false;
+		}
+		
+		// If a town channel, make sure they have a town
+		if( Darmok.getTowny() != null && channel.getContext() != null && channel.getContext().equals("towny-town") ){
+			if( !playerHasTown( player ) ){
+				return false;
 			}
 		}
-		return false;
+		
+		return true;
 	}
 	
 	
@@ -123,11 +154,40 @@ public class ChannelPermissions {
 	 * @return
 	 */
 	public static boolean playerCanSpeak( Player player, Channel channel ){
+		
+		// Perms?
 		String permPrefix = "darmok.channel." + channel.getName().toLowerCase() + ".";
-		if( player.hasPermission( permPrefix + "speak" ) ){
-			if( ! Darmok.getPlayerRegistry().isPlayerBannedFromChannel(player, channel) ){
-				return true;
+		if( !player.hasPermission( permPrefix + "speak" ) ){
+			return false;
+		}
+		
+		// Banned?
+		if( Darmok.getPlayerRegistry().isPlayerBannedFromChannel(player, channel) ){
+			return false;
+		}
+		
+		// If a town channel, make sure they have a town
+		if( Darmok.getTowny() != null && channel.getContext() != null && channel.getContext().equals("towny-town") ){
+			if( !playerHasTown( player ) ){
+				return false;
 			}
+		}
+		
+		return true;
+	}
+	
+	
+	/**
+	 * 
+	 * @param player
+	 * @param channel
+	 * @return
+	 */
+	public static boolean playerHasTown( Player player ){
+		try {
+			Resident resident = TownyUniverse.getDataSource().getResident( player.getName() );
+			return resident.hasTown();
+		} catch (NotRegisteredException e) {
 		}
 		return false;
 	}

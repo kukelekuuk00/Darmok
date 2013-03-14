@@ -14,6 +14,7 @@ public class Channel implements Cloneable {
 	private final String color;
 	private final String format;
 	private final int range;
+	private final String context;
 	
 	private boolean isDefault = false;
 	private boolean isMuted = false;
@@ -23,12 +24,13 @@ public class Channel implements Cloneable {
 	 * 
 	 * @param command
 	 */
-	public Channel( String name, String command, String color, String format, int range ){
+	public Channel( String name, String command, String color, String format, int range, String context ){
 		this.name = name;
 		this.command = command;
 		this.color = color;
 		this.format = format;
 		this.range = range;
+		this.context = context;
 	}
 	
 	
@@ -75,6 +77,16 @@ public class Channel implements Cloneable {
 	public int getRange(){
 		return range;
 	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public String getContext(){
+		return context;
+	}
+	
 	
 	
 	/**

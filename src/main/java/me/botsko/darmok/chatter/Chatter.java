@@ -1,5 +1,7 @@
 package me.botsko.darmok.chatter;
 
+import java.util.List;
+
 import me.botsko.darmok.Darmok;
 import me.botsko.darmok.channels.Channel;
 import me.botsko.darmok.channels.ChannelPermissions;
@@ -8,6 +10,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import com.earth2me.essentials.User;
+import com.palmergames.bukkit.towny.exceptions.NotRegisteredException;
+import com.palmergames.bukkit.towny.object.Resident;
+import com.palmergames.bukkit.towny.object.TownyUniverse;
 
 public class Chatter {
 	
@@ -86,11 +91,35 @@ public class Chatter {
 		// Format the final message
 		msg = channel.formatMessage( player, msg );
 		
-		// Only pull players in this channel
-		for( Player pl : Darmok.getPlayerRegistry().getPlayersInChannel(channel) ){
+		/**
+		 * Build a list of all players we think we should be
+		 * messaging.
+		 */
+		List<Player> playersToMessage = null;
+		// If towny town context, get online residents of town
+		if( Darmok.getTowny() != null && channel.getContext() != null && channel.getContext().equals("towny-town") ){
+			try {
+				Resident resident = TownyUniverse.getDataSource().getResident( player.getName() );
+				if( resident.hasTown() ){
+					plugin.debug("Player belongs to town, loading online residents");
+					playersToMessage = TownyUniverse.getOnlinePlayers( resident.getTown() );
+				}
+			} catch (NotRegisteredException e) {
+//				e.printStackTrace();
+			}
+		}
+			
+		// Instead, just get all players in channel
+		if( playersToMessage == null ){
+			playersToMessage = Darmok.getPlayerRegistry().getPlayersInChannel(channel);
+		}
+		
+		
+		// Message players if in range
+		for( Player pl : playersToMessage ){
 			
 			int range = channel.getRange();
-			
+
 			// Does range matter?
 			if( range > -1 ){
 				// if 0, check worlds match

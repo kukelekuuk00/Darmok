@@ -28,7 +28,7 @@ public class ConfigBase {
 	 * 
 	 * @param plugin
 	 */
-	public ConfigBase( Plugin plugin ) {
+	public ConfigBase( Plugin plugin ){
 		this.plugin = plugin;
 	}
 	
