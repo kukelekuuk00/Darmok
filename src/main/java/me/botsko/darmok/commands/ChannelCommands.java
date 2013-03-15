@@ -327,6 +327,10 @@ public class ChannelCommands extends Executor {
             	call.getSender().sendMessage( Darmok.messenger.playerHeaderMsg( "Welcome to Darmok - By Viveleroi" ) );
             	call.getSender().sendMessage( Darmok.messenger.playerHelp("join","(channel)", "Join a channel."));
             	call.getSender().sendMessage( Darmok.messenger.playerHelp("leave","(channel)", "Leave a channel."));
+            	call.getSender().sendMessage( Darmok.messenger.playerHelp("kick","(user) (channel)", "Kick a player from a channel."));
+            	call.getSender().sendMessage( Darmok.messenger.playerHelp("ban","(user) (channel)", "Ban a player from a channel."));
+            	call.getSender().sendMessage( Darmok.messenger.playerHelp("unban","(user) (channel)", "Unban a player from a channel."));
+            	call.getSender().sendMessage( Darmok.messenger.playerHelp("list","", "List channels"));
             }
 		});
 	}
