@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 import me.botsko.darmok.Darmok;
 
 import org.bukkit.entity.Player;
+import org.bukkit.ChatColor;
 
 public class Channel implements Cloneable {
 
@@ -169,8 +170,7 @@ public class Channel implements Cloneable {
 	 * @return
 	 */
 	public String colorize(String text){
-        String colorized = text.replaceAll("(&([a-f0-9A-F]))", "\u00A7$2");
-        return colorized;
+        return ChatColor.translateAlternateColorCodes('&', text);
     }
 	
 	

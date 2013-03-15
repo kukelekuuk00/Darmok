@@ -6,6 +6,7 @@ import me.botsko.darmok.Darmok;
 import me.botsko.darmok.channels.Channel;
 import me.botsko.darmok.channels.ChannelPermissions;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -143,6 +144,10 @@ public class Chatter {
 			pl.sendMessage( msg );
 			
 		}
+		
+		// log to console
+		Bukkit.getServer().getConsoleSender().sendMessage(msg);
+		
 	}
 	
 	
