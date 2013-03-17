@@ -121,8 +121,7 @@ public class PlayerChannels {
 	public boolean leaveChannel( Channel channel ){
 		if( channel != null ){
 			if( ChannelPermissions.playerCanLeave( player, channel ) ){
-				removeChannel( channel );
-				return true;
+				return removeChannel( channel );
 			}
 		}
 		return false;
@@ -134,9 +133,23 @@ public class PlayerChannels {
 	 * @param player
 	 * @return
 	 */
-	public void removeChannel( Channel channel ){
+	public boolean removeChannel( Channel channel ){
 		if( channel != null ){
+			if( channel.getCommand().equals(defaultChannel) ){
+				if( channels.size() > 1 ){
+					// Find the first channel that isn't this one
+					for( String alias : channels ){
+						if( !alias.equals( channel.getCommand() ) ){
+							defaultChannel = alias;
+						}
+					}
+				}
+				// @todo throw exception
+				return false;
+			}
 			channels.remove( channel.getCommand() );
+			return true;
 		}
+		return false;
 	}
 }
