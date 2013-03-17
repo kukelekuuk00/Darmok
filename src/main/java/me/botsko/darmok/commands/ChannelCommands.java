@@ -10,7 +10,9 @@ import me.botsko.darmok.channels.ChannelPermissions;
 import me.botsko.darmok.commandlibs.CallInfo;
 import me.botsko.darmok.commandlibs.Executor;
 import me.botsko.darmok.commandlibs.SubHandler;
+import me.botsko.darmok.exceptions.CannotJoinChannelException;
 import me.botsko.darmok.exceptions.CannotLeaveChannelException;
+import me.botsko.darmok.exceptions.ChannelPermissionException;
 import me.botsko.darmok.players.PlayerChannels;
 
 
@@ -62,12 +64,13 @@ public class ChannelCommands extends Executor {
             		return;
             	}
             	
-            	// Do they have permission to ban
-            	if( !ChannelPermissions.playerCanBan( call.getPlayer(), channel ) ){
-            		call.getPlayer().sendMessage( Darmok.messenger.playerError( "You do not have permission to ban players from this channel." ) );
-            		return;
-            	}
             	
+            	try {
+					ChannelPermissions.playerCanBan( call.getPlayer(), channel );
+				} catch (ChannelPermissionException e) {
+					call.getPlayer().sendMessage( Darmok.messenger.playerError( e.getMessage() ) );
+            		return;
+				}
             	
             	Darmok.getPlayerRegistry().banFromChannel( player, channel );
             	
@@ -100,10 +103,12 @@ public class ChannelCommands extends Executor {
             		return;
             	}
             	
-            	if( ! Darmok.getPlayerRegistry().getPlayerChannels( call.getPlayer() ).joinChannel( channel ) ){
-            		call.getPlayer().sendMessage( Darmok.messenger.playerError( "You may not join this channel." ) );
-            		return;
-            	}
+            	try {
+					Darmok.getPlayerRegistry().getPlayerChannels( call.getPlayer() ).joinChannel( channel );
+				} catch (CannotJoinChannelException e) {
+					call.getPlayer().sendMessage( Darmok.messenger.playerError( e.getMessage() ) );
+					return;
+				}
             	
             	call.getPlayer().sendMessage( Darmok.messenger.playerHeaderMsg( "Joined "+channel.getName()+" channel." ) );
         		return;
@@ -141,11 +146,12 @@ public class ChannelCommands extends Executor {
             		return;
             	}
             	
-            	// Do they have permission to kick
-            	if( !ChannelPermissions.playerCanKick( call.getPlayer(), channel ) ){
-            		call.getPlayer().sendMessage( Darmok.messenger.playerError( "You do not have permission to kick players from this channel." ) );
+            	try {
+					ChannelPermissions.playerCanKick( call.getPlayer(), channel );
+				} catch (ChannelPermissionException e1) {
+					call.getPlayer().sendMessage( Darmok.messenger.playerError( e1.getMessage() ) );
             		return;
-            	}
+				}
             	
             	try {
 					Darmok.getPlayerRegistry().getPlayerChannels( player ).removeChannel( channel );
@@ -235,10 +241,25 @@ public class ChannelCommands extends Executor {
             	for ( Channel c : channels ){
             		
             		boolean youreBanned = Darmok.getPlayerRegistry().isPlayerBannedFromChannel(call.getPlayer(), c);
+            		
+            		boolean canRead = true;
+            		try {
+						ChannelPermissions.playerCanRead(call.getPlayer(), c);
+					} catch (ChannelPermissionException e) {
+						canRead = false;
+					}
+            		
+            		
+            		boolean canSpeak = true;
+            		try {
+						ChannelPermissions.playerCanSpeak(call.getPlayer(), c);
+					} catch (ChannelPermissionException e) {
+						canSpeak = false;
+					}
         
             		String list = c.getColor() + c.getName() + " /" + c.getCommand() + " &f" + (youreBanned ? "You're Banned" : "");
-            		list += " &7Read: " + ( ChannelPermissions.playerCanRead(call.getPlayer(), c) ? "&aY" : "&cN" ) ;
-            		list += " &7Speak: " + ( ChannelPermissions.playerCanSpeak(call.getPlayer(), c) ? "&aY" : "&cN" ) ;
+            		list += " &7Read: " + ( canRead ? "&aY" : "&cN" ) ;
+            		list += " &7Speak: " + ( canSpeak ? "&aY" : "&cN" ) ;
             		
             		call.getPlayer().sendMessage( Darmok.messenger.playerMsg( c.colorize( list ) ) );
             		
@@ -307,11 +328,12 @@ public class ChannelCommands extends Executor {
             		return;
             	}
             	
-            	// Do they have permission to unban
-            	if( !ChannelPermissions.playerCanBan( call.getPlayer(), channel ) ){
-            		call.getPlayer().sendMessage( Darmok.messenger.playerError( "You do not have permission to unban players from this channel." ) );
+            	try {
+					ChannelPermissions.playerCanBan( call.getPlayer(), channel );
+				} catch (ChannelPermissionException e) {
+					call.getPlayer().sendMessage( Darmok.messenger.playerError( e.getMessage() ) );
             		return;
-            	}
+				}
             	
             	Darmok.getPlayerRegistry().unbanFromChannel( player, channel );
 

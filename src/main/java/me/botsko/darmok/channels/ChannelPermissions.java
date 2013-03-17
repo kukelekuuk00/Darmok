@@ -1,6 +1,7 @@
 package me.botsko.darmok.channels;
 
 import me.botsko.darmok.Darmok;
+import me.botsko.darmok.exceptions.ChannelPermissionException;
 
 import org.bukkit.entity.Player;
 
@@ -16,13 +17,14 @@ public class ChannelPermissions {
 	 * @param player
 	 * @param channel
 	 * @return
+	 * @throws ChannelPermissionException 
 	 */
-	public static boolean playerCanAutoJoin( Player player, Channel channel ){
+	public static boolean playerCanAutoJoin( Player player, Channel channel ) throws ChannelPermissionException{
 		String permPrefix = "darmok.channel." + channel.getName().toLowerCase() + ".";
 		if( player.hasPermission( permPrefix + "autojoin" ) && player.hasPermission( permPrefix + "read" ) ){
 			return true;
 		}
-		return false;
+		throw new ChannelPermissionException("Insufficient permission to auto-join this channel.");
 	}
 	
 	
@@ -31,13 +33,14 @@ public class ChannelPermissions {
 	 * @param player
 	 * @param channel
 	 * @return
+	 * @throws ChannelPermissionException 
 	 */
-	public static boolean playerCanBan( Player player, Channel channel ){
+	public static boolean playerCanBan( Player player, Channel channel ) throws ChannelPermissionException{
 		String permPrefix = "darmok.channel." + channel.getName().toLowerCase() + ".";
 		if( player.hasPermission( permPrefix + "ban" ) || player.hasPermission( "darmok.mod" ) ){
 			return true;
 		}
-		return false;
+		throw new ChannelPermissionException("Insufficient permission to ban a player from this channel.");
 	}
 	
 	
@@ -46,24 +49,25 @@ public class ChannelPermissions {
 	 * @param player
 	 * @param channel
 	 * @return
+	 * @throws ChannelPermissionException 
 	 */
-	public static boolean playerCanDefaultTo( Player player, Channel channel ){
+	public static boolean playerCanDefaultTo( Player player, Channel channel ) throws ChannelPermissionException{
 		
 		// Perms?
 		String permPrefix = "darmok.channel." + channel.getName().toLowerCase() + ".";
 		if( !player.hasPermission( permPrefix + "read" ) && !player.hasPermission( permPrefix + "speak" ) ){
-			return false;
+			throw new ChannelPermissionException("Insufficient permission to read or speak in this channel.");
 		}
 		
 		// Banned?
 		if( Darmok.getPlayerRegistry().isPlayerBannedFromChannel(player, channel) ){
-			return false;
+			throw new ChannelPermissionException("Player has been banned from this channel.");
 		}
 		
 		// If a town channel, make sure they have a town
 		if( Darmok.getTowny() != null && channel.getContext() != null && channel.getContext().equals("towny-town") ){
 			if( !playerHasTown( player ) ){
-				return false;
+				throw new ChannelPermissionException("Player does not have a town.");
 			}
 		}
 		
@@ -77,24 +81,25 @@ public class ChannelPermissions {
 	 * @param player
 	 * @param channel
 	 * @return
+	 * @throws ChannelPermissionException 
 	 */
-	public static boolean playerCanJoin( Player player, Channel channel ){
+	public static boolean playerCanJoin( Player player, Channel channel ) throws ChannelPermissionException{
 		
 		// Perms?
 		String permPrefix = "darmok.channel." + channel.getName().toLowerCase() + ".";
 		if( !player.hasPermission( permPrefix + "read" ) && !player.hasPermission( permPrefix + "speak" ) ){
-			return false;
+			throw new ChannelPermissionException("Insufficient permission to read or speak in this channel.");
 		}
 		
 		// Banned?
 		if( Darmok.getPlayerRegistry().isPlayerBannedFromChannel(player, channel) ){
-			return false;
+			throw new ChannelPermissionException("Player has been banned from this channel.");
 		}
 		
 		// If a town channel, make sure they have a town
 		if( Darmok.getTowny() != null && channel.getContext() != null && channel.getContext().equals("towny-town") ){
 			if( !playerHasTown( player ) ){
-				return false;
+				throw new ChannelPermissionException("Player does not have a town.");
 			}
 		}
 		
@@ -107,11 +112,12 @@ public class ChannelPermissions {
 	 * @param player
 	 * @param channel
 	 * @return
+	 * @throws ChannelPermissionException 
 	 */
-	public static boolean playerCanKick( Player player, Channel channel ){
+	public static boolean playerCanKick( Player player, Channel channel ) throws ChannelPermissionException{
 		String permPrefix = "darmok.channel." + channel.getName().toLowerCase() + ".";
 		if( player.hasPermission( permPrefix + "kick" ) || player.hasPermission( permPrefix + "ban" ) || player.hasPermission( "darmok.mod" ) ){
-			return true;
+			throw new ChannelPermissionException("Insufficient permission to kick a player from this channel.");
 		}
 		return false;
 	}
@@ -122,11 +128,12 @@ public class ChannelPermissions {
 	 * @param player
 	 * @param channel
 	 * @return
+	 * @throws ChannelPermissionException 
 	 */
-	public static boolean playerCanLeave( Player player, Channel channel ){
+	public static boolean playerCanLeave( Player player, Channel channel ) throws ChannelPermissionException{
 		String permPrefix = "darmok.channel." + channel.getName().toLowerCase() + ".";
 		if( player.hasPermission( permPrefix + "leave" ) ){
-			return true;
+			throw new ChannelPermissionException("Insufficient permission to leave this channel.");
 		}
 		return false;
 	}
@@ -137,24 +144,25 @@ public class ChannelPermissions {
 	 * @param player
 	 * @param channel
 	 * @return
+	 * @throws ChannelPermissionException 
 	 */
-	public static boolean playerCanRead( Player player, Channel channel ){
+	public static boolean playerCanRead( Player player, Channel channel ) throws ChannelPermissionException{
 		
 		// Perms?
 		String permPrefix = "darmok.channel." + channel.getName().toLowerCase() + ".";
 		if( !player.hasPermission( permPrefix + "read" ) && !player.hasPermission( permPrefix + "speak" ) ){
-			return false;
+			throw new ChannelPermissionException("Insufficient permission to read this channel.");
 		}
 		
 		// Banned?
 		if( Darmok.getPlayerRegistry().isPlayerBannedFromChannel(player, channel) ){
-			return false;
+			throw new ChannelPermissionException("Player has been banned from this channel.");
 		}
 		
 		// If a town channel, make sure they have a town
 		if( Darmok.getTowny() != null && channel.getContext() != null && channel.getContext().equals("towny-town") ){
 			if( !playerHasTown( player ) ){
-				return false;
+				throw new ChannelPermissionException("Player does not have a town.");
 			}
 		}
 		
@@ -168,24 +176,25 @@ public class ChannelPermissions {
 	 * @param player
 	 * @param channel
 	 * @return
+	 * @throws ChannelPermissionException 
 	 */
-	public static boolean playerCanSpeak( Player player, Channel channel ){
+	public static boolean playerCanSpeak( Player player, Channel channel ) throws ChannelPermissionException{
 		
 		// Perms?
 		String permPrefix = "darmok.channel." + channel.getName().toLowerCase() + ".";
 		if( !player.hasPermission( permPrefix + "speak" ) ){
-			return false;
+			throw new ChannelPermissionException("Insufficient permission to speak this channel.");
 		}
 		
 		// Banned?
 		if( Darmok.getPlayerRegistry().isPlayerBannedFromChannel(player, channel) ){
-			return false;
+			throw new ChannelPermissionException("Player has been banned from this channel.");
 		}
 		
 		// If a town channel, make sure they have a town
 		if( Darmok.getTowny() != null && channel.getContext() != null && channel.getContext().equals("towny-town") ){
 			if( !playerHasTown( player ) ){
-				return false;
+				throw new ChannelPermissionException("Player does not have a town.");
 			}
 		}
 		

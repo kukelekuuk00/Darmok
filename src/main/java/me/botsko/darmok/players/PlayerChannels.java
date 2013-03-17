@@ -7,7 +7,9 @@ import org.bukkit.entity.Player;
 import me.botsko.darmok.Darmok;
 import me.botsko.darmok.channels.Channel;
 import me.botsko.darmok.channels.ChannelPermissions;
+import me.botsko.darmok.exceptions.CannotJoinChannelException;
 import me.botsko.darmok.exceptions.CannotLeaveChannelException;
+import me.botsko.darmok.exceptions.ChannelPermissionException;
 
 public class PlayerChannels {
 	
@@ -104,13 +106,18 @@ public class PlayerChannels {
 	/**
 	 * Subscribes a player to a channel.
 	 * @param c
+	 * @throws CannotJoinChannelException 
 	 */
-	public boolean joinChannel( Channel c ){
-		if( ChannelPermissions.playerCanJoin( player, c ) ){
-			addChannel(c);
-			return true;
+	public void joinChannel( Channel c ) throws CannotJoinChannelException{
+		
+		try {
+			ChannelPermissions.playerCanJoin( player, c );
+		} catch (ChannelPermissionException e){
+			throw new CannotJoinChannelException( e.getMessage() );
 		}
-		return false;
+		
+		addChannel(c);
+		
 	}
 	
 	
@@ -122,22 +129,28 @@ public class PlayerChannels {
 	 */
 	public boolean leaveChannel( Channel channel ) throws CannotLeaveChannelException{
 		if( channel != null ){
-			if( ChannelPermissions.playerCanLeave( player, channel ) ){
-				if( channel.getCommand().equals(defaultChannel) ){
-					if( channels.size() > 1 ){
-						// Find the first channel that isn't this one
-						for( String alias : channels ){
-							if( !alias.equals( channel.getCommand() ) ){
-								defaultChannel = alias;
-								break;
-							}
-						}
-					} else {
-						throw new CannotLeaveChannelException("May not leave only subscribed channel.");
-					}
-				}
-				removeChannel( channel );
+			
+			try {
+				ChannelPermissions.playerCanLeave( player, channel );
+			} catch (ChannelPermissionException e){
+				throw new CannotLeaveChannelException( e.getMessage() );
 			}
+			
+			if( channel.getCommand().equals(defaultChannel) ){
+				if( channels.size() > 1 ){
+					// Find the first channel that isn't this one
+					for( String alias : channels ){
+						if( !alias.equals( channel.getCommand() ) ){
+							defaultChannel = alias;
+							break;
+						}
+					}
+				} else {
+					throw new CannotLeaveChannelException("May not leave only subscribed channel.");
+				}
+			}
+			removeChannel( channel );
+			
 		}
 		return false;
 	}

@@ -5,6 +5,7 @@ import java.util.List;
 import me.botsko.darmok.Darmok;
 import me.botsko.darmok.channels.Channel;
 import me.botsko.darmok.channels.ChannelPermissions;
+import me.botsko.darmok.exceptions.ChannelPermissionException;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -43,9 +44,10 @@ public class Chatter {
 			return;
 		}
 		
-		// Verify player has permission to SPEAK
-		if( !ChannelPermissions.playerCanSpeak( player, channel ) ){
-			player.sendMessage( Darmok.messenger.playerError("You don't have permission to speak in this channel.") );
+		try {
+			ChannelPermissions.playerCanSpeak( player, channel );
+		} catch (ChannelPermissionException e1) {
+			player.sendMessage( Darmok.messenger.playerError( e1.getMessage() ) );
 			return;
 		}
 		
@@ -136,7 +138,9 @@ public class Chatter {
 			// Player is in range.
 			
 			// Ensure they have permission to READ
-			if( ! ChannelPermissions.playerCanRead( player, channel ) ){
+			try {
+				ChannelPermissions.playerCanRead( player, channel );
+			} catch (ChannelPermissionException e) {
 				return;
 			}
 

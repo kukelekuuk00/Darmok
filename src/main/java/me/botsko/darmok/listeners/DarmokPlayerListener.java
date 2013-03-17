@@ -2,6 +2,7 @@ package me.botsko.darmok.listeners;
 
 import me.botsko.darmok.Darmok;
 import me.botsko.darmok.channels.Channel;
+import me.botsko.darmok.exceptions.CannotJoinChannelException;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.entity.Player;
@@ -68,10 +69,15 @@ public class DarmokPlayerListener implements Listener {
 			// Are they in the channel?
 			if( ! Darmok.getPlayerRegistry().getPlayerChannels( player ).inChannel( channel ) ){
 				plugin.debug("Trying to auto-join player to " + channel.getName());
-				if( ! Darmok.getPlayerRegistry().getPlayerChannels( player ).joinChannel( channel ) ){
-					player.sendMessage( Darmok.messenger.playerError("Failed joining channel. Are you allowed?") );
+				
+				try {
+					Darmok.getPlayerRegistry().getPlayerChannels( player ).joinChannel( channel );
+				} catch (CannotJoinChannelException e) {
+					player.sendMessage( Darmok.messenger.playerError( e.getMessage() ) );
+					event.setCancelled(true);
 					return;
 				}
+
 				player.sendMessage( Darmok.messenger.playerSubduedHeaderMsg("Auto-joining channel " + channel.getName() + "..." ) );
 			}
 			

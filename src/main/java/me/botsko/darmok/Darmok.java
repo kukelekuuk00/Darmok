@@ -12,6 +12,8 @@ import me.botsko.darmok.channels.ChannelRegistry;
 import me.botsko.darmok.chatter.Censor;
 import me.botsko.darmok.chatter.Chatter;
 import me.botsko.darmok.commands.ChannelCommands;
+import me.botsko.darmok.exceptions.CannotJoinChannelException;
+import me.botsko.darmok.exceptions.ChannelPermissionException;
 import me.botsko.darmok.listeners.DarmokPlayerListener;
 import me.botsko.darmok.players.PlayerChannels;
 import me.botsko.darmok.players.PlayerRegistry;
@@ -206,16 +208,27 @@ public class Darmok extends JavaPlugin {
 			ArrayList<Channel> channels = getChannelRegistry().getChannels();
 			for( Channel channel : channels ){
 				// Can the player join this?
-			    if( ChannelPermissions.playerCanAutoJoin( player, channel ) ){
-					debug("Creating first join in channel " + channel.getCommand());
-					// Register the channel for this player
-			    	getPlayerRegistry().getPlayerChannels(player).joinChannel( channel );
-			    	// Set as the default channel
-					if( getConfig().getString("darmok.channel.default-channel").equals( channel.getCommand() ) ){
-						debug("Setting default channel to " + channel.getName());
-						getPlayerRegistry().getPlayerChannels(player).setDefault( channel );
-			    	}
-			    }
+				
+				try {
+					ChannelPermissions.playerCanAutoJoin( player, channel );
+				} catch (ChannelPermissionException e) {
+					continue;
+				}
+			
+				debug("Creating first join in channel " + channel.getCommand());
+				
+				// Register the channel for this player
+		    	try {
+					getPlayerRegistry().getPlayerChannels(player).joinChannel( channel );
+				} catch (CannotJoinChannelException e) {
+					continue;
+				}
+		    	
+		    	// Set as the default channel
+				if( getConfig().getString("darmok.channel.default-channel").equals( channel.getCommand() ) ){
+					debug("Setting default channel to " + channel.getName());
+					getPlayerRegistry().getPlayerChannels(player).setDefault( channel );
+		    	}
 			}
 		} else {
 
