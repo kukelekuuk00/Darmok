@@ -83,6 +83,7 @@ public class PlayerChannels {
 	 */
 	public boolean setDefault( Channel channel ){
 		boolean channelUpdated = false;
+		System.out.print("PlayerChannels: Setting default channel for " + player.getName() + " to " + channel.getName());
 		if( ChannelPermissions.playerCanDefaultTo(player, channel) ){
 			for (Entry<String,Channel> entry : channels.entrySet()){
 				entry.getValue().setDefault( false );

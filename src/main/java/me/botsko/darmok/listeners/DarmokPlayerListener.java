@@ -67,6 +67,7 @@ public class DarmokPlayerListener implements Listener {
 			
 			// Are they in the channel?
 			if( ! Darmok.getPlayerRegistry().getPlayerChannels( player ).inChannel( channel ) ){
+				plugin.debug("Trying to auto-join player to " + channel.getName());
 				if( ! Darmok.getPlayerRegistry().getPlayerChannels( player ).joinChannel( channel ) ){
 					player.sendMessage( Darmok.messenger.playerError("Failed joining channel. Are you allowed?") );
 					return;
@@ -116,7 +117,13 @@ public class DarmokPlayerListener implements Listener {
 		// Get the current default channel
 		Channel channel = Darmok.getPlayerRegistry().getPlayerChannels(player).getDefault();
 		
+		// Reset their default
+		if( channel == null ){
+			channel = plugin.resetDefaultChannelForPlayer( player );
+		}
+		
 		if( channel != null ){
+			plugin.debug("Found default channel " + channel.getName() + " for " + player.getName());
 			Darmok.getChatter().send( player, channel, event.getMessage() );
 			event.setCancelled(true);
 		}

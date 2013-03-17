@@ -263,6 +263,25 @@ public class Darmok extends JavaPlugin {
 	
 	
 	/**
+	 * 
+	 * @param player
+	 */
+	public Channel resetDefaultChannelForPlayer( Player player ){
+		HashMap<String,Channel> channels = Darmok.getChannelRegistry().getChannels();
+		if( !channels.isEmpty() ){
+			for (Entry<String,Channel> entry : channels.entrySet()){
+				if( config.getBoolean("darmok.channels."+entry.getValue().getName()+".default") ){
+					debug("Resetting "+player.getName()+"'s default channel to " + entry.getValue().getName());
+					getPlayerRegistry().getPlayerChannels(player).setDefault(entry.getValue());
+					return entry.getValue();
+				}
+			}
+		}
+		return null;
+	}
+	
+	
+	/**
 	 * Build a new player channel settings save file based on
 	 * current channels.
 	 */
