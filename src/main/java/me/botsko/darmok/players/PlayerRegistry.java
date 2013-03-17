@@ -6,7 +6,7 @@ import java.util.Map.Entry;
 
 import me.botsko.darmok.channels.Channel;
 import me.botsko.darmok.channels.ChannelPermissions;
-import me.botsko.darmok.exceptions.CannotLeaveChannelException;
+import me.botsko.darmok.exceptions.LeaveChannelException;
 import me.botsko.darmok.exceptions.ChannelPermissionException;
 
 import org.bukkit.entity.Player;
@@ -61,7 +61,7 @@ public class PlayerRegistry {
 				} catch (ChannelPermissionException e1) {
 					try {
 						players.get( entry.getKey() ).leaveChannel(channel);
-					} catch (CannotLeaveChannelException e) {
+					} catch (LeaveChannelException e) {
 					}
 					continue;
 				}
@@ -82,7 +82,7 @@ public class PlayerRegistry {
 	public void banFromChannel( Player player, Channel channel ){
 		try {
 			getPlayerChannels( player ).removeChannel(channel);
-		} catch (CannotLeaveChannelException e) {
+		} catch (LeaveChannelException e) {
 			// not really possible
 		}
 		setChannelBanForPlayer( player, channel.getName() );

@@ -2,7 +2,7 @@ package me.botsko.darmok.listeners;
 
 import me.botsko.darmok.Darmok;
 import me.botsko.darmok.channels.Channel;
-import me.botsko.darmok.exceptions.CannotJoinChannelException;
+import me.botsko.darmok.exceptions.JoinChannelException;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.entity.Player;
@@ -72,7 +72,7 @@ public class DarmokPlayerListener implements Listener {
 				
 				try {
 					Darmok.getPlayerRegistry().getPlayerChannels( player ).joinChannel( channel );
-				} catch (CannotJoinChannelException e) {
+				} catch (JoinChannelException e) {
 					player.sendMessage( Darmok.messenger.playerError( e.getMessage() ) );
 					event.setCancelled(true);
 					return;

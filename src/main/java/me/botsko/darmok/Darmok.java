@@ -12,7 +12,7 @@ import me.botsko.darmok.channels.ChannelRegistry;
 import me.botsko.darmok.chatter.Censor;
 import me.botsko.darmok.chatter.Chatter;
 import me.botsko.darmok.commands.ChannelCommands;
-import me.botsko.darmok.exceptions.CannotJoinChannelException;
+import me.botsko.darmok.exceptions.JoinChannelException;
 import me.botsko.darmok.exceptions.ChannelPermissionException;
 import me.botsko.darmok.listeners.DarmokPlayerListener;
 import me.botsko.darmok.players.PlayerChannels;
@@ -220,7 +220,7 @@ public class Darmok extends JavaPlugin {
 				// Register the channel for this player
 		    	try {
 					getPlayerRegistry().getPlayerChannels(player).joinChannel( channel );
-				} catch (CannotJoinChannelException e) {
+				} catch (JoinChannelException e) {
 					continue;
 				}
 		    	

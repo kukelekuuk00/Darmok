@@ -1,6 +1,6 @@
 package me.botsko.darmok.exceptions;
 
-public class CannotJoinChannelException extends Exception {
+public class JoinChannelException extends Exception {
 
 	/**
 	 * 
@@ -11,7 +11,7 @@ public class CannotJoinChannelException extends Exception {
 	 * 
 	 * @param message
 	 */
-	public CannotJoinChannelException(String message) {
+	public JoinChannelException(String message) {
         super(message);
     }
 }

@@ -10,8 +10,8 @@ import me.botsko.darmok.channels.ChannelPermissions;
 import me.botsko.darmok.commandlibs.CallInfo;
 import me.botsko.darmok.commandlibs.Executor;
 import me.botsko.darmok.commandlibs.SubHandler;
-import me.botsko.darmok.exceptions.CannotJoinChannelException;
-import me.botsko.darmok.exceptions.CannotLeaveChannelException;
+import me.botsko.darmok.exceptions.JoinChannelException;
+import me.botsko.darmok.exceptions.LeaveChannelException;
 import me.botsko.darmok.exceptions.ChannelPermissionException;
 import me.botsko.darmok.players.PlayerChannels;
 
@@ -105,7 +105,7 @@ public class ChannelCommands extends Executor {
             	
             	try {
 					Darmok.getPlayerRegistry().getPlayerChannels( call.getPlayer() ).joinChannel( channel );
-				} catch (CannotJoinChannelException e) {
+				} catch (JoinChannelException e) {
 					call.getPlayer().sendMessage( Darmok.messenger.playerError( e.getMessage() ) );
 					return;
 				}
@@ -155,7 +155,7 @@ public class ChannelCommands extends Executor {
             	
             	try {
 					Darmok.getPlayerRegistry().getPlayerChannels( player ).removeChannel( channel );
-				} catch (CannotLeaveChannelException e) {
+				} catch (LeaveChannelException e) {
 					// not really possible
 				}
             	
@@ -190,7 +190,7 @@ public class ChannelCommands extends Executor {
             	
             	try {
 					Darmok.getPlayerRegistry().getPlayerChannels( call.getPlayer() ).leaveChannel( channel );
-				} catch (CannotLeaveChannelException e) {
+				} catch (LeaveChannelException e) {
 					call.getPlayer().sendMessage( Darmok.messenger.playerError( e.getMessage() ) );
 					return;
 				}

@@ -7,8 +7,8 @@ import org.bukkit.entity.Player;
 import me.botsko.darmok.Darmok;
 import me.botsko.darmok.channels.Channel;
 import me.botsko.darmok.channels.ChannelPermissions;
-import me.botsko.darmok.exceptions.CannotJoinChannelException;
-import me.botsko.darmok.exceptions.CannotLeaveChannelException;
+import me.botsko.darmok.exceptions.JoinChannelException;
+import me.botsko.darmok.exceptions.LeaveChannelException;
 import me.botsko.darmok.exceptions.ChannelPermissionException;
 
 public class PlayerChannels {
@@ -106,14 +106,14 @@ public class PlayerChannels {
 	/**
 	 * Subscribes a player to a channel.
 	 * @param c
-	 * @throws CannotJoinChannelException 
+	 * @throws JoinChannelException 
 	 */
-	public void joinChannel( Channel c ) throws CannotJoinChannelException{
+	public void joinChannel( Channel c ) throws JoinChannelException{
 		
 		try {
 			ChannelPermissions.playerCanJoin( player, c );
 		} catch (ChannelPermissionException e){
-			throw new CannotJoinChannelException( e.getMessage() );
+			throw new JoinChannelException( e.getMessage() );
 		}
 		
 		addChannel(c);
@@ -125,15 +125,15 @@ public class PlayerChannels {
 	 * Removes a channel from the player's subscriptions.
 	 * @param player
 	 * @return
-	 * @throws CannotLeaveChannelException 
+	 * @throws LeaveChannelException 
 	 */
-	public boolean leaveChannel( Channel channel ) throws CannotLeaveChannelException{
+	public boolean leaveChannel( Channel channel ) throws LeaveChannelException{
 		if( channel != null ){
 			
 			try {
 				ChannelPermissions.playerCanLeave( player, channel );
 			} catch (ChannelPermissionException e){
-				throw new CannotLeaveChannelException( e.getMessage() );
+				throw new LeaveChannelException( e.getMessage() );
 			}
 			
 			if( channel.getCommand().equals(defaultChannel) ){
@@ -146,7 +146,7 @@ public class PlayerChannels {
 						}
 					}
 				} else {
-					throw new CannotLeaveChannelException("May not leave only subscribed channel.");
+					throw new LeaveChannelException("May not leave only subscribed channel.");
 				}
 			}
 			removeChannel( channel );
@@ -160,13 +160,13 @@ public class PlayerChannels {
 	 * Removes a channel from a player without unsubscribing
 	 * @param player
 	 * @return
-	 * @throws CannotLeaveChannelException 
+	 * @throws LeaveChannelException 
 	 */
-	public void removeChannel( Channel channel ) throws CannotLeaveChannelException{
+	public void removeChannel( Channel channel ) throws LeaveChannelException{
 		if( channel != null ){
 			channels.remove( channel.getCommand() );
 			return;
 		}
-		throw new CannotLeaveChannelException("Removing channel player is not subscribed to.");
+		throw new LeaveChannelException("Removing channel player is not subscribed to.");
 	}
 }

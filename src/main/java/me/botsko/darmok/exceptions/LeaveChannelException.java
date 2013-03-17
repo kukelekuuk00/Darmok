@@ -1,6 +1,6 @@
 package me.botsko.darmok.exceptions;
 
-public class CannotLeaveChannelException extends Exception {
+public class LeaveChannelException extends Exception {
 	/**
 	 * 
 	 */
@@ -10,7 +10,7 @@ public class CannotLeaveChannelException extends Exception {
 	 * 
 	 * @param message
 	 */
-	public CannotLeaveChannelException(String message) {
+	public LeaveChannelException(String message) {
         super(message);
     }
 }
