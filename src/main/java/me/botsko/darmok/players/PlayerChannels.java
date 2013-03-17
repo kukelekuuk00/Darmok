@@ -1,10 +1,10 @@
 package me.botsko.darmok.players;
 
-import java.util.HashMap;
-import java.util.Map.Entry;
+import java.util.ArrayList;
 
 import org.bukkit.entity.Player;
 
+import me.botsko.darmok.Darmok;
 import me.botsko.darmok.channels.Channel;
 import me.botsko.darmok.channels.ChannelPermissions;
 
@@ -19,7 +19,13 @@ public class PlayerChannels {
 	/**
 	 * 
 	 */
-	private HashMap<String,Channel> channels = new HashMap<String,Channel>();
+	private ArrayList<String> channels = new ArrayList<String>();
+	
+	
+	/**
+	 * 
+	 */
+	private String defaultChannel;
 	
 	
 	/**
@@ -33,20 +39,19 @@ public class PlayerChannels {
 	
 	/**
 	 * 
-	 * @param command
 	 * @return
 	 */
-	public Channel getChannel( String command ){
-		return channels.get(command);
-	}
-	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public HashMap<String,Channel> getChannels(){
-		return channels;
+	public ArrayList<Channel> getChannels(){
+		ArrayList<Channel> playerChannels = new ArrayList<Channel>();
+		if(!channels.isEmpty()){
+			for(String alias : channels){
+				Channel c = Darmok.getChannelRegistry().getChannel( alias );
+				if( c != null ){
+					playerChannels.add(c);
+				}
+			}
+		}
+		return playerChannels;
 	}
 
 	
@@ -57,7 +62,7 @@ public class PlayerChannels {
 	 * @param c
 	 */
 	public boolean addChannel( Channel c ){
-		channels.put(c.getCommand(), c);
+		channels.add(c.getCommand());
 		return true;
 	}
 	
@@ -67,10 +72,8 @@ public class PlayerChannels {
 	 * @return
 	 */
 	public Channel getDefault(){
-		for (Entry<String,Channel> entry : channels.entrySet()){
-		    if( entry.getValue().isDefault() ){
-		    	return entry.getValue();
-		    }
+		if( defaultChannel != null ){
+			return Darmok.getChannelRegistry().getChannel( defaultChannel );
 		}
 		return null;
 	}
@@ -82,18 +85,8 @@ public class PlayerChannels {
 	 * @return
 	 */
 	public boolean setDefault( Channel channel ){
-		boolean channelUpdated = false;
-		System.out.print("PlayerChannels: Setting default channel for " + player.getName() + " to " + channel.getName());
-		if( ChannelPermissions.playerCanDefaultTo(player, channel) ){
-			for (Entry<String,Channel> entry : channels.entrySet()){
-				entry.getValue().setDefault( false );
-				if( entry.getValue().getName().equals( channel.getName() ) ){
-					entry.getValue().setDefault( true );
-					channelUpdated = true;
-				}
-			}
-		}
-		return channelUpdated;
+		defaultChannel = channel.getCommand();
+		return true;
 	}
 	
 	
@@ -103,7 +96,7 @@ public class PlayerChannels {
 	 * @return
 	 */
 	public boolean inChannel( Channel channel ){
-		return channels.containsKey( channel.getCommand() );
+		return channels.contains( channel.getCommand() );
 	}
 	
 	

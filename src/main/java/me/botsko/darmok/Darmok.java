@@ -2,9 +2,7 @@ package me.botsko.darmok;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -205,45 +203,40 @@ public class Darmok extends JavaPlugin {
 		if( playerConfig == null ){
 
 			// Load all channels
-			HashMap<String,Channel> channels = getChannelRegistry().getChannels();
-			for(Entry<String,Channel> entry : channels.entrySet()){
+			ArrayList<Channel> channels = getChannelRegistry().getChannels();
+			for( Channel channel : channels ){
 				// Can the player join this?
-			    if( ChannelPermissions.playerCanAutoJoin( player, entry.getValue() ) ){
-			    	Channel channel;
-					try {
-						channel = entry.getValue().clone();
-						
-						debug("Creating first join in channel " + channel.getName());
-						// Set as the default channel
-						if( player.hasPermission("darmok.channel."+entry.getKey()+".default") ){
-							debug("Setting default channel to " + channel.getName());
-				    		channel.setDefault( true );
-				    	}
-						// Register the channels for this player
-				    	getPlayerRegistry().getPlayerChannels(player).joinChannel( channel );
-					} catch (CloneNotSupportedException e) {
-						e.printStackTrace();
-					}
+			    if( ChannelPermissions.playerCanAutoJoin( player, channel ) ){
+					debug("Creating first join in channel " + channel.getCommand());
+					// Register the channel for this player
+			    	getPlayerRegistry().getPlayerChannels(player).joinChannel( channel );
+			    	// Set as the default channel
+					if( getConfig().getString("darmok.channel.default-channel").equals( channel.getCommand() ) ){
+						debug("Setting default channel to " + channel.getName());
+						getPlayerRegistry().getPlayerChannels(player).setDefault( channel );
+			    	}
 			    }
 			}
 		} else {
 
 			// Restore channel subscriptions
-			ConfigurationSection channels = playerConfig.getConfigurationSection("channels");
-			for(String channelCommand : channels.getKeys(false)){
-				Channel channel = Darmok.getChannelRegistry().getChannel( channelCommand );
+			@SuppressWarnings("unchecked")
+			ArrayList<String> channelAliases = (ArrayList<String>) playerConfig.getList("channels");
+			for( String alias : channelAliases ){
+				Channel channel = Darmok.getChannelRegistry().getChannel( alias );
 				if( channel != null ){
-					
-					// Load default
-					ConfigurationSection channelConfig = channels.getConfigurationSection(channelCommand);
-					if( channelConfig.getBoolean("default") ){
-						debug("Setting default channel to " + channel.getName());
-			    		channel.setDefault( true );
-					}
-					
 					getPlayerRegistry().getPlayerChannels(player).addChannel( channel );
 				}
 			}
+			
+			// Load default
+			String defaultAlias = playerConfig.getString("default");
+			debug("Setting default channel to " + defaultAlias);
+			Channel c = getChannelRegistry().getChannel(defaultAlias);
+			if( c != null ){
+				getPlayerRegistry().getPlayerChannels(player).setDefault(c);
+			}
+			// @todo throw an error and fix this
 			
 			// Restore channel bans
 			@SuppressWarnings("unchecked")
@@ -267,13 +260,13 @@ public class Darmok extends JavaPlugin {
 	 * @param player
 	 */
 	public Channel resetDefaultChannelForPlayer( Player player ){
-		HashMap<String,Channel> channels = Darmok.getChannelRegistry().getChannels();
+		ArrayList<Channel> channels = Darmok.getChannelRegistry().getChannels();
 		if( !channels.isEmpty() ){
-			for (Entry<String,Channel> entry : channels.entrySet()){
-				if( config.getBoolean("darmok.channels."+entry.getValue().getName()+".default") ){
-					debug("Resetting "+player.getName()+"'s default channel to " + entry.getValue().getName());
-					getPlayerRegistry().getPlayerChannels(player).setDefault(entry.getValue());
-					return entry.getValue();
+			for ( Channel c : channels ){
+				if( config.getBoolean("darmok.channels."+c.getName()+".default") ){
+					debug("Resetting "+player.getName()+"'s default channel to " + c.getName());
+					getPlayerRegistry().getPlayerChannels(player).setDefault(c);
+					return c;
 				}
 			}
 		}
@@ -288,18 +281,21 @@ public class Darmok extends JavaPlugin {
 	public void saveChannelSettingsForPlayer( Player player ){
 		
 		FileConfiguration playerConfig = new YamlConfiguration();
-		ConfigurationSection configChannels = playerConfig.createSection("channels");
 		
+		// Save current channels
 		PlayerChannels playerChannels = getPlayerRegistry().getPlayerChannels(player);
-		
 		if( ! playerChannels.getChannels().isEmpty() ){
-			for (Entry<String,Channel> entry : playerChannels.getChannels().entrySet()){
-				debug("Saving "+player.getName()+"'s active channel " + entry.getValue().getName() + " isDefault: " + entry.getValue().isDefault());
-				ConfigurationSection channelConfig = configChannels.createSection( entry.getKey() );
-				channelConfig.set( "default", entry.getValue().isDefault() );
-				channelConfig.set( "muted", entry.getValue().isMuted() );
+			ArrayList<String> channelAliases = new ArrayList<String>();
+			ArrayList<Channel> channels = playerChannels.getChannels();
+			if( !channels.isEmpty() ){
+				for( Channel c : channels ){
+					channelAliases.add( c.getCommand() );
+				}
 			}
+			playerConfig.set("channels", channelAliases);
 		}
+		
+		playerConfig.set("default", playerChannels.getDefault().getCommand());
 		
 		// Set their channel bans
 		ArrayList<String> bannedIn = getPlayerRegistry().getChannelBansForPlayer( player );

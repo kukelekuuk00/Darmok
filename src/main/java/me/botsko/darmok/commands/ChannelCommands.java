@@ -1,7 +1,6 @@
 package me.botsko.darmok.commands;
 
-import java.util.HashMap;
-import java.util.Map.Entry;
+import java.util.ArrayList;
 
 import org.bukkit.entity.Player;
 
@@ -205,7 +204,7 @@ public class ChannelCommands extends Executor {
             		limitTo= call.getPlayer();
             	}
             	
-            	HashMap<String,Channel> channels;
+            	ArrayList<Channel> channels;
             	
             	// Load the channels
             	if( limitTo != null ){
@@ -226,9 +225,8 @@ public class ChannelCommands extends Executor {
             	
             	// List them
             	call.getPlayer().sendMessage( Darmok.messenger.playerHeaderMsg( "-- All Channels --" ) );
-            	for (Entry<String,Channel> entry : channels.entrySet()){
+            	for ( Channel c : channels ){
             		
-            		Channel c = entry.getValue();
             		boolean youreBanned = Darmok.getPlayerRegistry().isPlayerBannedFromChannel(call.getPlayer(), c);
         
             		String list = c.getColor() + c.getName() + " /" + c.getCommand() + " &f" + (youreBanned ? "You're Banned" : "");

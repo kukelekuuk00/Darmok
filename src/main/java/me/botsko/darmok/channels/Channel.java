@@ -8,7 +8,7 @@ import me.botsko.darmok.Darmok;
 import org.bukkit.entity.Player;
 import org.bukkit.ChatColor;
 
-public class Channel implements Cloneable {
+public class Channel {
 
 	private final String name;
 	private final String command;

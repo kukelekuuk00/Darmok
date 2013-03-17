@@ -29,6 +29,7 @@ public class Config extends ConfigBase {
 //		config.addDefault("darmok.notify-newer-versions", true);
 		
 		config.addDefault("darmok.channel.default-format", "%(color)[%(command)] %(prefix) &f%(player) %(suffix)%(color): %(msg)");
+		config.addDefault("darmok.channel.default-channel", "g");
 		
 		// Build channels
 		ConfigurationSection channels = config.createSection("darmok.channels");
