@@ -99,6 +99,7 @@ public final class SubCommand {
 	 * @return
 	 */
 	public boolean playerHasPermission( Player player ){
+		if( permissionNodes == null || permissionNodes.length == 0 ) return true;
 		for(String node : permissionNodes){
 			if(player.hasPermission(node)){
 				return true;

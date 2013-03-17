@@ -122,6 +122,17 @@ public class Executor implements CommandExecutor {
 	 * @param permission
 	 * @return
 	 */
+	protected SubCommand addSub( String[] commandAliases ) {
+		return addSub(commandAliases, null, null);
+	}
+	
+	
+	/**
+	 * 
+	 * @param name
+	 * @param permission
+	 * @return
+	 */
 	protected SubCommand addSub( String[] commandAliases, String[] permissionNodes ) {
 		return addSub(commandAliases, permissionNodes, null);
 	}
@@ -136,6 +147,18 @@ public class Executor implements CommandExecutor {
 	 */
 	protected SubCommand addSub( String[] commandAliases, String permissionNode ) {
 		return addSub( commandAliases, new String[]{permissionNode}, null);
+	}
+	
+	
+	/**
+	 * 
+	 * @param name
+	 * @param permission
+	 * @param handler
+	 * @return
+	 */
+	protected SubCommand addSub( String commandAlias ) {
+		return addSub( new String[]{commandAlias}, null, null);
 	}
 	
 	

@@ -40,7 +40,7 @@ public class ChannelCommands extends Executor {
 		/**
 		 * /ch ban (player) (channel) 
 		 */
-		addSub("ban", "darmok.chat")
+		addSub("ban")
 		.allowConsole()
 		.setHandler(new SubHandler(){
             public void handle(CallInfo call){
@@ -86,7 +86,7 @@ public class ChannelCommands extends Executor {
 		/**
 		 * /ch join 
 		 */
-		addSub("join", "darmok.chat")
+		addSub("join")
 		.allowConsole()
 		.setHandler(new SubHandler(){
             public void handle(CallInfo call){
@@ -122,7 +122,7 @@ public class ChannelCommands extends Executor {
 		/**
 		 * /ch kick (player) (channel) 
 		 */
-		addSub("kick", "darmok.chat")
+		addSub("kick")
 		.allowConsole()
 		.setHandler(new SubHandler(){
             public void handle(CallInfo call){
@@ -171,7 +171,7 @@ public class ChannelCommands extends Executor {
 		/**
 		 * /ch leave 
 		 */
-		addSub("leave", "darmok.chat")
+		addSub("leave")
 		.allowConsole()
 		.setHandler(new SubHandler(){
             public void handle(CallInfo call){
@@ -207,7 +207,7 @@ public class ChannelCommands extends Executor {
 		/**
 		 * /ch list 
 		 */
-		addSub("list", "darmok.list")
+		addSub("list")
 		.allowConsole()
 		.setHandler(new SubHandler(){
             public void handle(CallInfo call){
@@ -271,7 +271,7 @@ public class ChannelCommands extends Executor {
 //		/**
 //		 * /ch mute 
 //		 */
-//		addSub("mute", "darmok.chat")
+//		addSub("mute")
 //		.allowConsole()
 //		.setHandler(new SubHandler(){
 //            public void handle(CallInfo call){
@@ -304,7 +304,7 @@ public class ChannelCommands extends Executor {
 		/**
 		 * /ch unban (player) (channel) 
 		 */
-		addSub("unban", "darmok.chat")
+		addSub("unban")
 		.allowConsole()
 		.setHandler(new SubHandler(){
             public void handle(CallInfo call){
