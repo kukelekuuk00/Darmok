@@ -128,7 +128,7 @@ public class Chatter {
 					continue;
 				}
 				// otherwise, it's a distance
-				else if( player.getLocation().distance( pl.getLocation() ) > range ){
+				else if( !player.getWorld().equals( pl.getWorld() ) || player.getLocation().distance( pl.getLocation() ) > range ){
 					continue;
 				}
 			}
