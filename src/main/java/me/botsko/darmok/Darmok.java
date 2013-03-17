@@ -46,6 +46,7 @@ public class Darmok extends JavaPlugin {
 	private static PlayerRegistry playerRegistry;
 	private static Censor censor;
 	private FileConfiguration profanity;
+	private FileConfiguration channels;
 	
 	// Plugins
 	private static Essentials essentials = null;
@@ -123,6 +124,7 @@ public class Darmok extends JavaPlugin {
 		configHandler = new Config( this );
 		config = configHandler.getConfig();
 		profanity = configHandler.getProfanityConfig();
+		channels = configHandler.getChannelConfig();
 		censor = new Censor( (List<String>) profanity.getList("reject-words"), (List<String>) profanity.getList("censor-words") );
 	}
 	
@@ -131,17 +133,15 @@ public class Darmok extends JavaPlugin {
 	 * 
 	 */
 	private void registerChannels(){
-		
-		ConfigurationSection channelList = getConfig().getConfigurationSection("darmok.channels");
-		
-		Set<String> channels = channelList.getKeys(false);
-		for(String channelName : channels){
 
-			ConfigurationSection channel = channelList.getConfigurationSection(channelName);
+		Set<String> channelKeys = channels.getKeys(false);
+		for(String channelName : channelKeys){
+
+			ConfigurationSection channel = channels.getConfigurationSection(channelName);
 			if(channel == null) continue;
 			
 			String format = config.getString("darmok.channel.default-format");
-
+			
 			channelRegistry.registerChannel(
 					new Channel(
 							channelName,

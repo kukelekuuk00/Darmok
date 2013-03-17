@@ -65,13 +65,31 @@ public class ConfigBase {
 	 * Loads language configuration
 	 * @return
 	 */
+	public FileConfiguration getChannelConfig(){
+		
+		// Read the base config
+		FileConfiguration config = loadConfig( "defaults/", "channels" );
+		
+		// copy defaults and save config
+//		config.options().copyDefaults(true);
+		write( getFilename( "channels" ).getAbsolutePath(), "channels", config );
+		
+		return config;
+		
+	}
+	
+	
+	/**
+	 * Loads language configuration
+	 * @return
+	 */
 	public FileConfiguration getProfanityConfig(){
 		
 		// Read the base config
 		FileConfiguration config = loadConfig( "defaults/", "profanity" );
 		
 		// copy defaults and save config
-		config.options().copyDefaults(true);
+//		config.options().copyDefaults(true);
 		write( getFilename( "profanity" ).getAbsolutePath(), "profanity", config );
 		
 		return config;

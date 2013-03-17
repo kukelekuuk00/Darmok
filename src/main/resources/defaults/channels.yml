@@ -1,0 +1,26 @@
+global:
+    command: g
+    range: -1
+    color: '&6'
+    format: ''
+help:
+    command: h
+    range: -1
+    color: '&b'
+    format: ''
+local:
+    command: l
+    range: 100
+    color: '&f'
+    format: ''
+staff:
+    command: s
+    range: -1
+    color: '&a'
+    format: ''
+town:
+    command: tc
+    range: -1
+    color: '&b'
+    format: ''
+    context: towny-town
