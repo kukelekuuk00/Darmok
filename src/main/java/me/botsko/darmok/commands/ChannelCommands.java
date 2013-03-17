@@ -323,12 +323,12 @@ public class ChannelCommands extends Executor {
 		.setHandler(new SubHandler() {
             public void handle(CallInfo call) {
             	call.getSender().sendMessage( Darmok.messenger.playerHeaderMsg( "Welcome to Darmok - By Viveleroi" ) );
-            	call.getSender().sendMessage( Darmok.messenger.playerHelp("join","(channel)", "Join a channel."));
-            	call.getSender().sendMessage( Darmok.messenger.playerHelp("leave","(channel)", "Leave a channel."));
-            	call.getSender().sendMessage( Darmok.messenger.playerHelp("kick","(user) (channel)", "Kick a player from a channel."));
-            	call.getSender().sendMessage( Darmok.messenger.playerHelp("ban","(user) (channel)", "Ban a player from a channel."));
-            	call.getSender().sendMessage( Darmok.messenger.playerHelp("unban","(user) (channel)", "Unban a player from a channel."));
-            	call.getSender().sendMessage( Darmok.messenger.playerHelp("list","", "List channels"));
+            	call.getSender().sendMessage( Darmok.messenger.playerHelp("ch join","(channel)", "Join a channel."));
+            	call.getSender().sendMessage( Darmok.messenger.playerHelp("ch leave","(channel)", "Leave a channel."));
+            	call.getSender().sendMessage( Darmok.messenger.playerHelp("ch kick","(user) (channel)", "Kick a player from a channel."));
+            	call.getSender().sendMessage( Darmok.messenger.playerHelp("ch ban","(user) (channel)", "Ban a player from a channel."));
+            	call.getSender().sendMessage( Darmok.messenger.playerHelp("ch unban","(user) (channel)", "Unban a player from a channel."));
+            	call.getSender().sendMessage( Darmok.messenger.playerHelp("ch list","", "List channels"));
             }
 		});
 	}

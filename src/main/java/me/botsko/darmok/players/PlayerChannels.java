@@ -141,11 +141,13 @@ public class PlayerChannels {
 					for( String alias : channels ){
 						if( !alias.equals( channel.getCommand() ) ){
 							defaultChannel = alias;
+							break;
 						}
 					}
+				} else {
+					// @todo throw exception
+					return false;
 				}
-				// @todo throw exception
-				return false;
 			}
 			channels.remove( channel.getCommand() );
 			return true;
