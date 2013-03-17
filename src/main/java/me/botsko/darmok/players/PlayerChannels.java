@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import me.botsko.darmok.Darmok;
 import me.botsko.darmok.channels.Channel;
 import me.botsko.darmok.channels.ChannelPermissions;
+import me.botsko.darmok.exceptions.CannotLeaveChannelException;
 
 public class PlayerChannels {
 	
@@ -117,11 +118,25 @@ public class PlayerChannels {
 	 * Removes a channel from the player's subscriptions.
 	 * @param player
 	 * @return
+	 * @throws CannotLeaveChannelException 
 	 */
-	public boolean leaveChannel( Channel channel ){
+	public boolean leaveChannel( Channel channel ) throws CannotLeaveChannelException{
 		if( channel != null ){
 			if( ChannelPermissions.playerCanLeave( player, channel ) ){
-				return removeChannel( channel );
+				if( channel.getCommand().equals(defaultChannel) ){
+					if( channels.size() > 1 ){
+						// Find the first channel that isn't this one
+						for( String alias : channels ){
+							if( !alias.equals( channel.getCommand() ) ){
+								defaultChannel = alias;
+								break;
+							}
+						}
+					} else {
+						throw new CannotLeaveChannelException("May not leave only subscribed channel.");
+					}
+				}
+				removeChannel( channel );
 			}
 		}
 		return false;
@@ -132,26 +147,13 @@ public class PlayerChannels {
 	 * Removes a channel from a player without unsubscribing
 	 * @param player
 	 * @return
+	 * @throws CannotLeaveChannelException 
 	 */
-	public boolean removeChannel( Channel channel ){
+	public void removeChannel( Channel channel ) throws CannotLeaveChannelException{
 		if( channel != null ){
-			if( channel.getCommand().equals(defaultChannel) ){
-				if( channels.size() > 1 ){
-					// Find the first channel that isn't this one
-					for( String alias : channels ){
-						if( !alias.equals( channel.getCommand() ) ){
-							defaultChannel = alias;
-							break;
-						}
-					}
-				} else {
-					// @todo throw exception
-					return false;
-				}
-			}
 			channels.remove( channel.getCommand() );
-			return true;
+			return;
 		}
-		return false;
+		throw new CannotLeaveChannelException("Removing channel player is not subscribed to.");
 	}
 }

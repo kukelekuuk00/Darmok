@@ -10,6 +10,7 @@ import me.botsko.darmok.channels.ChannelPermissions;
 import me.botsko.darmok.commandlibs.CallInfo;
 import me.botsko.darmok.commandlibs.Executor;
 import me.botsko.darmok.commandlibs.SubHandler;
+import me.botsko.darmok.exceptions.CannotLeaveChannelException;
 import me.botsko.darmok.players.PlayerChannels;
 
 
@@ -146,7 +147,11 @@ public class ChannelCommands extends Executor {
             		return;
             	}
             	
-            	Darmok.getPlayerRegistry().getPlayerChannels( player ).removeChannel( channel );
+            	try {
+					Darmok.getPlayerRegistry().getPlayerChannels( player ).removeChannel( channel );
+				} catch (CannotLeaveChannelException e) {
+					// not really possible
+				}
             	
             	player.sendMessage( Darmok.messenger.playerError( "You have been kicked from the "+channel.getName()+" channel." ) );
             	call.getPlayer().sendMessage( Darmok.messenger.playerHeaderMsg( "You have kicked "+player.getName()+" from the "+channel.getName()+" channel." ) );
@@ -177,10 +182,12 @@ public class ChannelCommands extends Executor {
             		return;
             	}
             	
-            	if( ! Darmok.getPlayerRegistry().getPlayerChannels( call.getPlayer() ).leaveChannel( channel ) ){
-            		call.getPlayer().sendMessage( Darmok.messenger.playerError( "You may not leave this channel." ) );
-            		return;
-            	}
+            	try {
+					Darmok.getPlayerRegistry().getPlayerChannels( call.getPlayer() ).leaveChannel( channel );
+				} catch (CannotLeaveChannelException e) {
+					call.getPlayer().sendMessage( Darmok.messenger.playerError( e.getMessage() ) );
+					return;
+				}
             	
             	call.getPlayer().sendMessage( Darmok.messenger.playerHeaderMsg( "You have left "+channel.getName()+" channel." ) );
         		return;
