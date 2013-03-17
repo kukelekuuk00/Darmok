@@ -85,7 +85,7 @@ public class PlayerRegistry {
 		} catch (LeaveChannelException e) {
 			// not really possible
 		}
-		setChannelBanForPlayer( player, channel.getName() );
+		setChannelBanForPlayer( player, channel.getCommand() );
 	}
 	
 	
