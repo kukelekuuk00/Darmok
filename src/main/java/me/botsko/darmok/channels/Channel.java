@@ -180,7 +180,7 @@ public class Channel {
 	 * @return
 	 */
 	public String stripColor( String text ){
-		return ChatColor.stripColor( text.replaceAll("(&([a-k0-9A-K]))", "") );
+		return ChatColor.stripColor( text.replaceAll("(&([a-z0-9A-Z]))", "") );
 	}
 	
 	
