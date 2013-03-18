@@ -8,7 +8,6 @@ import me.botsko.darmok.channels.ChannelPermissions;
 import me.botsko.darmok.exceptions.ChannelPermissionException;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import com.earth2me.essentials.User;
@@ -88,7 +87,8 @@ public class Chatter {
 		
 		// Do they have permission to use colors?
 		if( !player.hasPermission("darmok.chatcolor") ){
-			msg = ChatColor.stripColor(msg);
+			msg = channel.stripColor( msg );
+			System.out.print("MESSAGE " + msg);
 		}
 		
 		// Format the final message

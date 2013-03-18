@@ -176,6 +176,16 @@ public class Channel {
 	
 	/**
 	 * 
+	 * @param text
+	 * @return
+	 */
+	public String stripColor( String text ){
+		return ChatColor.stripColor( text.replaceAll("(&([a-f0-9A-F]))", "") );
+	}
+	
+	
+	/**
+	 * 
 	 */
 	public Channel clone() throws CloneNotSupportedException {
 		return (Channel) super.clone();
