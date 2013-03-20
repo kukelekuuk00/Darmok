@@ -82,6 +82,51 @@ public class ChannelCommands extends Executor {
             }
 		});
 		
+		
+		/**
+		 * /ch force (player) (channel) 
+		 */
+		addSub("force")
+		.allowConsole()
+		.setHandler(new SubHandler(){
+            public void handle(CallInfo call){
+
+            	if( call.getArgs().length != 3 ){
+            		call.getPlayer().sendMessage( Darmok.messenger.playerError( "You must provide a player name and channel, like /ch force viveleroi g" ) );
+            		return;
+            	}
+            	
+            	// Get the player
+            	Player player = darmok.getServer().getPlayer( call.getArg(1) );
+            	if( player == null ){
+            		call.getPlayer().sendMessage( Darmok.messenger.playerError( "Can't find a player with that name." ) );
+            		return;
+            	}
+            	
+            	// Get the channel
+            	Channel channel = Darmok.getChannelRegistry().getChannel( call.getArg(2) );
+            	if( channel == null ){
+            		call.getPlayer().sendMessage( Darmok.messenger.playerError( "Channel '"+call.getArg(1)+"' does not exist." ) );
+            		return;
+            	}
+            	
+            	try {
+					ChannelPermissions.playerCanForce( call.getPlayer(), channel );
+				} catch (ChannelPermissionException e1) {
+					call.getPlayer().sendMessage( Darmok.messenger.playerError( e1.getMessage() ) );
+            		return;
+				}
+            	
+            	Darmok.getPlayerRegistry().getPlayerChannels( player ).setDefault( channel );
+            	
+            	player.sendMessage( Darmok.messenger.playerError( "A moderator has forced you into the "+channel.getName()+" channel." ) );
+            	call.getPlayer().sendMessage( Darmok.messenger.playerHeaderMsg( "You have forced "+player.getName()+" into the "+channel.getName()+" channel." ) );
+            	
+            	// @todo alert other players in this channel that they left
+            	
+            }
+		});
+		
 	
 		/**
 		 * /ch join 

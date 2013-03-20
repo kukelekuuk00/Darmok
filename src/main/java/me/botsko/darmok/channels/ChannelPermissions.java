@@ -77,6 +77,21 @@ public class ChannelPermissions {
 	
 	
 	/**
+	 * Can the player force another user to change channels
+	 * @param player
+	 * @param channel
+	 * @return
+	 * @throws ChannelPermissionException 
+	 */
+	public static boolean playerCanForce( Player player, Channel channel ) throws ChannelPermissionException {
+		if( player.hasPermission( "darmok.mod" ) ){
+			throw new ChannelPermissionException("Insufficient permission to force a player into this channel.");
+		}
+		return false;
+	}
+	
+	
+	/**
 	 * 
 	 * @param player
 	 * @param channel
