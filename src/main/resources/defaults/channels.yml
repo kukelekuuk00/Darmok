@@ -32,6 +32,6 @@ town:
 nation:
     command: n
     range: -1
-    color: '&2'
+    color: '&9'
     format: ''
     context: towny-nation

@@ -16,6 +16,7 @@ import me.botsko.darmok.commands.DarmokCommands;
 import me.botsko.darmok.exceptions.JoinChannelException;
 import me.botsko.darmok.exceptions.ChannelPermissionException;
 import me.botsko.darmok.listeners.DarmokPlayerListener;
+import me.botsko.darmok.metrics.Metrics;
 import me.botsko.darmok.players.PlayerChannels;
 import me.botsko.darmok.players.PlayerRegistry;
 import net.milkbowl.vault.chat.Chat;
@@ -79,14 +80,12 @@ public class Darmok extends JavaPlugin {
 		// Load configuration, or install if new
 		loadConfig();
 
-//		if( getConfig().getBoolean("darmok.allow-metrics") ){
-//			try {
-//			    Metrics metrics = new Metrics(this);
-//			    metrics.start();
-//			} catch (IOException e) {
-//			    log("MCStats submission failed.");
-//			}
-//		}
+		try {
+		    Metrics metrics = new Metrics(this);
+		    metrics.start();
+		} catch (IOException e) {
+		    log("MCStats submission failed.");
+		}
 
 		if(isEnabled()){
 			
