@@ -1,5 +1,6 @@
 package me.botsko.darmok.chatter;
 
+import java.util.HashMap;
 import java.util.List;
 
 import me.botsko.darmok.Darmok;
@@ -17,7 +18,12 @@ import com.palmergames.bukkit.towny.object.TownyUniverse;
 
 public class Chatter {
 	
+	/**
+	 * 
+	 */
 	protected Darmok plugin;
+	
+	protected HashMap<Player,Long> messageTimestamps = new HashMap<Player,Long>();
 	
 	
 	/**
@@ -171,8 +177,30 @@ public class Chatter {
 	 * @return
 	 */
 	private boolean isPlayerSpamming( Player player ){
-		// @todo implement me
+		
+		if( !plugin.getConfig().getBoolean("darmok.spam-prevention.enabled") ){
+			return false;
+		}
+
+		int secondBetween = plugin.getConfig().getInt("darmok.spam-prevention.min-seconds-between-msg");
+		long currentTime = System.currentTimeMillis();
+		long spam = currentTime;
+
+		if ( messageTimestamps.containsKey(player) ){
+			spam = messageTimestamps.get(player);
+			messageTimestamps.remove(player);
+		} else {
+			spam -= ((secondBetween + 1)*1000);
+		}
+
+		messageTimestamps.put( player, currentTime );
+
+		if (currentTime - spam < (secondBetween*1000)){
+			return true;
+		}
+		
 		return false;
+	
 	}
 	
 

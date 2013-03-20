@@ -48,7 +48,7 @@ mv /tmp/plugin-old.yml src/main/resources/plugin.yml
 mv target/darmok-nightly.jar target/Darmok-$name.jar
 
 # send file to amazon bucket
-#s3cmd put --acl-public target/Darmok-$name.jar s3://botsko/Darmok/Darmok-$name.jar
+s3cmd put --acl-public target/Darmok-$name.jar s3://botsko/Darmok/Darmok-$name.jar
 
 # Create a new version file
 echo $name > versions.txt
