@@ -24,21 +24,23 @@ public class DarmokCommands extends Executor {
 	 */
 	private void setupCommands() {
 		
-//		final Darmok darmok = (Darmok) plugin;
+		final Darmok darmok = (Darmok) plugin;
 	
 		
-//		/**
-//		 * /darmok 
-//		 */
-//		addSub("", "darmok")
-//		.allowConsole()
-//		.setHandler(new SubHandler() {
-//            public void handle(CallInfo call){
-//            	
-//            	
-//            	
-//            }
-//		});
+		/**
+		 * /darmok reload
+		 */
+		addSub("reload", "prism.reload")
+		.allowConsole()
+		.setHandler(new SubHandler() {
+            public void handle(CallInfo call){
+            	darmok.unloadChannels();
+            	darmok.reloadConfig();
+            	Darmok.config = plugin.getConfig();
+            	darmok.loadChannelsForAllPlayers();
+				call.getSender().sendMessage( Darmok.messenger.playerHeaderMsg("Configuration reloaded successfully.") );
+            }
+		});
 
 		
 		/**

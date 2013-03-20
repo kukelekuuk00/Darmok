@@ -12,6 +12,7 @@ import me.botsko.darmok.channels.ChannelRegistry;
 import me.botsko.darmok.chatter.Censor;
 import me.botsko.darmok.chatter.Chatter;
 import me.botsko.darmok.commands.ChannelCommands;
+import me.botsko.darmok.commands.DarmokCommands;
 import me.botsko.darmok.exceptions.JoinChannelException;
 import me.botsko.darmok.exceptions.ChannelPermissionException;
 import me.botsko.darmok.listeners.DarmokPlayerListener;
@@ -104,14 +105,11 @@ public class Darmok extends JavaPlugin {
 			getServer().getPluginManager().registerEvents(new DarmokPlayerListener(this), this);
 			
 			// Add commands
-//			getCommand("darmok").setExecutor( (CommandExecutor) new DarmokCommands(this) );
+			getCommand("darmok").setExecutor( (CommandExecutor) new DarmokCommands(this) );
 			getCommand("ch").setExecutor( (CommandExecutor) new ChannelCommands(this) );
 			
+			loadChannelsForAllPlayers();
 			
-			// Load all channels for any online players (on reload)
-			for( Player pl : getServer().getOnlinePlayers() ){
-				loadChannelSettingsForPlayer( pl );
-			}
 		}
 	}
 
@@ -436,17 +434,34 @@ public class Darmok extends JavaPlugin {
 	
 	
 	/**
-	 * Shutdown
+	 * 
 	 */
-	@Override
-	public void onDisable(){
-		
+	public void loadChannelsForAllPlayers(){
+		// Load all channels for any online players (on reload)
+		for( Player pl : getServer().getOnlinePlayers() ){
+			loadChannelSettingsForPlayer( pl );
+		}
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public void unloadChannels(){
 		// Save and unload all channels for any online players
 		for( Player pl : getServer().getOnlinePlayers() ){
 			saveChannelSettingsForPlayer( pl );
 			unloadChannelSettingsForPlayer( pl );
 		}
-					
+	}
+	
+	
+	/**
+	 * Shutdown
+	 */
+	@Override
+	public void onDisable(){
+		unloadChannels();
 		this.log("Closing plugin.");	
 	}
 }
