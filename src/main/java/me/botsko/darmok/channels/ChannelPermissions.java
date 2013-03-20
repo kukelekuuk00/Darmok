@@ -84,7 +84,7 @@ public class ChannelPermissions {
 	 * @throws ChannelPermissionException 
 	 */
 	public static boolean playerCanForce( Player player, Channel channel ) throws ChannelPermissionException {
-		if( player.hasPermission( "darmok.mod" ) ){
+		if( !player.hasPermission( "darmok.mod" ) ){
 			throw new ChannelPermissionException("Insufficient permission to force a player into this channel.");
 		}
 		return false;
