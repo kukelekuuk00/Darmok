@@ -108,7 +108,17 @@ public class Chatter {
 					playersToMessage = TownyUniverse.getOnlinePlayers( resident.getTown() );
 				}
 			} catch (NotRegisteredException e) {
-//				e.printStackTrace();
+			}
+		}
+		// If towny nation context, get online residents of town
+		if( Darmok.getTowny() != null && channel.getContext() != null && channel.getContext().equals("towny-nation") ){
+			try {
+				Resident resident = TownyUniverse.getDataSource().getResident( player.getName() );
+				if( resident.hasTown() ){
+					plugin.debug("Player belongs to nation, loading online residents");
+					playersToMessage = TownyUniverse.getOnlinePlayers( resident.getTown().getNation() );
+				}
+			} catch (NotRegisteredException e) {
 			}
 		}
 			

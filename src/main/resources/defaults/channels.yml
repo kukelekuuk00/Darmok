@@ -18,9 +18,20 @@ staff:
     range: -1
     color: '&a'
     format: ''
+admin:
+    command: a
+    range: -1
+    color: '&e'
+    format: ''
 town:
     command: tc
     range: -1
     color: '&b'
     format: ''
     context: towny-town
+nation:
+    command: n
+    range: -1
+    color: '&2'
+    format: ''
+    context: towny-nation
