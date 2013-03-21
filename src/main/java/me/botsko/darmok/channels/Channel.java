@@ -4,6 +4,7 @@ import java.util.Hashtable;
 import java.util.Map.Entry;
 
 import me.botsko.darmok.Darmok;
+import net.milkbowl.vault.chat.Chat;
 
 import org.bukkit.entity.Player;
 import org.bukkit.ChatColor;
@@ -133,8 +134,13 @@ public class Channel {
 	 */
 	public String formatMessage( Player player, String msg ){
 		
-		String prefix = Darmok.getVaultChat().getPlayerPrefix(player);
-		String suffix = Darmok.getVaultChat().getPlayerSuffix(player);
+		String prefix = "";
+		String suffix = "";
+		Chat vaultChat = Darmok.getVaultChat();
+		if( vaultChat != null ){
+			prefix = Darmok.getVaultChat().getPlayerPrefix(player);
+			suffix = Darmok.getVaultChat().getPlayerSuffix(player);
+		}
 
 		Hashtable<String,String> headVal = new Hashtable<String,String>();
 		headVal.put("color", color );

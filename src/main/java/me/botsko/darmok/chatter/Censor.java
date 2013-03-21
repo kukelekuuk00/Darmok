@@ -13,8 +13,14 @@ public class Censor {
 	 */
 	protected HashMap<String,String> leet = new HashMap<String,String>();
 	
+	/**
+	 * 
+	 */
 	private final List<String> rejectWords;
 	
+	/**
+	 * 
+	 */
 	private final List<String> censorWords;
 	
 	
