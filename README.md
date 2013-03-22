@@ -11,7 +11,7 @@ Darmok was designed to feel very similar to existing chat plugins, but it packs 
 - Per-channel permissions for read and speak let you control who sees and who can talk to a channel.
 - Permissions to allow players to auto-join, or have channels automatically set as default
 - Abides by the Essentials /mute command
-- Towny integration. Duplicates the TownyChat town chat or nation chat commands
+- Towny integration (optional). Duplicates the town chat or nation chat commands
 - Players may join/leave a channel if the channel permissions allow it
 - Moderators may force players into a specific channel
 - Moderators may kick players from a channel

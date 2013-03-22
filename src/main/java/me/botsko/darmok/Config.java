@@ -31,7 +31,7 @@ public class Config extends ConfigBase {
 		config.addDefault("darmok.channel.default-channel", "g");
 		
 		config.addDefault("darmok.spam-prevention.enabled", true);
-		config.addDefault("darmok.spam-prevention.min-seconds-between-msg", 2);
+		config.addDefault("darmok.spam-prevention.min-seconds-between-msg", 1);
 
 		config.addDefault("darmok.censors.caps.enabled", false);
 		config.addDefault("darmok.censors.caps.min-length", 15);
