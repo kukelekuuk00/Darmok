@@ -5,10 +5,6 @@ import me.botsko.darmok.exceptions.ChannelPermissionException;
 
 import org.bukkit.entity.Player;
 
-import com.palmergames.bukkit.towny.exceptions.NotRegisteredException;
-import com.palmergames.bukkit.towny.object.Resident;
-import com.palmergames.bukkit.towny.object.TownyUniverse;
-
 public class ChannelPermissions {
 	
 	
@@ -66,7 +62,7 @@ public class ChannelPermissions {
 		
 		// If a town channel, make sure they have a town
 		if( Darmok.getTowny() != null && channel.getContext() != null && channel.getContext().equals("towny-town") ){
-			if( !playerHasTown( player ) ){
+			if( !Darmok.getTownyBridge().playerHasTown( player ) ){
 				throw new ChannelPermissionException("Player does not have a town.");
 			}
 		}
@@ -113,7 +109,7 @@ public class ChannelPermissions {
 		
 		// If a town channel, make sure they have a town
 		if( Darmok.getTowny() != null && channel.getContext() != null && channel.getContext().equals("towny-town") ){
-			if( !playerHasTown( player ) ){
+			if( !Darmok.getTownyBridge().playerHasTown( player ) ){
 				throw new ChannelPermissionException("Player does not have a town.");
 			}
 		}
@@ -176,7 +172,7 @@ public class ChannelPermissions {
 		
 		// If a town channel, make sure they have a town
 		if( Darmok.getTowny() != null && channel.getContext() != null && channel.getContext().equals("towny-town") ){
-			if( !playerHasTown( player ) ){
+			if( !Darmok.getTownyBridge().playerHasTown( player ) ){
 				throw new ChannelPermissionException("Player does not have a town.");
 			}
 		}
@@ -208,27 +204,11 @@ public class ChannelPermissions {
 		
 		// If a town channel, make sure they have a town
 		if( Darmok.getTowny() != null && channel.getContext() != null && channel.getContext().equals("towny-town") ){
-			if( !playerHasTown( player ) ){
+			if( !Darmok.getTownyBridge().playerHasTown( player ) ){
 				throw new ChannelPermissionException("Player does not have a town.");
 			}
 		}
 		
 		return true;
-	}
-	
-	
-	/**
-	 * 
-	 * @param player
-	 * @param channel
-	 * @return
-	 */
-	public static boolean playerHasTown( Player player ){
-		try {
-			Resident resident = TownyUniverse.getDataSource().getResident( player.getName() );
-			return resident.hasTown();
-		} catch (NotRegisteredException e) {
-		}
-		return false;
 	}
 }

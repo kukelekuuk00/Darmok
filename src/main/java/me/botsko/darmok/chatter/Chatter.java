@@ -12,9 +12,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import com.earth2me.essentials.User;
-import com.palmergames.bukkit.towny.exceptions.NotRegisteredException;
-import com.palmergames.bukkit.towny.object.Resident;
-import com.palmergames.bukkit.towny.object.TownyUniverse;
 
 public class Chatter {
 	
@@ -23,6 +20,9 @@ public class Chatter {
 	 */
 	protected Darmok plugin;
 	
+	/**
+	 * 
+	 */
 	protected HashMap<Player,Long> messageTimestamps = new HashMap<Player,Long>();
 	
 	
@@ -107,25 +107,11 @@ public class Chatter {
 		List<Player> playersToMessage = null;
 		// If towny town context, get online residents of town
 		if( Darmok.getTowny() != null && channel.getContext() != null && channel.getContext().equals("towny-town") ){
-			try {
-				Resident resident = TownyUniverse.getDataSource().getResident( player.getName() );
-				if( resident.hasTown() ){
-					plugin.debug("Player belongs to town, loading online residents");
-					playersToMessage = TownyUniverse.getOnlinePlayers( resident.getTown() );
-				}
-			} catch (NotRegisteredException e) {
-			}
+			Darmok.getTownyBridge().getPlayersInPlayerTown(player);
 		}
 		// If towny nation context, get online residents of town
 		if( Darmok.getTowny() != null && channel.getContext() != null && channel.getContext().equals("towny-nation") ){
-			try {
-				Resident resident = TownyUniverse.getDataSource().getResident( player.getName() );
-				if( resident.hasTown() ){
-					plugin.debug("Player belongs to nation, loading online residents");
-					playersToMessage = TownyUniverse.getOnlinePlayers( resident.getTown().getNation() );
-				}
-			} catch (NotRegisteredException e) {
-			}
+			Darmok.getTownyBridge().getPlayersInPlayerNation(player);
 		}
 			
 		// Instead, just get all players in channel

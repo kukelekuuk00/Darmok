@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import me.botsko.darmok.bridge.DarmokTownyBridge;
 import me.botsko.darmok.channels.Channel;
 import me.botsko.darmok.channels.ChannelPermissions;
 import me.botsko.darmok.channels.ChannelRegistry;
@@ -54,6 +55,7 @@ public class Darmok extends JavaPlugin {
 	private static Essentials essentials = null;
 	private static Chat chat = null;
 	private static Towny towny = null;
+	private static DarmokTownyBridge townyBridge;
 	
 	/**
 	 * Public
@@ -138,6 +140,9 @@ public class Darmok extends JavaPlugin {
 			if(channel == null) continue;
 			
 			String format = config.getString("darmok.channel.default-format");
+			
+			// Skip towny channels if no towny
+			if( channel.getString("context") != null && channel.getString("context").contains("towny") && getTowny() == null ) continue;
 			
 			channelRegistry.registerChannel(
 					new Channel(
@@ -355,6 +360,7 @@ public class Darmok extends JavaPlugin {
 		if (townyTmp != null){
 			log("Connected with Towny");
 			towny = (Towny) townyTmp;
+			townyBridge = new DarmokTownyBridge();
 		}
 	}
 	
@@ -386,6 +392,15 @@ public class Darmok extends JavaPlugin {
 			return towny.getTownyUniverse();
 		}
 		return null;
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public static DarmokTownyBridge getTownyBridge(){
+		return townyBridge;
 	}
 
 	

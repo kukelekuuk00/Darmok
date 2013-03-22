@@ -15,6 +15,20 @@
 			<artifactId>Vault</artifactId>
 			<version>1.2.24-SNAPSHOT</version>
 		</dependency>
+		<dependency>
+			<groupId>com.palmergames</groupId>
+		   	<artifactId>Towny</artifactId>
+		   	<version>0.82.0.5</version>
+		   	<scope>system</scope>
+		   	<systemPath>${project.basedir}/../LIBS/Towny.jar</systemPath>
+		</dependency>
+		<dependency>
+		   <groupId>com.earth2me</groupId>
+		   <artifactId>Essentials</artifactId>
+		   <version>2.9.6</version>
+		   <scope>system</scope>
+		   <systemPath>${project.basedir}/../LIBS/Essentials.jar</systemPath>
+	   </dependency>
 	</dependencies>
 	<repositories>
 		<repository>
