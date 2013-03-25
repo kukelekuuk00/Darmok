@@ -107,7 +107,6 @@ public class Chatter {
 		// If towny town context, get online residents of town
 		if( Darmok.getTowny() != null && channel.getContext() != null && channel.getContext().equals("towny-town") ){
 			playersToMessage = Darmok.getTownyBridge().getPlayersInPlayerTown(player);
-			System.out.println("SETTING TOWN CONTEXT" + playersToMessage.size());
 		}
 		// If towny nation context, get online residents of town
 		if( Darmok.getTowny() != null && channel.getContext() != null && channel.getContext().equals("towny-nation") ){
