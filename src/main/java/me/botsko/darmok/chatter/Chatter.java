@@ -94,7 +94,6 @@ public class Chatter {
 		// Do they have permission to use colors?
 		if( !player.hasPermission("darmok.chatcolor") ){
 			msg = channel.stripColor( msg );
-			System.out.print("MESSAGE " + msg);
 		}
 		
 		// Format the final message
@@ -107,11 +106,12 @@ public class Chatter {
 		List<Player> playersToMessage = null;
 		// If towny town context, get online residents of town
 		if( Darmok.getTowny() != null && channel.getContext() != null && channel.getContext().equals("towny-town") ){
-			Darmok.getTownyBridge().getPlayersInPlayerTown(player);
+			playersToMessage = Darmok.getTownyBridge().getPlayersInPlayerTown(player);
+			System.out.println("SETTING TOWN CONTEXT" + playersToMessage.size());
 		}
 		// If towny nation context, get online residents of town
 		if( Darmok.getTowny() != null && channel.getContext() != null && channel.getContext().equals("towny-nation") ){
-			Darmok.getTownyBridge().getPlayersInPlayerNation(player);
+			playersToMessage = Darmok.getTownyBridge().getPlayersInPlayerNation(player);
 		}
 			
 		// Instead, just get all players in channel
