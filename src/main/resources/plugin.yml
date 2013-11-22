@@ -1,6 +1,6 @@
 name: darmok
 main: me.botsko.darmok.Darmok
-version: 1.0
+version: ${describe}
 softdepend: [Vault,Essentials,Towny]
 commands:
    darmok:

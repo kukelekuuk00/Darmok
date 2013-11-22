@@ -2,13 +2,13 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>me.botsko.darmok</groupId>
   <artifactId>darmok</artifactId>
-  <version>nightly</version>
+  <version>${describe}</version>
   <name>Darmok</name>
   <dependencies>
 		<dependency>
 			<groupId>org.bukkit</groupId>
 			<artifactId>bukkit</artifactId>
-			<version>1.5.1-R0.1-SNAPSHOT</version>
+			<version>1.6.4-R2.0</version>
 		</dependency>
 		<dependency>
 			<groupId>net.milkbowl.vault</groupId>
@@ -18,7 +18,7 @@
 		<dependency>
 			<groupId>com.palmergames</groupId>
 		   	<artifactId>Towny</artifactId>
-		   	<version>0.82.0.5</version>
+		   	<version>0.84.0.0</version>
 		   	<scope>system</scope>
 		   	<systemPath>${project.basedir}/../LIBS/Towny.jar</systemPath>
 		</dependency>
@@ -40,4 +40,53 @@
 			<url>http://ci.herocraftonline.com/plugin/repository/everything</url>
 		</repository>
 	</repositories>
+	<build>
+		<resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>**/*.yml</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+                <excludes>
+                    <exclude>**/*.yml</exclude>
+                </excludes>
+            </resource>
+        </resources>
+        <plugins>
+			<plugin>
+                <groupId>com.lukegb.mojo</groupId>
+                <artifactId>gitdescribe-maven-plugin</artifactId>
+                <version>1.3</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>gitdescribe</goal>
+                        </goals>
+                        <id>git-describe</id>
+                        <phase>initialize</phase>
+                        <configuration>
+                            <outputPrefix></outputPrefix>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+         </plugins>
+      </build>
+      <distributionManagement>
+	  <repository>
+	     <id>deployment</id>
+	     <name>Internal Releases</name>
+	     <url>http://dhmc.us:8081/nexus/content/repositories/releases/</url>
+	  </repository>
+	  <snapshotRepository>
+	     <id>deployment</id>
+	     <name>Internal Releases</name>
+	     <url>http://dhmc.us:8081/nexus/content/repositories/snapshots/</url>
+	  </snapshotRepository>
+	</distributionManagement>
 </project>
