@@ -128,9 +128,9 @@ public class ChannelPermissions {
 	public static boolean playerCanKick( Player player, Channel channel ) throws ChannelPermissionException{
 		String permPrefix = "darmok.channel." + channel.getName().toLowerCase() + ".";
 		if( player.hasPermission( permPrefix + "kick" ) || player.hasPermission( permPrefix + "ban" ) || player.hasPermission( "darmok.mod" ) ){
-			throw new ChannelPermissionException("Insufficient permission to kick a player from this channel.");
+			return true;
 		}
-		return false;
+		throw new ChannelPermissionException("Insufficient permission to kick a player from this channel.");
 	}
 	
 	
@@ -144,9 +144,9 @@ public class ChannelPermissions {
 	public static boolean playerCanLeave( Player player, Channel channel ) throws ChannelPermissionException{
 		String permPrefix = "darmok.channel." + channel.getName().toLowerCase() + ".";
 		if( player.hasPermission( permPrefix + "leave" ) ){
-			throw new ChannelPermissionException("Insufficient permission to leave this channel.");
+			return true;
 		}
-		return false;
+		throw new ChannelPermissionException("Insufficient permission to leave this channel.");
 	}
 	
 	

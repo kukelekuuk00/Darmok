@@ -165,6 +165,9 @@ public class PlayerChannels {
 	public void removeChannel( Channel channel ) throws LeaveChannelException{
 		if( channel != null ){
 			channels.remove( channel.getCommand() );
+			if( channels.size() > 0 ){
+				setDefault( Darmok.getChannelRegistry().getChannel( channels.get(0) ) );
+			}
 			return;
 		}
 		throw new LeaveChannelException("Removing channel player is not subscribed to.");
