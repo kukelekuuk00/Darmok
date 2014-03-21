@@ -51,11 +51,7 @@ public class DarmokCommands extends Executor {
 		.setHandler(new SubHandler() {
             public void handle(CallInfo call) {
             	call.getSender().sendMessage( Darmok.messenger.playerHeaderMsg( "Welcome to Darmok - By Viveleroi" ) );
-            	call.getSender().sendMessage( Darmok.messenger.playerHelp("order","[quant] [item] [price]", "Order [quant] items for payment of [price]."));
-            	call.getSender().sendMessage( Darmok.messenger.playerHelp("order","cancel [id]", "Cancel an order that has no delivery"));
-            	call.getSender().sendMessage( Darmok.messenger.playerHelp("order","deliver [id]", "Deliver items requested by an order."));
-            	call.getSender().sendMessage( Darmok.messenger.playerHelp("order","claim [id]", "Claim delivered items if you were offline"));
-            	call.getSender().sendMessage( Darmok.messenger.playerHelp("order","list", "List all unfulfilled orders"));
+            	call.getSender().sendMessage( Darmok.messenger.playerHelp("darmok reload","Configuration reloaded successfully."));
             }
 		});
 	}
