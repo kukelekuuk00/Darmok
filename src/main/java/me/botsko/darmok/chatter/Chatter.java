@@ -7,6 +7,9 @@ import me.botsko.darmok.Darmok;
 import me.botsko.darmok.channels.Channel;
 import me.botsko.darmok.channels.ChannelPermissions;
 import me.botsko.darmok.exceptions.ChannelPermissionException;
+import me.botsko.darmok.link.DarmokUser;
+import me.botsko.darmok.link.LocalUser;
+import me.botsko.darmok.link.RemoteUser;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -23,7 +26,7 @@ public class Chatter {
 	/**
 	 * 
 	 */
-	protected HashMap<Player,Long> messageTimestamps = new HashMap<Player,Long>();
+	protected HashMap<DarmokUser,Long> messageTimestamps = new HashMap<DarmokUser,Long>();
 	
 	
 	/**
@@ -41,24 +44,24 @@ public class Chatter {
 	 * @param channel
 	 * @param msg
 	 */
-	public void send( Player player, Channel channel, String msg ){
+	public void send( DarmokUser user, Channel channel, String msg ){
 		
 		// Not spamming are you?
-		if( isPlayerSpamming( player ) ){
-			player.sendMessage( Darmok.messenger.playerError("Can the spam man!") );
+		if( isPlayerSpamming( user ) ){
+		    user.sendMessage( Darmok.messenger.playerError("Can the spam man!") );
 			return;
 		}
 		
 		try {
-			ChannelPermissions.playerCanSpeak( player, channel );
+			ChannelPermissions.playerCanSpeak( user, channel );
 		} catch (ChannelPermissionException e1) {
-			player.sendMessage( Darmok.messenger.playerError( e1.getMessage() ) );
+		    user.sendMessage( Darmok.messenger.playerError( e1.getMessage() ) );
 			return;
 		}
 		
 		// Muted?
-		if( isPlayerMuted( player ) ){
-			player.sendMessage( Darmok.messenger.playerError("You've been muted in this channel, sorry.") );
+		if( isPlayerMuted( user ) ){
+		    user.sendMessage( Darmok.messenger.playerError("You've been muted in this channel, sorry.") );
 			return;
 		}
 		
@@ -78,7 +81,7 @@ public class Chatter {
 		if( plugin.getConfig().getBoolean("darmok.censors.profanity.enabled") ){
 			if( Darmok.getCensor().containsSuspectedProfanity( msg ) ){
 				
-				player.sendMessage( Darmok.messenger.playerError("Profanity or trying to bypass the censor is not allowed. Sorry if this is a false catch.") );
+			    user.sendMessage( Darmok.messenger.playerError("Profanity or trying to bypass the censor is not allowed. Sorry if this is a false catch.") );
 				
 //				String alert_msg = player.getName() + "'s message was blocked for profanity.";
 //				plugin.alertPlayers(alert_msg);
@@ -92,26 +95,18 @@ public class Chatter {
 		}
 		
 		// Do they have permission to use colors?
-		if( !player.hasPermission("darmok.chatcolor") ){
+		if( !user.hasPermission("darmok.chatcolor") ){
 			msg = channel.stripColor( msg );
 		}
 		
 		// Format the final message
-		msg = channel.formatMessage( player, msg );
+		String frm_msg = channel.formatMessage( user, msg );
 		
 		/**
 		 * Build a list of all players we think we should be
 		 * messaging.
 		 */
-		List<Player> playersToMessage = null;
-		// If towny town context, get online residents of town
-		if( Darmok.getTowny() != null && channel.getContext() != null && channel.getContext().equals("towny-town") ){
-			playersToMessage = Darmok.getTownyBridge().getPlayersInPlayerTown(player);
-		}
-		// If towny nation context, get online residents of town
-		if( Darmok.getTowny() != null && channel.getContext() != null && channel.getContext().equals("towny-nation") ){
-			playersToMessage = Darmok.getTownyBridge().getPlayersInPlayerNation(player);
-		}
+		List<DarmokUser> playersToMessage = null;
 			
 		// Instead, just get all players in channel
 		if( playersToMessage == null ){
@@ -119,39 +114,81 @@ public class Chatter {
 		}
 		
 		
-		// Message players if in range
-		for( Player pl : playersToMessage ){
-			
-			int range = channel.getRange();
-
-			// Does range matter?
-			if( range > -1 ){
-				// if 0, check worlds match
-				if( range == 0 && !player.getWorld().equals( pl.getWorld() ) ){
-					continue;
-				}
-				// otherwise, it's a distance
-				else if( !player.getWorld().equals( pl.getWorld() ) || player.getLocation().distance( pl.getLocation() ) > range ){
-					continue;
-				}
-			}
-			
-			// Player is in range.
-			
-			// Ensure they have permission to READ
-			try {
-				ChannelPermissions.playerCanRead( player, channel );
-			} catch (ChannelPermissionException e) {
-				return;
-			}
-
-			// All checks are GO for launch
-			pl.sendMessage( msg );
-			
-		}
+		if( user instanceof RemoteUser ){
+            RemoteUser remote = (RemoteUser) user;
+            // Use raw message, recipient handles formatting
+            remote.writeToChannel(user, channel, msg);
+        } else {
+            
+            LocalUser local = (LocalUser) user;
+            
+            Player player = null;
+            if( local.getSender() instanceof Player ){
+                player = (Player) local.getSender();
+            }
+            
+            if( player != null ){
+            
+                // If towny town context, get online residents of town
+                if( Darmok.getTowny() != null && channel.getContext() != null && channel.getContext().equals("towny-town") ){
+                    List<Player> townyPlayers = Darmok.getTownyBridge().getPlayersInPlayerTown(player);
+                    for( Player townyPlayer : townyPlayers ){
+                        playersToMessage.add( new LocalUser(townyPlayer) );
+                    }
+                }
+                // If towny nation context, get online residents of town
+                if( Darmok.getTowny() != null && channel.getContext() != null && channel.getContext().equals("towny-nation") ){
+                    List<Player> townyPlayers = Darmok.getTownyBridge().getPlayersInPlayerNation(player);
+                    for( Player townyPlayer : townyPlayers ){
+                        playersToMessage.add( new LocalUser(townyPlayer) );
+                    }
+                }
+    		
+        		// Message players if in range
+        		for( DarmokUser sendToUser : playersToMessage ){
+        		    
+        		    if( sendToUser instanceof RemoteUser ) continue;
+        		    
+        		    Player pl = null;
+        		    LocalUser localUser = (LocalUser) sendToUser;
+                    if( localUser.getSender() instanceof Player ){
+                        pl = (Player) localUser.getSender();
+                    }
+                    
+                    if( pl == null ) continue;
+        			
+        			int range = channel.getRange();
+        
+        			// Does range matter?
+        			if( range > -1 ){
+        				// if 0, check worlds match
+        				if( range == 0 && !player.getWorld().equals( pl.getWorld() ) ){
+        					continue;
+        				}
+        				// otherwise, it's a distance
+        				else if( !player.getWorld().equals( pl.getWorld() ) || player.getLocation().distance( pl.getLocation() ) > range ){
+        					continue;
+        				}
+        			}
+        			
+        			// Player is in range.
+        			
+        			// Ensure they have permission to READ
+        			try {
+        				ChannelPermissions.playerCanRead( localUser, channel );
+        			} catch (ChannelPermissionException e) {
+        				return;
+        			}
+        
+        			// All checks are GO for launch
+        			pl.sendMessage( frm_msg );
+        			
+        		}
+            }
+        }
 		
 		// log to console
-		Bukkit.getServer().getConsoleSender().sendMessage(msg);
+		Bukkit.getServer().getConsoleSender().sendMessage(frm_msg);
 		
 	}
 	
@@ -161,7 +198,7 @@ public class Chatter {
 	 * @param player
 	 * @return
 	 */
-	private boolean isPlayerSpamming( Player player ){
+	private boolean isPlayerSpamming( DarmokUser user ){
 		
 		if( !plugin.getConfig().getBoolean("darmok.spam-prevention.enabled") ){
 			return false;
@@ -171,14 +208,14 @@ public class Chatter {
 		long currentTime = System.currentTimeMillis();
 		long spam = currentTime;
 
-		if ( messageTimestamps.containsKey(player) ){
-			spam = messageTimestamps.get(player);
-			messageTimestamps.remove(player);
+		if ( messageTimestamps.containsKey(user) ){
+			spam = messageTimestamps.get(user);
+			messageTimestamps.remove(user);
 		} else {
 			spam -= ((secondBetween + 1)*1000);
 		}
 
-		messageTimestamps.put( player, currentTime );
+		messageTimestamps.put( user, currentTime );
 
 		if (currentTime - spam < (secondBetween*1000)){
 			return true;
@@ -194,10 +231,14 @@ public class Chatter {
 	 * @param player
 	 * @return
 	 */
-	private boolean isPlayerMuted( Player player ){
+	private boolean isPlayerMuted( DarmokUser user ){
+	    if( !(user instanceof LocalUser) ) return false;
+	    LocalUser local = (LocalUser) user;
+	    if( !(local.getSender() instanceof Player) ) return false;
 		if( Darmok.getEssentials() != null ){
-			User user = Darmok.getEssentials().getUser(player);
-			if( user != null && user.isMuted() ){
+		    Player player = (Player) local.getSender();
+			User essUser = Darmok.getEssentials().getUser(player);
+			if( essUser != null && essUser.isMuted() ){
 				return true;
 			}
 		}

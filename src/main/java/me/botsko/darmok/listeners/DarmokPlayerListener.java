@@ -3,6 +3,9 @@ package me.botsko.darmok.listeners;
 import me.botsko.darmok.Darmok;
 import me.botsko.darmok.channels.Channel;
 import me.botsko.darmok.exceptions.JoinChannelException;
+import me.botsko.darmok.link.DarmokUser;
+import me.botsko.darmok.link.LocalUser;
+import me.botsko.darmok.link.RemoteUser;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.entity.Player;
@@ -35,7 +38,7 @@ public class DarmokPlayerListener implements Listener {
 	@EventHandler(priority = EventPriority.LOW)
 	public void onPlayerJoin(final PlayerJoinEvent event){
 		Player player = event.getPlayer();
-		plugin.loadChannelSettingsForPlayer( player );
+		plugin.loadChannelSettingsForPlayer( new LocalUser(player) );
 	}
 
 	
@@ -45,8 +48,9 @@ public class DarmokPlayerListener implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.LOW)
 	public void onPlayerQuit(final PlayerQuitEvent event){
-		plugin.saveChannelSettingsForPlayer( event.getPlayer() );
-		Darmok.unloadChannelSettingsForPlayer( event.getPlayer() );
+	    LocalUser local = new LocalUser(event.getPlayer());
+		plugin.saveChannelSettingsForPlayer( local );
+		Darmok.unloadChannelSettingsForPlayer( local );
 	}
 
 	
@@ -56,10 +60,19 @@ public class DarmokPlayerListener implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event){
+		event.setCancelled(true);
+		onUserCommandPreprocess( new LocalUser(event.getPlayer()), event.getMessage());
+	}
+	
+	
+	/**
+	 * 
+	 * @param user
+	 * @param msg
+	 */
+	public void onUserCommandPreprocess(DarmokUser user, String msg){
 		
-		Player player = event.getPlayer();
-
-		String cmdArgs[] = event.getMessage().split("\\ ");
+		String cmdArgs[] = msg.split("\\ ");
 		String primaryCmd = cmdArgs[0].trim().toLowerCase().replace("/", "");
 		
 		// Does channel exist?
@@ -67,18 +80,17 @@ public class DarmokPlayerListener implements Listener {
 		if( channel != null ){
 			
 			// Are they in the channel?
-			if( ! Darmok.getPlayerRegistry().getPlayerChannels( player ).inChannel( channel ) ){
+			if( !(user instanceof RemoteUser) && ! Darmok.getPlayerRegistry().getPlayerChannels( user ).inChannel( channel ) ){
 				plugin.debug("Trying to auto-join player to " + channel.getName());
 				
 				try {
-					Darmok.getPlayerRegistry().getPlayerChannels( player ).joinChannel( channel );
+					Darmok.getPlayerRegistry().getPlayerChannels( user ).joinChannel( channel );
 				} catch (JoinChannelException e) {
-					player.sendMessage( Darmok.messenger.playerError( e.getMessage() ) );
-					event.setCancelled(true);
+				    user.sendMessage( Darmok.messenger.playerError( e.getMessage() ) );
 					return;
 				}
 
-				player.sendMessage( Darmok.messenger.playerSubduedHeaderMsg("Auto-joining channel " + channel.getName() + "..." ) );
+				user.sendMessage( Darmok.messenger.playerSubduedHeaderMsg("Auto-joining channel " + channel.getName() + "..." ) );
 			}
 			
 			// if message actually sent
@@ -92,20 +104,16 @@ public class DarmokPlayerListener implements Listener {
 				String message = StringUtils.join( messageArgs, " ");
 				
 				// Chat!
-				Darmok.getChatter().send( player, channel, message );
+				Darmok.getChatter().send( user, channel, message );
 			
-			} else {
-				plugin.debug( "Setting " + player.getName() + "'s default channel to " + channel.getName() );
-				if( Darmok.getPlayerRegistry().getPlayerChannels( player ).setDefault( channel ) ){
-					player.sendMessage( Darmok.messenger.playerHeaderMsg("Default channel switched to " + channel.getName() ) );
+			} else if(!(user instanceof RemoteUser)) {
+				plugin.debug( "Setting " + user.getName() + "'s default channel to " + channel.getName() );
+				if( Darmok.getPlayerRegistry().getPlayerChannels( user ).setDefault( channel ) ){
+				    user.sendMessage( Darmok.messenger.playerHeaderMsg("Default channel switched to " + channel.getName() ) );
 				} else {
-					player.sendMessage( Darmok.messenger.playerError("Failed setting channel as default. Are you allowed?") );
+				    user.sendMessage( Darmok.messenger.playerError("Failed setting channel as default. Are you allowed?") );
 				}
 			}
-			
-			event.setCancelled(true);
-			return;
-			
 		}
 		// it's not our command, ignore it
 	}
@@ -118,19 +126,19 @@ public class DarmokPlayerListener implements Listener {
 	@EventHandler(priority = EventPriority.LOW)
 	public void onPlayerChat(AsyncPlayerChatEvent event){
 		
-		Player player = event.getPlayer();
+		LocalUser user = new LocalUser(event.getPlayer());
 		
 		// Get the current default channel
-		Channel channel = Darmok.getPlayerRegistry().getPlayerChannels(player).getDefault();
+		Channel channel = Darmok.getPlayerRegistry().getPlayerChannels(user).getDefault();
 		
 		// Reset their default
 		if( channel == null ){
-			channel = plugin.resetDefaultChannelForPlayer( player );
+			channel = plugin.resetDefaultChannelForPlayer( user );
 		}
 		
 		if( channel != null ){
-			plugin.debug("Found default channel " + channel.getName() + " for " + player.getName());
-			Darmok.getChatter().send( player, channel, event.getMessage() );
+			plugin.debug("Found default channel " + channel.getName() + " for " + user.getName());
+			Darmok.getChatter().send( user, channel, event.getMessage() );
 			event.setCancelled(true);
 		}
 	}

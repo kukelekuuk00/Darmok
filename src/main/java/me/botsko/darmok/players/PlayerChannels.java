@@ -2,21 +2,20 @@ package me.botsko.darmok.players;
 
 import java.util.ArrayList;
 
-import org.bukkit.entity.Player;
-
 import me.botsko.darmok.Darmok;
 import me.botsko.darmok.channels.Channel;
 import me.botsko.darmok.channels.ChannelPermissions;
 import me.botsko.darmok.exceptions.JoinChannelException;
 import me.botsko.darmok.exceptions.LeaveChannelException;
 import me.botsko.darmok.exceptions.ChannelPermissionException;
+import me.botsko.darmok.link.DarmokUser;
 
 public class PlayerChannels {
 	
 	/**
 	 * 
 	 */
-	private Player player;
+	private DarmokUser player;
 	
 	
 	/**
@@ -35,7 +34,7 @@ public class PlayerChannels {
 	 * 
 	 * @param player
 	 */
-	public PlayerChannels( Player player ){
+	public PlayerChannels( DarmokUser player ){
 		this.player = player;
 	}
 	

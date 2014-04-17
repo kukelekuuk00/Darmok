@@ -6,9 +6,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 
+import me.botsko.darmok.link.DarmokUser;
+import me.botsko.darmok.link.RemoteUser;
+
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 public class ConfigBase {
@@ -143,8 +145,9 @@ public class ConfigBase {
 	 * @param player
 	 * @return
 	 */
-	public FileConfiguration loadPlayerConfig( Player player ){
-		String filename = "/players/"+player.getName();
+	public FileConfiguration loadPlayerConfig( DarmokUser user ){
+	    if( user instanceof RemoteUser ) return null;
+		String filename = "/players/"+user.getName();
 		File file = getFilename( filename );
 		if(file.exists()){
 			return YamlConfiguration.loadConfiguration(file);

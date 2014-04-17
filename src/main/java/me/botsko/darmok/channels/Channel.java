@@ -4,6 +4,8 @@ import java.util.Hashtable;
 import java.util.Map.Entry;
 
 import me.botsko.darmok.Darmok;
+import me.botsko.darmok.link.DarmokUser;
+import me.botsko.darmok.link.LocalUser;
 import net.milkbowl.vault.chat.Chat;
 
 import org.bukkit.entity.Player;
@@ -132,14 +134,25 @@ public class Channel {
 	 * @param msg
 	 * @return
 	 */
-	public String formatMessage( Player player, String msg ){
+	public String formatMessage( DarmokUser user, String msg ){
+	    
+	    Player player = null;
+	    if( user instanceof LocalUser){
+            LocalUser local = (LocalUser) user;
+            if( local.getSender() instanceof Player ){
+                player = (Player) local.getSender();
+            }
+        }
 		
 		String prefix = "";
 		String suffix = "";
-		Chat vaultChat = Darmok.getVaultChat();
-		if( vaultChat != null ){
-			prefix = Darmok.getVaultChat().getPlayerPrefix(player);
-			suffix = Darmok.getVaultChat().getPlayerSuffix(player);
+		
+		if( player != null ){
+		    Chat vaultChat = Darmok.getVaultChat();
+    		if( vaultChat != null ){
+    			prefix = Darmok.getVaultChat().getPlayerPrefix(player);
+    			suffix = Darmok.getVaultChat().getPlayerSuffix(player);
+    		}
 		}
 
 		Hashtable<String,String> headVal = new Hashtable<String,String>();

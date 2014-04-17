@@ -42,6 +42,11 @@ public class Config extends ConfigBase {
 //		config.addDefault("darmok.censors.fakecensor.enabled", true);
 //		config.addDefault("darmok.censors.fakecensor.string", "***");
 		
+		config.addDefault("darmok.link.hostname", false);
+		config.addDefault("darmok.link.port", 23397);
+		config.addDefault("darmok.link.password", "");
+		config.addDefault("darmok.link.ident", "server_identifier"); // one word.
+		
 		// Copy defaults
 		config.options().copyDefaults(true);
 		

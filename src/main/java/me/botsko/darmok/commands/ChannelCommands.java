@@ -13,6 +13,9 @@ import me.botsko.darmok.commandlibs.SubHandler;
 import me.botsko.darmok.exceptions.JoinChannelException;
 import me.botsko.darmok.exceptions.LeaveChannelException;
 import me.botsko.darmok.exceptions.ChannelPermissionException;
+import me.botsko.darmok.link.DarmokUser;
+import me.botsko.darmok.link.RemoteUser;
+import me.botsko.darmok.link.LocalUser;
 import me.botsko.darmok.players.PlayerChannels;
 
 
@@ -50,12 +53,20 @@ public class ChannelCommands extends Executor {
             		return;
             	}
             	
-            	// Get the player
-            	Player player = darmok.getServer().getPlayer( call.getArg(1) );
-            	if( player == null ){
-            		call.getPlayer().sendMessage( Darmok.messenger.playerError( "Can't find a player with that name." ) );
-            		return;
-            	}
+            	LocalUser sender = new LocalUser(call.getSender());
+            	
+            	DarmokUser player;
+                // Get the player
+                if(call.getArg(1).contains("@")){
+                    player = new RemoteUser(call.getArg(1));
+                } else {
+                    Player bukkitPlayer = darmok.getServer().getPlayer( call.getArg(1) );
+                    if( bukkitPlayer == null ){
+                        call.getPlayer().sendMessage( Darmok.messenger.playerError( "Can't find a player with that name." ) );
+                        return;
+                    }
+                    player = new LocalUser( bukkitPlayer );
+                }
             	
             	// Get the channel
             	Channel channel = Darmok.getChannelRegistry().getChannel( call.getArg(2) );
@@ -66,13 +77,13 @@ public class ChannelCommands extends Executor {
             	
             	
             	try {
-					ChannelPermissions.playerCanBan( call.getPlayer(), channel );
+					ChannelPermissions.playerCanBan( sender, channel );
 				} catch (ChannelPermissionException e) {
 					call.getPlayer().sendMessage( Darmok.messenger.playerError( e.getMessage() ) );
             		return;
 				}
             	
-            	Darmok.getPlayerRegistry().banFromChannel( player, channel );
+            	Darmok.getPlayerRegistry().banFromChannel( sender, player, channel );
             	
             	player.sendMessage( Darmok.messenger.playerError( "You have been banned from the "+channel.getName()+" channel." ) );
             	call.getPlayer().sendMessage( Darmok.messenger.playerHeaderMsg( "You have banned "+player.getName()+" from the "+channel.getName()+" channel." ) );
@@ -96,6 +107,8 @@ public class ChannelCommands extends Executor {
             		return;
             	}
             	
+            	LocalUser sender = new LocalUser(call.getSender());
+            	
             	// Get the player
             	Player player = darmok.getServer().getPlayer( call.getArg(1) );
             	if( player == null ){
@@ -111,13 +124,13 @@ public class ChannelCommands extends Executor {
             	}
             	
             	try {
-					ChannelPermissions.playerCanForce( call.getPlayer(), channel );
+					ChannelPermissions.playerCanForce( sender, channel );
 				} catch (ChannelPermissionException e1) {
 					call.getPlayer().sendMessage( Darmok.messenger.playerError( e1.getMessage() ) );
             		return;
 				}
             	
-            	Darmok.getPlayerRegistry().getPlayerChannels( player ).setDefault( channel );
+            	Darmok.getPlayerRegistry().getPlayerChannels( new LocalUser(player) ).setDefault( channel );
             	
             	player.sendMessage( Darmok.messenger.playerError( "A moderator has forced you into the "+channel.getName()+" channel." ) );
             	call.getPlayer().sendMessage( Darmok.messenger.playerHeaderMsg( "You have forced "+player.getName()+" into the "+channel.getName()+" channel." ) );
@@ -141,6 +154,8 @@ public class ChannelCommands extends Executor {
             		return;
             	}
             	
+            	LocalUser sender = new LocalUser(call.getSender());
+            	
             	// Get the channel
             	Channel channel = Darmok.getChannelRegistry().getChannel( call.getArg(1) );
             	if( channel == null ){
@@ -149,7 +164,7 @@ public class ChannelCommands extends Executor {
             	}
             	
             	try {
-					Darmok.getPlayerRegistry().getPlayerChannels( call.getPlayer() ).joinChannel( channel );
+					Darmok.getPlayerRegistry().getPlayerChannels( sender ).joinChannel( channel );
 				} catch (JoinChannelException e) {
 					call.getPlayer().sendMessage( Darmok.messenger.playerError( e.getMessage() ) );
 					return;
@@ -177,6 +192,8 @@ public class ChannelCommands extends Executor {
             		return;
             	}
             	
+            	LocalUser sender = new LocalUser(call.getSender());
+            	
             	// Get the player
             	Player player = darmok.getServer().getPlayer( call.getArg(1) );
             	if( player == null ){
@@ -192,14 +209,14 @@ public class ChannelCommands extends Executor {
             	}
             	
             	try {
-					ChannelPermissions.playerCanKick( call.getPlayer(), channel );
+					ChannelPermissions.playerCanKick( sender, channel );
 				} catch (ChannelPermissionException e1) {
 					call.getPlayer().sendMessage( Darmok.messenger.playerError( e1.getMessage() ) );
             		return;
 				}
             	
             	try {
-					Darmok.getPlayerRegistry().getPlayerChannels( player ).removeChannel( channel );
+					Darmok.getPlayerRegistry().getPlayerChannels( new LocalUser(player) ).removeChannel( channel );
 				} catch (LeaveChannelException e) {
 					// not really possible
 				}
@@ -226,6 +243,8 @@ public class ChannelCommands extends Executor {
             		return;
             	}
             	
+            	LocalUser sender = new LocalUser(call.getSender());
+            	
             	// Get the channel
             	Channel channel = Darmok.getChannelRegistry().getChannel( call.getArg(1) );
             	if( channel == null ){
@@ -234,7 +253,7 @@ public class ChannelCommands extends Executor {
             	}
             	
             	try {
-					Darmok.getPlayerRegistry().getPlayerChannels( call.getPlayer() ).leaveChannel( channel );
+					Darmok.getPlayerRegistry().getPlayerChannels( sender ).leaveChannel( channel );
 				} catch (LeaveChannelException e) {
 					call.getPlayer().sendMessage( Darmok.messenger.playerError( e.getMessage() ) );
 					return;
@@ -264,9 +283,11 @@ public class ChannelCommands extends Executor {
             	
             	ArrayList<Channel> channels;
             	
+            	LocalUser sender = new LocalUser(call.getSender());
+            	
             	// Load the channels
             	if( limitTo != null ){
-            		PlayerChannels playerChannels = Darmok.getPlayerRegistry().getPlayerChannels( limitTo );
+            		PlayerChannels playerChannels = Darmok.getPlayerRegistry().getPlayerChannels( new LocalUser(limitTo) );
     				if( playerChannels == null ){
     					call.getPlayer().sendMessage( Darmok.messenger.playerError( "This player has no active channel subscriptions." ) );
                 		return;
@@ -285,11 +306,11 @@ public class ChannelCommands extends Executor {
             	call.getPlayer().sendMessage( Darmok.messenger.playerHeaderMsg( "-- All Channels --" ) );
             	for ( Channel c : channels ){
             		
-            		boolean youreBanned = Darmok.getPlayerRegistry().isPlayerBannedFromChannel(call.getPlayer(), c);
+            		boolean youreBanned = Darmok.getPlayerRegistry().isPlayerBannedFromChannel(sender, c);
             		
             		boolean canRead = true;
             		try {
-						ChannelPermissions.playerCanRead(call.getPlayer(), c);
+						ChannelPermissions.playerCanRead(sender, c);
 					} catch (ChannelPermissionException e) {
 						canRead = false;
 					}
@@ -297,7 +318,7 @@ public class ChannelCommands extends Executor {
             		
             		boolean canSpeak = true;
             		try {
-						ChannelPermissions.playerCanSpeak(call.getPlayer(), c);
+						ChannelPermissions.playerCanSpeak(sender, c);
 					} catch (ChannelPermissionException e) {
 						canSpeak = false;
 					}
@@ -359,6 +380,8 @@ public class ChannelCommands extends Executor {
             		return;
             	}
             	
+            	LocalUser sender = new LocalUser(call.getSender());
+            	
             	// Get the player
             	Player player = darmok.getServer().getPlayer( call.getArg(1) );
             	if( player == null ){
@@ -374,13 +397,13 @@ public class ChannelCommands extends Executor {
             	}
             	
             	try {
-					ChannelPermissions.playerCanBan( call.getPlayer(), channel );
+					ChannelPermissions.playerCanBan( sender, channel );
 				} catch (ChannelPermissionException e) {
 					call.getPlayer().sendMessage( Darmok.messenger.playerError( e.getMessage() ) );
             		return;
 				}
             	
-            	Darmok.getPlayerRegistry().unbanFromChannel( player, channel );
+            	Darmok.getPlayerRegistry().unbanFromChannel( sender, new LocalUser(player), channel );
 
             	player.sendMessage( Darmok.messenger.playerError( "You have been unbanned from the "+channel.getName()+" channel." ) );
             	call.getPlayer().sendMessage( Darmok.messenger.playerHeaderMsg( "You have unbanned "+player.getName()+" from the "+channel.getName()+" channel." ) );

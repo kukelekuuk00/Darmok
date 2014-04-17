@@ -16,6 +16,9 @@ import me.botsko.darmok.commands.ChannelCommands;
 import me.botsko.darmok.commands.DarmokCommands;
 import me.botsko.darmok.exceptions.JoinChannelException;
 import me.botsko.darmok.exceptions.ChannelPermissionException;
+import me.botsko.darmok.link.DarmokClient;
+import me.botsko.darmok.link.DarmokUser;
+import me.botsko.darmok.link.LocalUser;
 import me.botsko.darmok.listeners.DarmokPlayerListener;
 import me.botsko.darmok.metrics.Metrics;
 import me.botsko.darmok.players.PlayerChannels;
@@ -50,6 +53,7 @@ public class Darmok extends JavaPlugin {
 	private static Censor censor;
 	private FileConfiguration profanity;
 	private FileConfiguration channels;
+	private Thread client = null;
 	
 	// Plugins
 	private static Essentials essentials = null;
@@ -90,6 +94,11 @@ public class Darmok extends JavaPlugin {
 		}
 
 		if(isEnabled()){
+		    
+		    DarmokClient client = new DarmokClient(this, plugin_version, configHandler.getConfig());
+		    if(this.client == null || !this.client.isAlive()){
+		        (this.client = new Thread(client)).start();
+		    }
 			
 			channelRegistry = new ChannelRegistry();
 			chatter = new Chatter(this);
@@ -199,7 +208,7 @@ public class Darmok extends JavaPlugin {
 	 * 
 	 * @param player
 	 */
-	public void loadChannelSettingsForPlayer( Player player ){
+	public void loadChannelSettingsForPlayer( DarmokUser player ){
 
 		FileConfiguration playerConfig = configHandler.loadPlayerConfig(player);
 		
@@ -274,7 +283,7 @@ public class Darmok extends JavaPlugin {
 	 * 
 	 * @param player
 	 */
-	public Channel resetDefaultChannelForPlayer( Player player ){
+	public Channel resetDefaultChannelForPlayer( DarmokUser player ){
 		ArrayList<Channel> channels = Darmok.getChannelRegistry().getChannels();
 		if( !channels.isEmpty() ){
 			for ( Channel c : channels ){
@@ -293,7 +302,7 @@ public class Darmok extends JavaPlugin {
 	 * Build a new player channel settings save file based on
 	 * current channels.
 	 */
-	public void saveChannelSettingsForPlayer( Player player ){
+	public void saveChannelSettingsForPlayer( DarmokUser player ){
 		
 		FileConfiguration playerConfig = new YamlConfiguration();
 		
@@ -331,7 +340,7 @@ public class Darmok extends JavaPlugin {
 	 * 
 	 * @param player
 	 */
-	public static void unloadChannelSettingsForPlayer( Player player ){
+	public static void unloadChannelSettingsForPlayer( DarmokUser player ){
 		getPlayerRegistry().removePlayer( player );
 	}
 	
@@ -453,7 +462,7 @@ public class Darmok extends JavaPlugin {
 	public void loadChannelsForAllPlayers(){
 		// Load all channels for any online players (on reload)
 		for( Player pl : getServer().getOnlinePlayers() ){
-			loadChannelSettingsForPlayer( pl );
+			loadChannelSettingsForPlayer( new LocalUser(pl) );
 		}
 	}
 	
@@ -464,8 +473,9 @@ public class Darmok extends JavaPlugin {
 	public void unloadChannels(){
 		// Save and unload all channels for any online players
 		for( Player pl : getServer().getOnlinePlayers() ){
-			saveChannelSettingsForPlayer( pl );
-			unloadChannelSettingsForPlayer( pl );
+		    LocalUser local = new LocalUser(pl);
+			saveChannelSettingsForPlayer( local );
+			unloadChannelSettingsForPlayer( local );
 		}
 	}
 	
