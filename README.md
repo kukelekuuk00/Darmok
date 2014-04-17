@@ -36,6 +36,7 @@ Modify the configuration if you wish, but it comes with sensible defaults.
 
 - `darmok.channel.CHANNEL_NAME_HERE.read` - Messages to this channel can be seen by the player
 - `darmok.channel.CHANNEL_NAME_HERE.speak` - Player may send messages to this channel
+- `darmok.channel.CHANNEL_NAME_HERE.leave` - Player may leave channel
 - `darmok.channel.CHANNEL_NAME_HERE.autojoin` - Players will auto-join this channel unless they have settings otherwise.
 - `darmok.list` - List all available channels, or list channels you're subscribed to
 - `darmok.chatcolor` - Use chat color codes or text formatting codes in messages
@@ -85,7 +86,6 @@ Designed to solve specific needs for our Minecraft server, DHMC.
 
 
 ## Donate to Vive
-
 
 [![alt text][2]][1]
 
