@@ -51,7 +51,7 @@ public class DarmokCommands extends Executor {
 		.setHandler(new SubHandler() {
             public void handle(CallInfo call) {
             	call.getSender().sendMessage( Darmok.messenger.playerHeaderMsg( "Welcome to Darmok - By Viveleroi" ) );
-            	call.getSender().sendMessage( Darmok.messenger.playerHelp("darmok reload","Configuration reloaded successfully."));
+            	call.getSender().sendMessage( Darmok.messenger.playerHelp("darmok","reload","Configuration reloaded successfully."));
             }
 		});
 	}
