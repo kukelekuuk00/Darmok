@@ -7,6 +7,7 @@ import me.botsko.darmok.Darmok;
 import me.botsko.darmok.channels.Channel;
 import me.botsko.darmok.channels.ChannelPermissions;
 import me.botsko.darmok.exceptions.ChannelPermissionException;
+import me.botsko.darmok.link.DarmokClient;
 import me.botsko.darmok.link.DarmokUser;
 import me.botsko.darmok.link.LocalUser;
 import me.botsko.darmok.link.RemoteUser;
@@ -114,13 +115,12 @@ public class Chatter {
 		}
 		
 		
-		if( user instanceof RemoteUser ){
-            RemoteUser remote = (RemoteUser) user;
-            // Use raw message, recipient handles formatting
-            remote.writeToChannel(user, channel, msg);
-        } else {
-            
-            LocalUser local = (LocalUser) user;
+		if( user instanceof LocalUser ){
+
+    		DarmokClient.out.println(String.format("CMSG %s@%s %s %s", user.getName(), DarmokClient.ident, channel.getCommand(), msg));
+            DarmokClient.out.flush();
+                
+                LocalUser local = (LocalUser) user;
             
             Player player = null;
             if( local.getSender() instanceof Player ){
@@ -185,7 +185,8 @@ public class Chatter {
         			
         		}
             }
-        }
+		}
+
 		
 		// log to console
 		Bukkit.getServer().getConsoleSender().sendMessage(frm_msg);

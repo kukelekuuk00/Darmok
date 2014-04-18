@@ -13,5 +13,7 @@ public interface DarmokUser {
     public void unbanFromChannel( DarmokUser source, Channel channel );
     
     public String getName();
+    
+    public boolean equals( Object obj );
 
 }

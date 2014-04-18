@@ -6,60 +6,61 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.Arrays;
 
 import me.botsko.darmok.Darmok;
 import me.botsko.darmok.commands.ChannelCommands;
-import me.botsko.darmok.listeners.DarmokPlayerListener;
 
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 public class DarmokClient implements Runnable {
     
-    private String[] servers;
     public static PrintWriter out;
-    private static BufferedReader in;
+    public static String ident;
     
+    private static BufferedReader in;
     private String hostname;
     private int port;
     private String password;
-    public static String ident;
-    private Darmok plugin;
-    private String plugin_version;
-    
     private ChannelCommands commandHandler;
     
-    public DarmokClient(Darmok plugin, String version, FileConfiguration config){
-        hostname = config.getString("darmok.link.hostname");
-        port = config.getInt("darmok.link.port");
-        password = config.getString("darmok.link.password");
-        ident = config.getString("darmok.link.ident");
-        this.plugin = plugin;
-        this.plugin_version = version;
-        this.commandHandler = new ChannelCommands(plugin);
+    
+    /**
+     * 
+     * @param version
+     * @param config
+     */
+    public DarmokClient( FileConfiguration config ){
+        hostname = config.getString("darmok.link.client.hostname");
+        port = config.getInt("darmok.link.client.port");
+        password = config.getString("darmok.link.client.password");
+        ident = config.getString("darmok.link.client.name");
+//        this.commandHandler = new ChannelCommands(plugin);
 //        this.playerListener = new DarmokPlayerListener(plugin);
     }
 
+    
+    /**
+     * 
+     */
     public void run(){
         while(true){
             try {
                 Socket relay = new Socket(this.hostname, this.port);
                 DarmokClient.out = new PrintWriter(relay.getOutputStream(), true);
                 DarmokClient.in = new BufferedReader(new InputStreamReader(relay.getInputStream()));
-                out.println("VERSION " + plugin_version);
+                out.println("VERSION " + Darmok.plugin_version);
                 out.println("AUTH " + ident + " " +  password);
                 String line;
                 while((line = in.readLine()) != null){
                     cmd_exec(line);
                 }
             } catch (UnknownHostException e) {
-                //e.printStackTrace();
-                System.out.println("We were unable to connect to the Darmok Chat link. Stack trace: " + e);
+                Darmok.log("We were unable to connect to the Darmok Chat link. Stack trace: " + e);
                 return;
             } catch (IOException e) {
-                // e.printStackTrace();
-                System.out.println("Darmok Chat link was broken. Reconnecting in 30 seconds.");
+                Darmok.log("Darmok Chat link was broken. Reconnecting in 30 seconds.");
                 try {
                     Thread.sleep(30000);
                 } catch (InterruptedException e1) {
@@ -71,10 +72,10 @@ public class DarmokClient implements Runnable {
     }
     
     public void cmd_exec(String line){
-//        System.out.println("RECEIVED: " + line);
+        Darmok.debug("RECEIVED: " + line);
         String[] args = line.split(" ");
         if(args[0].equals("UPD")){
-            servers = Arrays.copyOfRange(args, 1, args.length);
+//            servers = Arrays.copyOfRange(args, 1, args.length);
             return;
         }
         Command c = null;
@@ -106,7 +107,7 @@ public class DarmokClient implements Runnable {
                 new_args = new String[]{"unban", args[2].split("@")[0], args[3]};
                 break;
             case EMSG:
-                Player ply = plugin.getServer().getPlayer(args[1].split("@")[0]);
+                Player ply = Bukkit.getServer().getPlayer(args[1].split("@")[0]);
                 if(ply != null){
                     String response = "";
                     for(int i=2;i<args.length;i++){
@@ -118,14 +119,19 @@ public class DarmokClient implements Runnable {
             default:
                 return;
         }
+        System.out.println( "CMD_EXEC: " +cmd );
 //        System.out.println(player + ", " + cmd + ", " + new_args);
 //        for(String x : new_args){
 //            System.out.println(x);
 //        }
-        commandHandler.onCommand(player, plugin.getCommand(cmd), cmd, new_args);
+//        commandHandler.onCommand(player, plugin.getCommand(cmd), cmd, new_args);
     }
 
-    
+    /**
+     * 
+     * @author botskonet
+     *
+     */
     enum Command{
         UPD,
         CBAN,
@@ -136,7 +142,11 @@ public class DarmokClient implements Runnable {
 }
 
 
-
+/**
+ * 
+ * @author botskonet
+ *
+ */
 interface Handler{
     public void handle(String[] args);
 }

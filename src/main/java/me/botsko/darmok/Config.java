@@ -42,10 +42,14 @@ public class Config extends ConfigBase {
 //		config.addDefault("darmok.censors.fakecensor.enabled", true);
 //		config.addDefault("darmok.censors.fakecensor.string", "***");
 		
-		config.addDefault("darmok.link.hostname", false);
-		config.addDefault("darmok.link.port", 23397);
-		config.addDefault("darmok.link.password", "");
-		config.addDefault("darmok.link.ident", "server_identifier"); // one word.
+		config.addDefault("darmok.link.is-server-or-client", "client");
+        config.addDefault("darmok.link.server.port", 23397);
+        config.addDefault("darmok.link.server.password", "");
+		
+		config.addDefault("darmok.link.client.hostname", "127.0.0.1");
+		config.addDefault("darmok.link.client.port", 23397);
+		config.addDefault("darmok.link.client.password", "");
+		config.addDefault("darmok.link.client.name", "default");
 		
 		// Copy defaults
 		config.options().copyDefaults(true);

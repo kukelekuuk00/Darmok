@@ -1,6 +1,8 @@
 package me.botsko.darmok;
 
 import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -17,6 +19,7 @@ import me.botsko.darmok.commands.DarmokCommands;
 import me.botsko.darmok.exceptions.JoinChannelException;
 import me.botsko.darmok.exceptions.ChannelPermissionException;
 import me.botsko.darmok.link.DarmokClient;
+import me.botsko.darmok.link.DarmokServer;
 import me.botsko.darmok.link.DarmokUser;
 import me.botsko.darmok.link.LocalUser;
 import me.botsko.darmok.listeners.DarmokPlayerListener;
@@ -44,9 +47,9 @@ public class Darmok extends JavaPlugin {
 	/**
 	 * Protected/private
 	 */
-	private String plugin_name;
-	private String plugin_version;
-	private Logger log = Logger.getLogger("Minecraft");
+	public static String plugin_name;
+	public static String plugin_version;
+	private static Logger log = Logger.getLogger("Minecraft");
 	private static ChannelRegistry channelRegistry;
 	private static Chatter chatter;
 	private static PlayerRegistry playerRegistry;
@@ -54,6 +57,7 @@ public class Darmok extends JavaPlugin {
 	private FileConfiguration profanity;
 	private FileConfiguration channels;
 	private Thread client = null;
+	private Thread server = null;
 	
 	// Plugins
 	private static Essentials essentials = null;
@@ -81,7 +85,7 @@ public class Darmok extends JavaPlugin {
 
 		darmok = this;
 		
-		this.log("Initializing " + plugin_name + " " + plugin_version + ". By Viveleroi.");
+		log("Initializing " + plugin_name + " " + plugin_version + ". By Viveleroi.");
 		
 		// Load configuration, or install if new
 		loadConfig();
@@ -95,11 +99,37 @@ public class Darmok extends JavaPlugin {
 
 		if(isEnabled()){
 		    
-		    DarmokClient client = new DarmokClient(this, plugin_version, configHandler.getConfig());
-		    if(this.client == null || !this.client.isAlive()){
-		        (this.client = new Thread(client)).start();
+		    
+		    // In server/client listeners - if enabled
+		    if( config.getString( "darmok.link.is-server-or-client" ).equalsIgnoreCase( "server" ) ){
+		    
+    		    int port = config.getInt( "darmok.link.server.port" );
+    	        String pass = config.getString( "darmok.link.server.password" );
+    	        
+    	        // @todo validate port/pass
+    	        
+    	        ServerSocket ssocket = null;
+    	        try {
+    	            ssocket = new ServerSocket(port);
+//    	            while(true){ // Accept new connections.
+    	                Socket usock = ssocket.accept();
+    	                DarmokServer connHandler = new DarmokServer(usock, pass);
+    	                server = new Thread(connHandler);
+    	                server.start();
+    	                Darmok.log("Chat link server running on port " + port);
+//    	            }
+    	        } catch (IOException e) {
+    	            e.printStackTrace();
+    	        }
+		    } else {
+		    
+    		    DarmokClient client = new DarmokClient(configHandler.getConfig());
+    		    if(this.client == null || !this.client.isAlive()){
+    		        (this.client = new Thread(client)).start();
+    		    }
 		    }
-			
+
+    			
 			channelRegistry = new ChannelRegistry();
 			chatter = new Chatter(this);
 			playerRegistry = new PlayerRegistry();
@@ -417,7 +447,7 @@ public class Darmok extends JavaPlugin {
 	 * 
 	 * @param message
 	 */
-	public void log(String message){
+	public static void log(String message){
 		log.info("["+plugin_name+"]: " + message);
 	}
 	
@@ -426,7 +456,7 @@ public class Darmok extends JavaPlugin {
 	 * 
 	 * @param message
 	 */
-	public void logSection(String[] messages){
+	public static void logSection(String[] messages){
 		if(messages.length > 0){
 			log("--------------------- ## Important ## ---------------------");
 			for(String msg : messages){
@@ -441,7 +471,7 @@ public class Darmok extends JavaPlugin {
 	 * 
 	 * @param message
 	 */
-	public void debug(String message){
+	public static void debug(String message){
 		if(config.getBoolean("darmok.debug")){
 			log.info("["+plugin_name+"]: " + message);
 		}
@@ -485,7 +515,11 @@ public class Darmok extends JavaPlugin {
 	 */
 	@Override
 	public void onDisable(){
+	    
+	    if( server != null ) server.interrupt();
+	    if( client != null ) client.interrupt();
+	    
 		unloadChannels();
-		this.log("Closing plugin.");	
+		log("Closing plugin.");	
 	}
 }
