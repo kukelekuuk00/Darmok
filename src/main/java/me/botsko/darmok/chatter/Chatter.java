@@ -8,6 +8,7 @@ import me.botsko.darmok.channels.Channel;
 import me.botsko.darmok.channels.ChannelPermissions;
 import me.botsko.darmok.exceptions.ChannelPermissionException;
 import me.botsko.darmok.link.DarmokClient;
+import me.botsko.darmok.link.DarmokServer;
 import me.botsko.darmok.link.DarmokUser;
 import me.botsko.darmok.link.LocalUser;
 import me.botsko.darmok.link.RemoteUser;
@@ -116,11 +117,13 @@ public class Chatter {
 		
 		
 		if( user instanceof LocalUser ){
-
-    		DarmokClient.out.println(String.format("CMSG %s@%s %s %s", user.getName(), DarmokClient.ident, channel.getCommand(), msg));
-            DarmokClient.out.flush();
+		    
+		    // Send over network, works for either client/server
+		    String linkMsg = String.format("CMSG %s@%s %s %s", user.getName(), DarmokClient.ident, channel.getCommand(), msg);
+    		DarmokClient.write(linkMsg);
+    		DarmokServer.write(linkMsg);
                 
-                LocalUser local = (LocalUser) user;
+            LocalUser local = (LocalUser) user;
             
             Player player = null;
             if( local.getSender() instanceof Player ){

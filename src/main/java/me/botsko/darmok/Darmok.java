@@ -1,8 +1,6 @@
 package me.botsko.darmok;
 
 import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -107,22 +105,14 @@ public class Darmok extends JavaPlugin {
     	        String pass = config.getString( "darmok.link.server.password" );
     	        
     	        // @todo validate port/pass
+ 
+    	        // Start listener management
+    	        new Thread(new DarmokServer(port,pass)).start();
     	        
-    	        ServerSocket ssocket = null;
-    	        try {
-    	            ssocket = new ServerSocket(port);
-//    	            while(true){ // Accept new connections.
-    	                Socket usock = ssocket.accept();
-    	                DarmokServer connHandler = new DarmokServer(usock, pass);
-    	                server = new Thread(connHandler);
-    	                server.start();
-    	                Darmok.log("Chat link server running on port " + port);
-//    	            }
-    	        } catch (IOException e) {
-    	            e.printStackTrace();
-    	        }
+    	        Darmok.log("Initializing chat link server...");
+    	        
 		    } else {
-		    
+		        Darmok.log("Initializing chat link client...");
     		    DarmokClient client = new DarmokClient(configHandler.getConfig());
     		    if(this.client == null || !this.client.isAlive()){
     		        (this.client = new Thread(client)).start();

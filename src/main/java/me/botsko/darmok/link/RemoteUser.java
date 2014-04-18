@@ -1,5 +1,6 @@
 package me.botsko.darmok.link;
 
+import me.botsko.darmok.Darmok;
 import me.botsko.darmok.channels.Channel;
 
 public class RemoteUser implements DarmokUser {
@@ -20,9 +21,8 @@ public class RemoteUser implements DarmokUser {
      * 
      */
     public void sendMessage( String message ){
-//        DarmokClient.out.println("EMSG " + this.uid + " " + arg0);
-//        DarmokClient.out.flush();
-//        System.out.println("DEBUG: sending from " + this.uid + ": " + arg0);
+        DarmokClient.write("EMSG " + this.identityName + " " + message);
+        Darmok.debug("DEBUG: sending from " + this.identityName + ": " + message);
     }
     
     
@@ -34,9 +34,11 @@ public class RemoteUser implements DarmokUser {
     }
     
     
+    /**
+     * 
+     */
     public void banFromChannel( DarmokUser source, Channel channel ){
-        DarmokClient.out.println(String.format("CBAN %s@%s %s %s", source.getName(), DarmokClient.ident, this.identityName, channel.getCommand()));
-        DarmokClient.out.flush();
+        DarmokClient.write(String.format("CBAN %s@%s %s %s", source.getName(), DarmokClient.ident, this.identityName, channel.getCommand()));
     }
 
 
@@ -46,19 +48,8 @@ public class RemoteUser implements DarmokUser {
      * @param channel
      */
     public void unbanFromChannel( DarmokUser source, Channel channel ){
-        DarmokClient.out.println(String.format("CUNBAN %s@%s %s %s", source.getName(), DarmokClient.ident, this.identityName, channel.getCommand()));
-        DarmokClient.out.flush();
+        DarmokClient.write(String.format("CUNBAN %s@%s %s %s", source.getName(), DarmokClient.ident, this.identityName, channel.getCommand()));
     }
-//
-//    /**
-//     * 
-//     * @param channel
-//     * @param msg
-//     */
-//    public void writeToChannel( DarmokUser source, Channel channel, String msg ){
-//        DarmokClient.out.println(String.format("CMSG %s@%s %s %s", source.getName(), DarmokClient.ident, channel.getCommand(), msg));
-//        DarmokClient.out.flush();
-//    }
 
 
     /**

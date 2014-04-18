@@ -8,7 +8,6 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 import me.botsko.darmok.Darmok;
-import me.botsko.darmok.commands.ChannelCommands;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -16,14 +15,14 @@ import org.bukkit.entity.Player;
 
 public class DarmokClient implements Runnable {
     
-    public static PrintWriter out;
+    private static PrintWriter out;
     public static String ident;
     
     private static BufferedReader in;
     private String hostname;
     private int port;
     private String password;
-    private ChannelCommands commandHandler;
+//    private ChannelCommands commandHandler;
     
     
     /**
@@ -36,8 +35,17 @@ public class DarmokClient implements Runnable {
         port = config.getInt("darmok.link.client.port");
         password = config.getString("darmok.link.client.password");
         ident = config.getString("darmok.link.client.name");
-//        this.commandHandler = new ChannelCommands(plugin);
-//        this.playerListener = new DarmokPlayerListener(plugin);
+    }
+    
+    
+    /**
+     * 
+     * @param message
+     */
+    public static void write( String message ){
+        if( out == null ) return;
+        out.println(message);
+        out.flush();
     }
 
     
@@ -48,7 +56,7 @@ public class DarmokClient implements Runnable {
         while(true){
             try {
                 Socket relay = new Socket(this.hostname, this.port);
-                DarmokClient.out = new PrintWriter(relay.getOutputStream(), true);
+                out = new PrintWriter(relay.getOutputStream(), true);
                 DarmokClient.in = new BufferedReader(new InputStreamReader(relay.getInputStream()));
                 out.println("VERSION " + Darmok.plugin_version);
                 out.println("AUTH " + ident + " " +  password);
@@ -71,6 +79,11 @@ public class DarmokClient implements Runnable {
         }
     }
     
+    
+    /**
+     * 
+     * @param line
+     */
     public void cmd_exec(String line){
         Darmok.debug("RECEIVED: " + line);
         String[] args = line.split(" ");
@@ -119,7 +132,7 @@ public class DarmokClient implements Runnable {
             default:
                 return;
         }
-        System.out.println( "CMD_EXEC: " +cmd );
+        Darmok.debug( "CMD_EXEC: " +cmd );
 //        System.out.println(player + ", " + cmd + ", " + new_args);
 //        for(String x : new_args){
 //            System.out.println(x);
