@@ -81,7 +81,7 @@ public class DarmokPlayerListener implements Listener {
 			
 			// Are they in the channel?
 			if( !(user instanceof RemoteUser) && ! Darmok.getPlayerRegistry().getPlayerChannels( user ).inChannel( channel ) ){
-				plugin.debug("Trying to auto-join player to " + channel.getName());
+				Darmok.debug("Trying to auto-join player to " + channel.getName());
 				
 				try {
 					Darmok.getPlayerRegistry().getPlayerChannels( user ).joinChannel( channel );
@@ -107,7 +107,7 @@ public class DarmokPlayerListener implements Listener {
 				Darmok.getChatter().send( user, channel, message );
 			
 			} else if(!(user instanceof RemoteUser)) {
-				plugin.debug( "Setting " + user.getName() + "'s default channel to " + channel.getName() );
+				Darmok.debug( "Setting " + user.getName() + "'s default channel to " + channel.getName() );
 				if( Darmok.getPlayerRegistry().getPlayerChannels( user ).setDefault( channel ) ){
 				    user.sendMessage( Darmok.messenger.playerHeaderMsg("Default channel switched to " + channel.getName() ) );
 				} else {
@@ -137,7 +137,7 @@ public class DarmokPlayerListener implements Listener {
 		}
 		
 		if( channel != null ){
-			plugin.debug("Found default channel " + channel.getName() + " for " + user.getName());
+			Darmok.debug("Found default channel " + channel.getName() + " for " + user.getName());
 			Darmok.getChatter().send( user, channel, event.getMessage() );
 			event.setCancelled(true);
 		}

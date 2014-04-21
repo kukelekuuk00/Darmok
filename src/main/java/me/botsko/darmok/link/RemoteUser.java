@@ -58,6 +58,14 @@ public class RemoteUser implements DarmokUser {
     public String getName() {
         return identityName;
     }
+    
+    
+    /**
+     * 
+     */
+    public String getDisplayName() {
+        return identityName;
+    }
 
 
     /* (non-Javadoc)

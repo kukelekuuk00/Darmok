@@ -8,10 +8,9 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 import me.botsko.darmok.Darmok;
+import me.botsko.darmok.channels.Channel;
 
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
 
 public class DarmokClient implements Runnable {
     
@@ -22,7 +21,6 @@ public class DarmokClient implements Runnable {
     private String hostname;
     private int port;
     private String password;
-//    private ChannelCommands commandHandler;
     
     
     /**
@@ -85,7 +83,7 @@ public class DarmokClient implements Runnable {
      * @param line
      */
     public void cmd_exec(String line){
-        Darmok.debug("RECEIVED: " + line);
+        Darmok.debug("Raw message (from server): " + line);
         String[] args = line.split(" ");
         if(args[0].equals("UPD")){
 //            servers = Arrays.copyOfRange(args, 1, args.length);
@@ -97,42 +95,48 @@ public class DarmokClient implements Runnable {
         } catch(Exception e){
             return;
         }
-        String cmd;
-        String[] new_args;
-        DarmokUser player;
+
+//        String[] new_args;
+        DarmokUser remoteUser;
         switch(c){
             case CMSG:
-                player = new RemoteUser(args[1]);
-                cmd = args[2];
+                remoteUser = new RemoteUser(args[1]);
+                
+                String chatMessage = "";
                 for(int i = 3; i < args.length; i++){
-                    cmd += " " + args[i];
+                    chatMessage += " " + args[i];
                 }
-//                this.playerListener.onPlayerCommandPreprocess(player, cmd);
+                
+                Darmok.debug( "Finding channel for: " + args[2] );
+                Channel channel = Darmok.getChannelRegistry().getChannel( args[2] );
+                
+                Darmok.getChatter().send( remoteUser, channel, chatMessage);
+
                 return;
             case CBAN:
-                cmd = "ch";
-                player = new RemoteUser(args[1]);
-                new_args = new String[]{"ban", args[2].split("@")[0], args[3]};
+//                cmd = "ch";
+//                player = new RemoteUser(args[1]);
+//                new_args = new String[]{"ban", args[2].split("@")[0], args[3]};
                 break;
             case CUNBAN:
-                cmd = "ch";
-                player = new RemoteUser(args[1]);
-                new_args = new String[]{"unban", args[2].split("@")[0], args[3]};
+//                cmd = "ch";
+//                player = new RemoteUser(args[1]);
+//                new_args = new String[]{"unban", args[2].split("@")[0], args[3]};
                 break;
             case EMSG:
-                Player ply = Bukkit.getServer().getPlayer(args[1].split("@")[0]);
-                if(ply != null){
-                    String response = "";
-                    for(int i=2;i<args.length;i++){
-                        response += args[i] + " ";
-                    }
-                    ply.sendMessage(Darmok.messenger.playerError(response.trim()));
-                }
+//                Player ply = Bukkit.getServer().getPlayer(args[1].split("@")[0]);
+//                if(ply != null){
+//                    String response = "";
+//                    for(int i=2;i<args.length;i++){
+//                        response += args[i] + " ";
+//                    }
+//                    ply.sendMessage(Darmok.messenger.playerError(response.trim()));
+//                }
                 return;
             default:
                 return;
         }
-        Darmok.debug( "CMD_EXEC: " +cmd );
+       
 //        System.out.println(player + ", " + cmd + ", " + new_args);
 //        for(String x : new_args){
 //            System.out.println(x);

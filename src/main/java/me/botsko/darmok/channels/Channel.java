@@ -161,7 +161,7 @@ public class Channel {
 		headVal.put("suffix", suffix );
 		headVal.put("command", command );
 		headVal.put("msg", msg );
-		headVal.put("player", player.getDisplayName() );
+		headVal.put("player", user.getDisplayName() );
 		return getString( format, headVal );
 		
 	}

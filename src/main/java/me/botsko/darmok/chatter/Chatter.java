@@ -115,6 +115,11 @@ public class Chatter {
 			playersToMessage = Darmok.getPlayerRegistry().getPlayersInChannel(channel);
 		}
 		
+		Darmok.debug( "playersToMessage: " + playersToMessage.size() );
+		for( DarmokUser usrToMsg : playersToMessage ){
+		    Darmok.debug( "Messging: " + usrToMsg.getName() );
+		}
+		
 		
 		if( user instanceof LocalUser ){
 		    
@@ -146,49 +151,64 @@ public class Chatter {
                         playersToMessage.add( new LocalUser(townyPlayer) );
                     }
                 }
-    		
-        		// Message players if in range
-        		for( DarmokUser sendToUser : playersToMessage ){
-        		    
-        		    if( sendToUser instanceof RemoteUser ) continue;
-        		    
-        		    Player pl = null;
-        		    LocalUser localUser = (LocalUser) sendToUser;
+                
+                // Message players if in range
+                for( DarmokUser sendToUser : playersToMessage ){
+                    
+                    if( sendToUser instanceof RemoteUser ) continue;
+                    
+                    Player pl = null;
+                    LocalUser localUser = (LocalUser) sendToUser;
                     if( localUser.getSender() instanceof Player ){
                         pl = (Player) localUser.getSender();
                     }
                     
                     if( pl == null ) continue;
-        			
-        			int range = channel.getRange();
+                    
+                    int range = channel.getRange();
         
-        			// Does range matter?
-        			if( range > -1 ){
-        				// if 0, check worlds match
-        				if( range == 0 && !player.getWorld().equals( pl.getWorld() ) ){
-        					continue;
-        				}
-        				// otherwise, it's a distance
-        				else if( !player.getWorld().equals( pl.getWorld() ) || player.getLocation().distance( pl.getLocation() ) > range ){
-        					continue;
-        				}
-        			}
-        			
-        			// Player is in range.
-        			
-        			// Ensure they have permission to READ
-        			try {
-        				ChannelPermissions.playerCanRead( localUser, channel );
-        			} catch (ChannelPermissionException e) {
-        				return;
-        			}
-        
-        			// All checks are GO for launch
-        			pl.sendMessage( frm_msg );
-        			
-        		}
+                    // Does range matter?
+                    if( range > -1 ){
+                        // if 0, check worlds match
+                        if( range == 0 && !player.getWorld().equals( pl.getWorld() ) ){
+                            playersToMessage.remove( pl );
+                            continue;
+                        }
+                        // otherwise, it's a distance
+                        else if( !player.getWorld().equals( pl.getWorld() ) || player.getLocation().distance( pl.getLocation() ) > range ){
+                            playersToMessage.remove( pl );
+                            continue;
+                        }
+                    }
+                }
             }
 		}
+		
+		
+		// Message players if in range
+        for( DarmokUser sendToUser : playersToMessage ){
+            
+            if( sendToUser instanceof RemoteUser ) continue;
+            
+            Player pl = null;
+            LocalUser localUser = (LocalUser) sendToUser;
+            if( localUser.getSender() instanceof Player ){
+                pl = (Player) localUser.getSender();
+            }
+            
+            if( pl == null ) continue;
+            
+            // Ensure they have permission to READ
+            try {
+                ChannelPermissions.playerCanRead( localUser, channel );
+            } catch (ChannelPermissionException e) {
+                return;
+            }
+
+            // All checks are GO for launch
+            pl.sendMessage( frm_msg );
+            
+        }
 
 		
 		// log to console

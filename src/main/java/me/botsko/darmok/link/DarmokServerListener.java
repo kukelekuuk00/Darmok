@@ -8,6 +8,7 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 
 import me.botsko.darmok.Darmok;
+import me.botsko.darmok.channels.Channel;
 
 public class DarmokServerListener implements Runnable {
     
@@ -65,7 +66,7 @@ public class DarmokServerListener implements Runnable {
      * @param raw
      */
     public void handle( String raw ){
-        Darmok.debug("Raw server message: " + raw);
+        Darmok.debug("Raw server message (from client): " + raw);
         String[] args = raw.split(" ");
         if(this.identifier != null){
             Darmok.debug(this.identifier + ": " + raw);
@@ -88,7 +89,7 @@ public class DarmokServerListener implements Runnable {
                         this.in.close();
                     } catch (IOException e) {
                         // e.printStackTrace();
-                    } 
+                    }
                 }
             }
         }
@@ -101,14 +102,27 @@ public class DarmokServerListener implements Runnable {
                 }
             }
         }
-        else if(args[0].equals("EMSG") && this.identified){
-            String id = args[1].split("@")[1];
-            for(DarmokServerListener i : DarmokServer.pool){
-                if(i.identifier.equals(id) && i.identifier != this.identifier){
-                    i.send(raw);
-                    break;
-                }
+        else if(args[0].equals("CMSG") && this.identified){
+            
+            DarmokUser remoteUser = new RemoteUser(args[1]);
+            
+            String chatMessage = "";
+            for(int i = 3; i < args.length; i++){
+                chatMessage += " " + args[i];
             }
+            
+            Darmok.debug( "Finding channel for: " + args[2] );
+            Channel channel = Darmok.getChannelRegistry().getChannel( args[2] );
+            
+            Darmok.getChatter().send( remoteUser, channel, chatMessage);
+            
+//            String id = args[1].split("@")[1];
+//            for(DarmokServerListener i : DarmokServer.pool){
+//                if(i.identifier.equals(id) && i.identifier != this.identifier){
+//                    i.send(raw);
+//                    break;
+//                }
+//            }
         }
         else if (this.identified){
             for(DarmokServerListener i : DarmokServer.pool){

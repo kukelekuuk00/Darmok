@@ -14,6 +14,8 @@ public interface DarmokUser {
     
     public String getName();
     
+    public String getDisplayName();
+    
     public boolean equals( Object obj );
 
 }

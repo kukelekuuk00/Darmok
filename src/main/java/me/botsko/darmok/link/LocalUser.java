@@ -3,6 +3,7 @@ package me.botsko.darmok.link;
 import me.botsko.darmok.channels.Channel;
 
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 public class LocalUser implements DarmokUser {
     
@@ -68,6 +69,17 @@ public class LocalUser implements DarmokUser {
      * 
      */
     public String getName() {
+        return sender.getName();
+    }
+    
+    
+    /**
+     * 
+     */
+    public String getDisplayName() {
+        if( sender instanceof Player ){
+            return ((Player)sender).getDisplayName();
+        }
         return sender.getName();
     }
 
