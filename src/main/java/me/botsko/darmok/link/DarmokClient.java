@@ -8,7 +8,6 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 import me.botsko.darmok.Darmok;
-import me.botsko.darmok.channels.Channel;
 
 import org.bukkit.configuration.file.FileConfiguration;
 
@@ -22,7 +21,6 @@ public class DarmokClient implements Runnable {
     private int port;
     private String password;
     
-    
     /**
      * 
      * @param version
@@ -35,7 +33,6 @@ public class DarmokClient implements Runnable {
         ident = config.getString("darmok.link.client.name");
     }
     
-    
     /**
      * 
      * @param message
@@ -46,7 +43,6 @@ public class DarmokClient implements Runnable {
         out.flush();
     }
 
-    
     /**
      * 
      */
@@ -77,7 +73,6 @@ public class DarmokClient implements Runnable {
         }
     }
     
-    
     /**
      * 
      * @param line
@@ -96,52 +91,20 @@ public class DarmokClient implements Runnable {
             return;
         }
 
-//        String[] new_args;
-        DarmokUser remoteUser;
         switch(c){
             case CMSG:
-                remoteUser = new RemoteUser(args[1]);
-                
-                String chatMessage = "";
-                for(int i = 3; i < args.length; i++){
-                    chatMessage += " " + args[i];
-                }
-                
-                Darmok.debug( "Finding channel for: " + args[2] );
-                Channel channel = Darmok.getChannelRegistry().getChannel( args[2] );
-                
-                Darmok.getChatter().send( remoteUser, channel, chatMessage);
-
-                return;
+            	LinkCommandHandler.cmsg(args);
+                break;
             case CBAN:
-//                cmd = "ch";
-//                player = new RemoteUser(args[1]);
-//                new_args = new String[]{"ban", args[2].split("@")[0], args[3]};
-                break;
+            	LinkCommandHandler.cban(args);
+            	break;
             case CUNBAN:
-//                cmd = "ch";
-//                player = new RemoteUser(args[1]);
-//                new_args = new String[]{"unban", args[2].split("@")[0], args[3]};
-                break;
-            case EMSG:
-//                Player ply = Bukkit.getServer().getPlayer(args[1].split("@")[0]);
-//                if(ply != null){
-//                    String response = "";
-//                    for(int i=2;i<args.length;i++){
-//                        response += args[i] + " ";
-//                    }
-//                    ply.sendMessage(Darmok.messenger.playerError(response.trim()));
-//                }
-                return;
+            	LinkCommandHandler.cunban(args);
+            	break;
             default:
-                return;
+            	break;
         }
-       
-//        System.out.println(player + ", " + cmd + ", " + new_args);
-//        for(String x : new_args){
-//            System.out.println(x);
-//        }
-//        commandHandler.onCommand(player, plugin.getCommand(cmd), cmd, new_args);
+        return;
     }
 
     /**
@@ -153,8 +116,7 @@ public class DarmokClient implements Runnable {
         UPD,
         CBAN,
         CUNBAN,
-        CMSG,
-        EMSG;
+        CMSG;
     }
 }
 
@@ -164,6 +126,6 @@ public class DarmokClient implements Runnable {
  * @author botskonet
  *
  */
-interface Handler{
-    public void handle(String[] args);
-}
+//interface Handler{
+//    public void handle(String[] args);
+//}

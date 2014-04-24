@@ -8,11 +8,11 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 
 import me.botsko.darmok.Darmok;
-import me.botsko.darmok.channels.Channel;
 
 public class DarmokServerListener implements Runnable {
     
     private String identifier;
+    private String version;
     private boolean identified = false;
     private BufferedReader in;
     private BufferedWriter out;
@@ -35,6 +35,21 @@ public class DarmokServerListener implements Runnable {
         this.password = password;
     }
     
+    /**
+     * 
+     * @return
+     */
+    public String getIdentifier(){
+    	return identifier;
+    }
+    
+    /**
+     * 
+     * @return
+     */
+    public String getVersion(){
+    	return version;
+    }
     
     /**
      * 
@@ -43,7 +58,6 @@ public class DarmokServerListener implements Runnable {
     public boolean isDead(){
         return isDead;
     }
-    
     
     /**
      * 
@@ -67,70 +81,50 @@ public class DarmokServerListener implements Runnable {
      */
     public void handle( String raw ){
         Darmok.debug("Raw server message (from client): " + raw);
+        Darmok.debug("Indent: " + this.identifier);
+        
+        
         String[] args = raw.split(" ");
-        if(this.identifier != null){
-            Darmok.debug(this.identifier + ": " + raw);
-        }
+
+        // Command handling
         if(args[0].equals("VERSION")){
-//            this.version = args[1];
+            this.version = args[1];
         }
+        
+        // AUTH
         else if(args[0].equals("AUTH")){
-            if(!this.identified){
-                if(args[2].equals(this.password)){
-                    this.identified = true;
-                    this.identifier = args[1];
-                    synchronized(DarmokServer.pool){
-                        DarmokServer.pool.add(this);
-                    }
-                    Darmok.log("Authentication successful for " + args[1]);
-                    DarmokServerListener.update();
-                } else {
-                    try {
-                        this.in.close();
-                    } catch (IOException e) {
-                        // e.printStackTrace();
-                    }
+            if(args[2].equals(this.password)){
+                this.identified = true;
+                this.identifier = args[1];
+                synchronized(DarmokServer.pool){
+                    DarmokServer.pool.add(this);
+                }
+                Darmok.log("Authentication successful for " + args[1]);
+                DarmokServerListener.update();
+            } else {
+                try {
+                    this.in.close();
+                } catch (IOException e) {
+                    // e.printStackTrace();
                 }
             }
         }
-        else if((args[0].equals("CBAN") || args[0].equals("UBAN")) && this.identified){
-            String id = args[2].split("@")[1];
-            for(DarmokServerListener i : DarmokServer.pool){
-                if(i.identifier.equals(id) && i.identifier != this.identifier){
-                    i.send(raw);
-                    break;
-                }
-            }
+        
+        // CBAN
+        else if(args[0].equals("CBAN") && this.identified){
+        	LinkCommandHandler.cban(args);
         }
+        
+        // CUNBAN
+        else if(args[0].equals("CUNBAN") && this.identified){
+        	LinkCommandHandler.cunban(args);
+        }
+        
+        // CMSG
         else if(args[0].equals("CMSG") && this.identified){
-            
-            DarmokUser remoteUser = new RemoteUser(args[1]);
-            
-            String chatMessage = "";
-            for(int i = 3; i < args.length; i++){
-                chatMessage += " " + args[i];
-            }
-            
-            Darmok.debug( "Finding channel for: " + args[2] );
-            Channel channel = Darmok.getChannelRegistry().getChannel( args[2] );
-            
-            Darmok.getChatter().send( remoteUser, channel, chatMessage);
-            
-//            String id = args[1].split("@")[1];
-//            for(DarmokServerListener i : DarmokServer.pool){
-//                if(i.identifier.equals(id) && i.identifier != this.identifier){
-//                    i.send(raw);
-//                    break;
-//                }
-//            }
+        	LinkCommandHandler.cmsg(args);
         }
-        else if (this.identified){
-            for(DarmokServerListener i : DarmokServer.pool){
-                if(i.identifier != this.identifier){
-                    i.send(raw);
-                }
-            }
-        } else {
+        else {
             this.send("DBG You are not authenticated. use AUTH.");
         }
     }
@@ -143,7 +137,7 @@ public class DarmokServerListener implements Runnable {
     public void send(String raw){
         try {
             this.out.write(raw + "\r\n");
-            Darmok.debug("DEBUG: WRITING " + raw + " TO " + this.identifier);
+            Darmok.debug("Writing " + raw + " TO " + this.identifier);
             this.out.flush();
         } catch (IOException e) {
             isDead = true;
