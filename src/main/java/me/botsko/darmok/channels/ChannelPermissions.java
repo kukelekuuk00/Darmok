@@ -61,11 +61,18 @@ public class ChannelPermissions {
 		}
 		
 		// If a town channel, make sure they have a town
-		if( Darmok.getTowny() != null && channel.getContext() != null && channel.getContext().equals("towny-town") ){
-			if( !Darmok.getTownyBridge().playerHasTown( player ) ){
-				throw new ChannelPermissionException("Player does not have a town.");
-			}
-		}
+        if( Darmok.getTowny() != null && channel.getContext() != null && channel.getContext().equals("towny-town") ){
+            if( !Darmok.getTownyBridge().playerHasTown( player ) ){
+                throw new ChannelPermissionException("Player does not have a town.");
+            }
+        }
+
+        // If a nation channel, make sure they have a nation
+        if( Darmok.getTowny() != null && channel.getContext() != null && channel.getContext().equals("towny-nation") ){
+            if( !Darmok.getTownyBridge().playerHasNation( player ) ){
+                throw new ChannelPermissionException("Player does not have a nation.");
+            }
+        }
 		
 		return true;
 		
@@ -108,20 +115,18 @@ public class ChannelPermissions {
 		}
 		
 		// If a town channel, make sure they have a town
-		if( Darmok.getTowny() != null && channel.getContext() != null && channel.getContext().equals("towny-nation") ){
-			if( !Darmok.getTownyBridge().playerHasNation( player ) ){
-				throw new ChannelPermissionException("Player does not have a town.");
-			}
-		}
-		
-		return true;
-		
-		//If a nation channel, make sure they have a nation
 		if( Darmok.getTowny() != null && channel.getContext() != null && channel.getContext().equals("towny-town") ){
-			if( !Darmok.getTownyBridge().playerHasTown( player ) ){
-				throw new ChannelPermissionException("Player does not have a town.");
-			}
-		}
+            if( !Darmok.getTownyBridge().playerHasTown( player ) ){
+                throw new ChannelPermissionException("Player does not have a town.");
+            }
+        }
+
+		// If a nation channel, make sure they have a nation
+		if( Darmok.getTowny() != null && channel.getContext() != null && channel.getContext().equals("towny-nation") ){
+            if( !Darmok.getTownyBridge().playerHasNation( player ) ){
+                throw new ChannelPermissionException("Player does not have a nation.");
+            }
+        }
 		
 		return true;
 	}
@@ -180,11 +185,18 @@ public class ChannelPermissions {
 		}
 		
 		// If a town channel, make sure they have a town
-		if( Darmok.getTowny() != null && channel.getContext() != null && channel.getContext().equals("towny-town") ){
-			if( !Darmok.getTownyBridge().playerHasTown( player ) ){
-				throw new ChannelPermissionException("Player does not have a town.");
-			}
-		}
+        if( Darmok.getTowny() != null && channel.getContext() != null && channel.getContext().equals("towny-town") ){
+            if( !Darmok.getTownyBridge().playerHasTown( player ) ){
+                throw new ChannelPermissionException("Player does not have a town.");
+            }
+        }
+
+        // If a nation channel, make sure they have a nation
+        if( Darmok.getTowny() != null && channel.getContext() != null && channel.getContext().equals("towny-nation") ){
+            if( !Darmok.getTownyBridge().playerHasNation( player ) ){
+                throw new ChannelPermissionException("Player does not have a nation.");
+            }
+        }
 		
 		return true;
 		
@@ -212,11 +224,18 @@ public class ChannelPermissions {
 		}
 		
 		// If a town channel, make sure they have a town
-		if( Darmok.getTowny() != null && channel.getContext() != null && channel.getContext().equals("towny-town") ){
-			if( !Darmok.getTownyBridge().playerHasTown( player ) ){
-				throw new ChannelPermissionException("Player does not have a town.");
-			}
-		}
+        if( Darmok.getTowny() != null && channel.getContext() != null && channel.getContext().equals("towny-town") ){
+            if( !Darmok.getTownyBridge().playerHasTown( player ) ){
+                throw new ChannelPermissionException("Player does not have a town.");
+            }
+        }
+
+        // If a nation channel, make sure they have a nation
+        if( Darmok.getTowny() != null && channel.getContext() != null && channel.getContext().equals("towny-nation") ){
+            if( !Darmok.getTownyBridge().playerHasNation( player ) ){
+                throw new ChannelPermissionException("Player does not have a nation.");
+            }
+        }
 		
 		return true;
 	}

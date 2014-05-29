@@ -27,6 +27,12 @@ public class DarmokTownyBridge {
 		return false;
 	}
 	
+	
+	/**
+	 * 
+	 * @param player
+	 * @return
+	 */
 	public boolean playerHasNation( Player player ){
 		try {
 			Resident resident = TownyUniverse.getDataSource().getResident( player.getName() );
@@ -35,6 +41,7 @@ public class DarmokTownyBridge {
 		}
 		return false;
 	}
+	
 	
 	/**
 	 * 
