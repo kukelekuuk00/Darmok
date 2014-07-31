@@ -95,6 +95,9 @@ public class DarmokClient implements Runnable {
             case CMSG:
             	LinkCommandHandler.cmsg(args);
                 break;
+            case DMSG:
+            	LinkCommandHandler.dmsg(args);
+                break;
             case CBAN:
             	LinkCommandHandler.cban(args);
             	break;
@@ -116,16 +119,7 @@ public class DarmokClient implements Runnable {
         UPD,
         CBAN,
         CUNBAN,
-        CMSG;
+        CMSG,
+        DMSG;
     }
 }
-
-
-/**
- * 
- * @author botskonet
- *
- */
-//interface Handler{
-//    public void handle(String[] args);
-//}

@@ -124,6 +124,11 @@ public class DarmokServerListener implements Runnable {
         else if(args[0].equals("CMSG") && this.identified){
         	LinkCommandHandler.cmsg(args);
         }
+        
+        // DMSG
+        else if(args[0].equals("DMSG") && this.identified){
+        	LinkCommandHandler.dmsg(args);
+        }
         else {
             this.send("DBG You are not authenticated. use AUTH.");
         }

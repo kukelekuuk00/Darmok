@@ -27,6 +27,26 @@ public class LinkCommandHandler {
 	}
 	
 	
+	/**
+	 * Send a direct message to a specific player
+	 * @param args
+	 */
+	public static void dmsg( String[] args ){
+		
+//		DarmokUser remoteUser = new RemoteUser(args[1]);
+//        
+//        String chatMessage = "";
+//        for(int i = 3; i < args.length; i++){
+//            chatMessage += " " + args[i];
+//        }
+//        
+//        Darmok.debug( "Finding channel for: " + args[2] );
+//        Channel channel = Darmok.getChannelRegistry().getChannel( args[2] );
+//        
+//        Darmok.getChatter().send( remoteUser, channel, chatMessage);
+		
+	}
+	
 	
 	public static void cban( String[] args ){
 		//player = new RemoteUser(args[1]);

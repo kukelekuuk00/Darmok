@@ -21,7 +21,7 @@ public class RemoteUser implements DarmokUser {
      * 
      */
     public void sendMessage( String message ){
-        DarmokClient.write("EMSG " + this.identityName + " " + message);
+        DarmokClient.write("DMSG " + this.identityName + " " + message);
         Darmok.debug("DEBUG: sending from " + this.identityName + ": " + message);
     }
     
