@@ -46,26 +46,26 @@ public class ChannelLeaveCommand implements CommandCallable {
         // @todo fix this!
         Player player = (Player) source;
 
-        if( args.length != 2 ){
-            source.sendMessage( Format.error( "You must provide a channel to leave, like /ch leave g" ) );
+        if (args.length != 2) {
+            source.sendMessage(Format.error("You must provide a channel to leave, like /ch leave g"));
             return Optional.absent();
         }
 
         // Get the channel
         Channel channel = Darmok.getChannelRegistry().getChannel(args[1]);
-        if( channel == null ){
-            source.sendMessage( Format.error( "Channel '" + args[1] + "' does not exist." ) );
+        if (channel == null) {
+            source.sendMessage(Format.error("Channel '" + args[1] + "' does not exist."));
             return Optional.absent();
         }
 
         try {
             Darmok.getPlayerRegistry().getPlayerChannels(player).leaveChannel(channel);
         } catch (LeaveChannelException e) {
-            source.sendMessage( Format.error( e.getMessage() ) );
+            source.sendMessage(Format.error(e.getMessage()));
             return Optional.absent();
         }
 
-        source.sendMessage( Format.heading( "You have left "+channel.getName()+" channel." ) );
+        source.sendMessage(Format.heading("You have left " + channel.getName() + " channel."));
 
         return Optional.of(CommandResult.success());
     }

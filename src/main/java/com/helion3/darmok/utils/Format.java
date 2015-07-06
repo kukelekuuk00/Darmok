@@ -33,19 +33,22 @@ public class Format {
 
     private static final String namespace = "Darmok";
 
-    private Format() {}
+    private Format() {
+    }
 
     /**
      * Returns content formatted as an error message
+     * 
      * @param content Object[] Content to format
      * @return Text Formatted content.
      */
-    public static Text error(Object...objects) {
+    public static Text error(Object... objects) {
         return error(Texts.of(objects));
     }
 
     /**
      * Returns content formatted as an error message
+     * 
      * @param content Text Content to format
      * @return Text Formatted content.
      */
@@ -56,15 +59,17 @@ public class Format {
 
     /**
      * Returns content formatted as a "heading"
+     * 
      * @param content Object[] Content to format
      * @return Text Formatted content.
      */
-    public static Text heading(Object...objects) {
+    public static Text heading(Object... objects) {
         return heading(Texts.of(objects));
     }
 
     /**
      * Returns content formatted as a "heading"
+     * 
      * @param content Text Content to format
      * @return Text Formatted content.
      */
@@ -75,15 +80,17 @@ public class Format {
 
     /**
      * Returns content formatted as a standard message
+     * 
      * @param content Object[] Content to format
      * @return Text Formatted content.
      */
-    public static Text message(Object...objects) {
+    public static Text message(Object... objects) {
         return message(Texts.of(objects));
     }
 
     /**
      * Returns content formatted as a standard message
+     * 
      * @param content Text Content to format
      * @return Text Formatted content.
      */
@@ -94,15 +101,17 @@ public class Format {
 
     /**
      * Returns content formatted as a "subdued heading"
+     * 
      * @param content Object[] Content to format
      * @return Text Formatted content.
      */
-    public static Text subduedHeading(Object...objects) {
+    public static Text subduedHeading(Object... objects) {
         return subduedHeading(Texts.of(objects));
     }
 
     /**
      * Returns content formatted as a "subdued heading"
+     * 
      * @param content Text Content to format
      * @return Text Formatted content.
      */
@@ -113,15 +122,17 @@ public class Format {
 
     /**
      * Returns content formatted as a success message
+     * 
      * @param content Object[] Content to format
      * @return Text Formatted content.
      */
-    public static Text success(Object...objects) {
+    public static Text success(Object... objects) {
         return success(Texts.of(objects));
     }
 
     /**
      * Returns content formatted as a success message
+     * 
      * @param content Text Content to format
      * @return Text Formatted content.
      */
@@ -132,17 +143,19 @@ public class Format {
 
     /**
      * Returns content formatted as a bonus message
+     * 
      * @param content Object[] Content to format
      * @return Text Formatted content.
      */
-    public static Text bonus(Object...objects) {
+    public static Text bonus(Object... objects) {
         return bonus(Texts.of(objects));
     }
 
     /**
-     * Returns content formatted as a bonus string. Usually used
-     * for fun wording inside other messages.
-     * @param content  Text Content to format
+     * Returns content formatted as a bonus string. Usually used for fun wording
+     * inside other messages.
+     * 
+     * @param content Text Content to format
      * @return Text Formatted content.
      */
     public static Text bonus(Text content) {

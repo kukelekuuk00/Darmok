@@ -31,6 +31,7 @@ import com.helion3.darmok.Darmok;
 public class PlayerJoinListener {
     /**
      * Load channels for player upon join.
+     * 
      * @param event
      */
     @Subscribe

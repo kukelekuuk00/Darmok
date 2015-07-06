@@ -44,7 +44,7 @@ public class Chatter {
      */
     public void send(Player player, Channel channel, Text msg) {
         try {
-            ChannelPermissions.playerCanSpeak( player, channel );
+            ChannelPermissions.playerCanSpeak(player, channel);
         } catch (ChannelPermissionException e1) {
             player.sendMessage(Format.error(e1.getMessage()));
             return;
@@ -67,9 +67,10 @@ public class Chatter {
         }
 
         // Profanity
-        if (Darmok.getConfig().getNode("censors", "profanity", "enabled").getBoolean()){
+        if (Darmok.getConfig().getNode("censors", "profanity", "enabled").getBoolean()) {
             if (Darmok.getCensor().containsSuspectedProfanity(msg)) {
-                player.sendMessage(Format.error("Profanity or trying to bypass the censor is not allowed. Sorry if this is a false catch."));
+                player.sendMessage(Format
+                        .error("Profanity or trying to bypass the censor is not allowed. Sorry if this is a false catch."));
                 return;
             } else {
                 // scan for words we censor
@@ -85,8 +86,7 @@ public class Chatter {
         }
 
         /**
-         * Build a list of all players we think we should be
-         * messaging.
+         * Build a list of all players we think we should be messaging.
          */
         List<Player> playersToMessage = Darmok.getPlayerRegistry().getPlayersInChannel(channel);
 
@@ -95,13 +95,14 @@ public class Chatter {
             int range = channel.getRange();
 
             // Does range matter?
-            if( range > -1 ){
+            if (range > -1) {
                 // if 0, check worlds match
-                if( range == 0 && !player.getWorld().equals( pl.getWorld() ) ){
+                if (range == 0 && !player.getWorld().equals(pl.getWorld())) {
                     continue;
                 }
                 // otherwise, it's a distance
-                else if( !player.getWorld().equals( pl.getWorld() ) || player.getLocation().getPosition().distance( pl.getLocation().getPosition() ) > range ){
+                else if (!player.getWorld().equals(pl.getWorld())
+                        || player.getLocation().getPosition().distance(pl.getLocation().getPosition()) > range) {
                     continue;
                 }
             }
@@ -110,7 +111,7 @@ public class Chatter {
 
             // Ensure they have permission to READ
             try {
-                ChannelPermissions.playerCanRead( player, channel );
+                ChannelPermissions.playerCanRead(player, channel);
             } catch (ChannelPermissionException e) {
                 return;
             }
@@ -128,7 +129,7 @@ public class Chatter {
      * @param player
      * @return
      */
-    private boolean isPlayerMuted( Player player ){
+    private boolean isPlayerMuted(Player player) {
         // @todo until essentials works, this won't
         return false;
     }

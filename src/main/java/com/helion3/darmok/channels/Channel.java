@@ -45,7 +45,7 @@ public class Channel {
      *
      * @param command
      */
-    public Channel( String name, String command, String color, String format, int range, String context ){
+    public Channel(String name, String command, String color, String format, int range, String context) {
         this.name = name;
         this.command = command;
         this.color = color;
@@ -58,7 +58,7 @@ public class Channel {
      *
      * @return
      */
-    public String getName(){
+    public String getName() {
         return name;
     }
 
@@ -66,7 +66,7 @@ public class Channel {
      *
      * @return
      */
-    public String getCommand(){
+    public String getCommand() {
         return command;
     }
 
@@ -74,7 +74,7 @@ public class Channel {
      *
      * @return
      */
-    public String getColor(){
+    public String getColor() {
         return color;
     }
 
@@ -82,7 +82,7 @@ public class Channel {
      *
      * @return
      */
-    public String getFormat(){
+    public String getFormat() {
         return format;
     }
 
@@ -90,7 +90,7 @@ public class Channel {
      *
      * @return
      */
-    public int getRange(){
+    public int getRange() {
         return range;
     }
 
@@ -98,7 +98,7 @@ public class Channel {
      *
      * @return
      */
-    public String getContext(){
+    public String getContext() {
         return context;
     }
 
@@ -106,7 +106,7 @@ public class Channel {
      *
      * @return
      */
-    public boolean isDefault(){
+    public boolean isDefault() {
         return isDefault;
     }
 
@@ -114,7 +114,7 @@ public class Channel {
      *
      * @return
      */
-    public void setDefault( boolean isDefault ){
+    public void setDefault(boolean isDefault) {
         this.isDefault = isDefault;
     }
 
@@ -122,7 +122,7 @@ public class Channel {
      *
      * @return
      */
-    public void setMuted( boolean isMuted ){
+    public void setMuted(boolean isMuted) {
         this.isMuted = isMuted;
     }
 
@@ -130,7 +130,7 @@ public class Channel {
      *
      * @return
      */
-    public boolean isMuted(){
+    public boolean isMuted() {
         return isMuted;
     }
 
@@ -142,7 +142,7 @@ public class Channel {
      */
     @SuppressWarnings("deprecation")
     public Text formatMessage(Player player, Text msg) throws TextMessageException {
-        Hashtable<String,String> tokens = new Hashtable<String,String>();
+        Hashtable<String, String> tokens = new Hashtable<String, String>();
         tokens.put("color", color);
         tokens.put("command", command);
         tokens.put("msg", Texts.toPlain(msg));
@@ -161,10 +161,10 @@ public class Channel {
      * @param replacer
      * @return
      */
-    protected String getString( String msg, Hashtable<String,String> replacer ){
-        if( msg != null && !replacer.isEmpty() ){
-            for (Entry<String,String> entry : replacer.entrySet()){
-                msg = msg.replace("%("+entry.getKey()+")", entry.getValue());
+    protected String getString(String msg, Hashtable<String, String> replacer) {
+        if (msg != null && !replacer.isEmpty()) {
+            for (Entry<String, String> entry : replacer.entrySet()) {
+                msg = msg.replace("%(" + entry.getKey() + ")", entry.getValue());
             }
         }
         return msg;

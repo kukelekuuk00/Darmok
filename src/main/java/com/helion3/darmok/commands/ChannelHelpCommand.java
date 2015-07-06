@@ -37,13 +37,13 @@ import com.helion3.darmok.utils.Format;
 public class ChannelHelpCommand implements CommandCallable {
     @Override
     public Optional<CommandResult> process(CommandSource source, String arguments) throws CommandException {
-        source.sendMessage(Format.heading( "Welcome to Darmok - By Viveleroi" ));
-        source.sendMessage(Format.message("ch join","(channel)", "Join a channel."));
-        source.sendMessage(Format.message("ch leave","(channel)", "Leave a channel."));
-        source.sendMessage(Format.message("ch kick","(user) (channel)", "Kick a player from a channel."));
-        source.sendMessage(Format.message("ch ban","(user) (channel)", "Ban a player from a channel."));
-        source.sendMessage(Format.message("ch unban","(user) (channel)", "Unban a player from a channel."));
-        source.sendMessage(Format.message("ch list","", "List channels"));
+        source.sendMessage(Format.heading("Welcome to Darmok - By Viveleroi"));
+        source.sendMessage(Format.message("ch join", "(channel)", "Join a channel."));
+        source.sendMessage(Format.message("ch leave", "(channel)", "Leave a channel."));
+        source.sendMessage(Format.message("ch kick", "(user) (channel)", "Kick a player from a channel."));
+        source.sendMessage(Format.message("ch ban", "(user) (channel)", "Ban a player from a channel."));
+        source.sendMessage(Format.message("ch unban", "(user) (channel)", "Unban a player from a channel."));
+        source.sendMessage(Format.message("ch list", "", "List channels"));
         return Optional.of(CommandResult.success());
     }
 

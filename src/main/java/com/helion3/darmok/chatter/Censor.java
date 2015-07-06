@@ -33,17 +33,16 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.Texts;
 
 public class Censor {
-    protected HashMap<String,String> leet = new HashMap<String,String>();
+    protected HashMap<String, String> leet = new HashMap<String, String>();
     private final List<String> rejectWords;
     private final List<String> censorWords;
-
 
     /**
      *
      * @param plugin
      * @throws SQLException
      */
-    public Censor( List<String> rejectWords, List<String> censorWords ){
+    public Censor(List<String> rejectWords, List<String> censorWords) {
         this.rejectWords = rejectWords;
         this.censorWords = censorWords;
 
@@ -71,12 +70,12 @@ public class Censor {
      * @param msg
      * @return
      */
-    public Text filterCaps(Text msg, int minLength, int capsPercent ){
+    public Text filterCaps(Text msg, int minLength, int capsPercent) {
         String msgString = Texts.toPlain(msg);
-        if( msgString.length() < minLength ){
+        if (msgString.length() < minLength) {
             return msg;
         }
-        if( capsPercentage(msgString) > capsPercent ){
+        if (capsPercentage(msgString) > capsPercent) {
             msgString = msgString.toLowerCase();
         }
         return Texts.of(msgString);
@@ -87,14 +86,14 @@ public class Censor {
      * @param msg
      * @return
      */
-    protected double capsPercentage(String msg){
+    protected double capsPercentage(String msg) {
         int count = 0;
-        for (char ch : msg.toCharArray()){
-            if (Character.isUpperCase(ch)){
+        for (char ch : msg.toCharArray()) {
+            if (Character.isUpperCase(ch)) {
                 count++;
             }
         }
-        return (count > 0 ? (( (double)count / (double)msg.length()) * 100) : 100);
+        return (count > 0 ? (((double) count / (double) msg.length()) * 100) : 100);
     }
 
     /**
@@ -102,7 +101,7 @@ public class Censor {
      * @param msg
      * @return
      */
-    protected boolean containsSuspectedProfanity(Text msg){
+    protected boolean containsSuspectedProfanity(Text msg) {
         // ensure lower case
         String _tmp = Texts.toPlain(msg).toLowerCase();
 
@@ -112,10 +111,10 @@ public class Censor {
         // get possible leet versions
         List<String> variations = convertLeetSpeak(_tmp);
 
-        for(String variation : variations){
+        for (String variation : variations) {
             // scan for illegal words
-            for(String w : rejectWords){
-                if(variation.contains(w)){
+            for (String w : rejectWords) {
+                if (variation.contains(w)) {
                     return true;
                 }
             }
@@ -128,10 +127,10 @@ public class Censor {
      *
      * @return
      */
-    public Text replaceCensoredWords(Text msg){
+    public Text replaceCensoredWords(Text msg) {
         String msgString = Texts.toPlain(msg);
-        for(String w : censorWords){
-            msgString = msgString.replaceAll("(?i)"+w, "*****");
+        for (String w : censorWords) {
+            msgString = msgString.replaceAll("(?i)" + w, "*****");
         }
         return Texts.of(msgString);
     }
@@ -141,15 +140,15 @@ public class Censor {
      * @param msg
      * @return
      */
-    protected List<String> convertLeetSpeak( String msg ){
+    protected List<String> convertLeetSpeak(String msg) {
         // Begin list of all variations, including original
         List<String> _variations = new ArrayList<String>();
         _variations.add(msg);
 
-        for (Entry<String, String> entry : leet.entrySet()){
-            if(msg.contains( entry.getKey() )){
+        for (Entry<String, String> entry : leet.entrySet()) {
+            if (msg.contains(entry.getKey())) {
                 // entry.getValue()
-                _variations.add( msg.replace(entry.getKey(), entry.getValue()) );
+                _variations.add(msg.replace(entry.getKey(), entry.getValue()));
             }
         }
 

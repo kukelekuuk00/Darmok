@@ -24,6 +24,8 @@
 package com.helion3.darmok;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +33,7 @@ import java.util.Map;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.Types;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
+import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 
 import org.slf4j.Logger;
@@ -48,7 +51,6 @@ import com.helion3.darmok.channels.ChannelRegistry;
 import com.helion3.darmok.chatter.Censor;
 import com.helion3.darmok.chatter.Chatter;
 import com.helion3.darmok.commands.ChannelCommands;
-import com.helion3.darmok.commands.DarmokCommands;
 import com.helion3.darmok.listeners.CommandListener;
 import com.helion3.darmok.listeners.PlayerChatListener;
 import com.helion3.darmok.listeners.PlayerJoinListener;
@@ -58,14 +60,14 @@ import com.helion3.darmok.players.PlayerRegistry;
 
 @Plugin(id = "Darmok", name = "Darmok", version = "2.0")
 final public class Darmok {
-    private static Configuration config;
-    private static Game game;
-    private static Logger logger;
+    private static Censor censor;
     private static ChannelRegistry channelRegistry = new ChannelRegistry();
     private static Chatter chatter;
-    private static PlayerRegistry playerRegistry = new PlayerRegistry();
-    private static Censor censor;
+    private static Configuration config;
     private static File parentDir;
+    private static Game game;
+    private static Logger logger;
+    private static PlayerRegistry playerRegistry = new PlayerRegistry();
 
     @Inject
     @DefaultConfig(sharedRoot = false)
@@ -76,8 +78,7 @@ final public class Darmok {
     private ConfigurationLoader<CommentedConfigurationNode> configManager;
 
     /**
-     * Performs bootstrapping of Prism resources/objects.
-     *
+     * Bootstrap
      * @param event Server started
      */
     @Subscribe
@@ -87,14 +88,25 @@ final public class Darmok {
 
         // Load configuration file
         config = new Configuration(defaultConfig, configManager);
-
         parentDir = defaultConfig.getParentFile();
+
+        // Init censor
+        List<String> rejectWords = new ArrayList<String>();
+        List<String> censorWords = new ArrayList<String>();
+        try {
+            ConfigurationNode node = getCensorConfig();
+            rejectWords = node.getNode("reject-words").getList(Types::asString);
+            censorWords = node.getNode("censor-words").getList(Types::asString);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        censor = new Censor(rejectWords, censorWords);
 
         // Init vars
         chatter = new Chatter();
 
         // Register commands
-        game.getCommandDispatcher().register(this, DarmokCommands.getCommand(game), "darmok");
         game.getCommandDispatcher().register(this, ChannelCommands.getCommand(game), "ch", "channel");
 
         // Register event listeners
@@ -113,6 +125,7 @@ final public class Darmok {
 
     /**
      * Returns the plugin configuration
+     *
      * @return Configuration
      */
     public static Configuration getConfig() {
@@ -121,6 +134,7 @@ final public class Darmok {
 
     /**
      * Returns the current game
+     *
      * @return Game
      */
     public static Game getGame() {
@@ -129,6 +143,7 @@ final public class Darmok {
 
     /**
      * Returns the Logger instance for this plugin.
+     *
      * @return Logger instance
      */
     public static Logger getLogger() {
@@ -137,6 +152,7 @@ final public class Darmok {
 
     /**
      * Injects the Logger instance for this plugin
+     *
      * @param log Logger
      */
     @Inject
@@ -144,99 +160,106 @@ final public class Darmok {
         logger = log;
     }
 
-    public static void reloadConfig() {
+    /**
+     *
+     * @return
+     */
+    public static ChannelRegistry getChannelRegistry() {
+        return channelRegistry;
+    }
 
+   /**
+     *
+     */
+    public static Chatter getChatter() {
+        return chatter;
+    }
+
+   /**
+     *
+     * @return
+     */
+    public static PlayerRegistry getPlayerRegistry() {
+        return playerRegistry;
+    }
+
+   /**
+     *
+     * @return
+     */
+    public static Censor getCensor() {
+        return censor;
     }
 
     /**
-     *
+     * Loads profanity config.
+     * @return
+     * @throws IOException
      */
-    private void registerChannels(){
-        ConfigurationNode channels = getConfig().getNode("channels");
-        String format = getConfig().getNode("channel", "default-format").getString();
+    private CommentedConfigurationNode getCensorConfig() throws IOException {
+        File profanityConf = new File(parentDir.getAbsolutePath() + "/profanity.conf");
 
-        Map<Object, ? extends ConfigurationNode> children = channels.getChildrenMap();
-        for(Object key : children.keySet()){
-            if (!(key instanceof String)){
-               continue;
-            }
-
-            ConfigurationNode channel = children.get(key);
-
-            channelRegistry.registerChannel(
-                new Channel(
-                        (String) key,
-                        channel.getNode("command").getString(),
-                        channel.getNode("color").getString(),
-                        (channel.getNode("format").getString().isEmpty() ? format : channel.getNode("format").getString()),
-                        channel.getNode("range").getInt(),
-                        channel.getNode("context").getString()
-                    ));
+        if (!profanityConf.exists()) {
+            URL jarConfigFile = this.getClass().getResource("profanity.conf");
+            return HoconConfigurationLoader.builder().setURL(jarConfigFile).build().load();
+        } else {
+            return HoconConfigurationLoader.builder().setFile(profanityConf).build().load();
         }
     }
 
     /**
      *
-     * @return
      */
-    public static ChannelRegistry getChannelRegistry(){
-        return channelRegistry;
+    private void registerChannels() {
+        ConfigurationNode channels = getConfig().getNode("channels");
+        String format = getConfig().getNode("channel", "default-format").getString();
+
+        Map<Object, ? extends ConfigurationNode> children = channels.getChildrenMap();
+        for (Object key : children.keySet()) {
+            if (!(key instanceof String)) {
+                continue;
+            }
+
+            ConfigurationNode channel = children.get(key);
+
+            channelRegistry.registerChannel(new Channel((String) key, channel.getNode("command").getString(), channel
+                    .getNode("color").getString(), (channel.getNode("format").getString().isEmpty() ? format : channel
+                    .getNode("format").getString()), channel.getNode("range").getInt(), channel.getNode("context")
+                    .getString()));
+        }
     }
 
     /**
-     *
-     */
-    public static Chatter getChatter(){
-        return chatter;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public static PlayerRegistry getPlayerRegistry(){
-        return playerRegistry;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public static Censor getCensor(){
-        return censor;
-    }
-
-    /**
-     * Load existing yaml channel settings for a player
-     * when they join, or when the server reloads.
+     * Load existing yaml channel settings for a player when they join, or when
+     * the server reloads.
      *
      * @param player
      */
-    public static void loadChannelSettingsForPlayer( Player player ){
+    public static void loadChannelSettingsForPlayer(Player player) {
         PlayerConfiguration playerConfig = new PlayerConfiguration(parentDir, player.getUniqueId());
 
         // Restore channel subscriptions
         List<String> channelAliases = playerConfig.getNode("channels").getList(Types::asString);
-        for( String alias : channelAliases ){
-            Channel channel = Darmok.getChannelRegistry().getChannel( alias );
-            if( channel != null ){
-                getPlayerRegistry().getPlayerChannels(player).addChannel( channel );
+        for (String alias : channelAliases) {
+            Channel channel = Darmok.getChannelRegistry().getChannel(alias);
+            if (channel != null) {
+                getPlayerRegistry().getPlayerChannels(player).addChannel(channel);
             }
         }
 
         // Load default
         String defaultAlias = playerConfig.getNode("default").getString();
         Channel c = getChannelRegistry().getChannel(defaultAlias);
-        if( c != null ){
+        if (c != null) {
             getPlayerRegistry().getPlayerChannels(player).setDefault(c);
         }
 
         // Restore channel bans
         List<String> bannedIn = playerConfig.getNode("banned-in").getList(Types::asString);
         // If player was banned in this channel, restore that
-        if( bannedIn != null && !bannedIn.isEmpty() ){
-            for( String channelAlias : bannedIn){
-                Darmok.getPlayerRegistry().setChannelBanForPlayer( player, channelAlias );
+        if (bannedIn != null && !bannedIn.isEmpty()) {
+            for (String channelAlias : bannedIn) {
+                Darmok.getPlayerRegistry().setChannelBanForPlayer(player, channelAlias);
             }
         }
 
@@ -248,10 +271,10 @@ final public class Darmok {
      *
      * @param player
      */
-    public static Channel resetDefaultChannelForPlayer( Player player ){
+    public static Channel resetDefaultChannelForPlayer(Player player) {
         ArrayList<Channel> channels = Darmok.getChannelRegistry().getChannels();
-        if( !channels.isEmpty() ){
-            for ( Channel c : channels ){
+        if (!channels.isEmpty()) {
+            for (Channel c : channels) {
                 if (getConfig().getNode("channels", c.getName(), "default").getBoolean()) {
                     getPlayerRegistry().getPlayerChannels(player).setDefault(c);
                     return c;
@@ -262,20 +285,19 @@ final public class Darmok {
     }
 
     /**
-     * Build a new player channel settings save file based on
-     * current channels.
+     * Build a new player channel settings save file based on current channels.
      */
-    public static void saveChannelSettingsForPlayer( Player player ){
+    public static void saveChannelSettingsForPlayer(Player player) {
         PlayerConfiguration playerConfig = new PlayerConfiguration(parentDir, player.getUniqueId());
 
         // Save current channels
         PlayerChannels playerChannels = getPlayerRegistry().getPlayerChannels(player);
-        if( ! playerChannels.getChannels().isEmpty() ){
+        if (!playerChannels.getChannels().isEmpty()) {
             ArrayList<String> channelAliases = new ArrayList<String>();
             ArrayList<Channel> channels = playerChannels.getChannels();
-            if( !channels.isEmpty() ){
-                for( Channel c : channels ){
-                    channelAliases.add( c.getCommand() );
+            if (!channels.isEmpty()) {
+                for (Channel c : channels) {
+                    channelAliases.add(c.getCommand());
                 }
             }
             playerConfig.getNode("channels").setValue(channelAliases);
@@ -284,8 +306,8 @@ final public class Darmok {
         playerConfig.getNode("default").setValue(playerChannels.getDefault().getCommand());
 
         // Set their channel bans
-        ArrayList<String> bannedIn = getPlayerRegistry().getChannelBansForPlayer( player );
-        if( bannedIn != null && !bannedIn.isEmpty() ){
+        ArrayList<String> bannedIn = getPlayerRegistry().getChannelBansForPlayer(player);
+        if (bannedIn != null && !bannedIn.isEmpty()) {
             playerConfig.getNode("banned-in").setValue(bannedIn);
         }
 
@@ -296,26 +318,26 @@ final public class Darmok {
      *
      * @param player
      */
-    public static void unloadChannelSettingsForPlayer( Player player ){
-        getPlayerRegistry().removePlayer( player );
+    public static void unloadChannelSettingsForPlayer(Player player) {
+        getPlayerRegistry().removePlayer(player);
     }
 
     /**
      * Load all channels for any online players (on reload)
      */
-    public static void loadChannelsForAllPlayers(){
+    public static void loadChannelsForAllPlayers() {
         for (Player pl : game.getServer().getOnlinePlayers()) {
-            loadChannelSettingsForPlayer( pl );
+            loadChannelSettingsForPlayer(pl);
         }
     }
 
     /**
      * Save and unload all channels for any online players
      */
-    public static void unloadChannels(){
+    public static void unloadChannels() {
         for (Player pl : game.getServer().getOnlinePlayers()) {
-            saveChannelSettingsForPlayer( pl );
-            unloadChannelSettingsForPlayer( pl );
+            saveChannelSettingsForPlayer(pl);
+            unloadChannelSettingsForPlayer(pl);
         }
     }
 

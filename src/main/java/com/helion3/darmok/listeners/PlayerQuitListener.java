@@ -31,11 +31,12 @@ import com.helion3.darmok.Darmok;
 public class PlayerQuitListener {
     /**
      * Load channels for player upon join.
+     * 
      * @param event
      */
     @Subscribe
     public void onPlayerQuit(final PlayerQuitEvent event) {
-        Darmok.saveChannelSettingsForPlayer( event.getEntity() );
-        Darmok.unloadChannelSettingsForPlayer( event.getEntity() );
+        Darmok.saveChannelSettingsForPlayer(event.getEntity());
+        Darmok.unloadChannelSettingsForPlayer(event.getEntity());
     }
 }

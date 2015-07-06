@@ -33,6 +33,7 @@ import com.helion3.darmok.channels.Channel;
 public class PlayerChatListener {
     /**
      * Load channels for player upon join.
+     * 
      * @param event
      */
     @Subscribe
@@ -43,11 +44,11 @@ public class PlayerChatListener {
         Channel channel = Darmok.getPlayerRegistry().getPlayerChannels(player).getDefault();
 
         // Reset their default
-        if( channel == null ){
-            channel = Darmok.resetDefaultChannelForPlayer( player );
+        if (channel == null) {
+            channel = Darmok.resetDefaultChannelForPlayer(player);
         }
 
-        if( channel != null ){
+        if (channel != null) {
             Darmok.getLogger().debug("Found default channel " + channel.getName() + " for " + player.getName());
             Darmok.getChatter().send(player, channel, event.getUnformattedMessage());
             event.setCancelled(true);

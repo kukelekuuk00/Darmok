@@ -40,8 +40,9 @@ public class CommandListener {
      * @param event
      */
     @Subscribe
-    public void onCommandEvent(CommandEvent event){
-        if (!(event.getSource() instanceof Player)) return;
+    public void onCommandEvent(CommandEvent event) {
+        if (!(event.getSource() instanceof Player))
+            return;
 
         Player player = (Player) event.getSource();
 
@@ -49,48 +50,48 @@ public class CommandListener {
         String primaryCmd = cmdArgs[0].trim().toLowerCase().replace("/", "");
 
         // Does channel exist?
-        Channel channel = Darmok.getChannelRegistry().getChannel( primaryCmd );
-        if( channel != null ){
+        Channel channel = Darmok.getChannelRegistry().getChannel(primaryCmd);
+        if (channel != null) {
 
-           // Are they in the channel?
-           if( ! Darmok.getPlayerRegistry().getPlayerChannels( player ).inChannel( channel ) ){
-               Darmok.getLogger().debug("Trying to auto-join player to " + channel.getName());
+            // Are they in the channel?
+            if (!Darmok.getPlayerRegistry().getPlayerChannels(player).inChannel(channel)) {
+                Darmok.getLogger().debug("Trying to auto-join player to " + channel.getName());
 
-               try {
-                   Darmok.getPlayerRegistry().getPlayerChannels( player ).joinChannel( channel );
-               } catch (JoinChannelException e) {
-                   player.sendMessage(Format.error(e.getMessage()));
-                   event.setCancelled(true);
-                   return;
-               }
+                try {
+                    Darmok.getPlayerRegistry().getPlayerChannels(player).joinChannel(channel);
+                } catch (JoinChannelException e) {
+                    player.sendMessage(Format.error(e.getMessage()));
+                    event.setCancelled(true);
+                    return;
+                }
 
-               player.sendMessage(Format.subduedHeading("Auto-joining channel " + channel.getName() + "..." ));
-           }
+                player.sendMessage(Format.subduedHeading("Auto-joining channel " + channel.getName() + "..."));
+            }
 
-           // if message actually sent
-           if( cmdArgs.length > 1 ){
+            // if message actually sent
+            if (cmdArgs.length > 1) {
 
-               String[] messageArgs = new String[(cmdArgs.length - 1)];
-               for(int i = 1; i < cmdArgs.length; i++ ){
-                   messageArgs[ (i-1) ] = cmdArgs[i];
-               }
+                String[] messageArgs = new String[(cmdArgs.length - 1)];
+                for (int i = 1; i < cmdArgs.length; i++) {
+                    messageArgs[(i - 1)] = cmdArgs[i];
+                }
 
-               String message = StringUtils.join(messageArgs, " ");
+                String message = StringUtils.join(messageArgs, " ");
 
-               // Chat!
-               Darmok.getChatter().send(player, channel, Texts.of(message));
+                // Chat!
+                Darmok.getChatter().send(player, channel, Texts.of(message));
 
-           } else {
-               Darmok.getLogger().debug("Setting " + player.getName() + "'s default channel to " + channel.getName());
-               if( Darmok.getPlayerRegistry().getPlayerChannels( player ).setDefault( channel ) ){
-                   player.sendMessage(Format.heading("Default channel switched to " + channel.getName()));
-               } else {
-                   player.sendMessage(Format.error("Failed setting channel as default. Are you allowed?"));
-               }
-           }
+            } else {
+                Darmok.getLogger().debug("Setting " + player.getName() + "'s default channel to " + channel.getName());
+                if (Darmok.getPlayerRegistry().getPlayerChannels(player).setDefault(channel)) {
+                    player.sendMessage(Format.heading("Default channel switched to " + channel.getName()));
+                } else {
+                    player.sendMessage(Format.error("Failed setting channel as default. Are you allowed?"));
+                }
+            }
 
-           event.setCancelled(true);
-           return;
+            event.setCancelled(true);
+            return;
 
         }
         // it's not our command, ignore it

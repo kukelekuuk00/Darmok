@@ -45,8 +45,8 @@ public class ChannelKickCommand implements CommandCallable {
     public Optional<CommandResult> process(CommandSource source, String arguments) throws CommandException {
         String[] args = arguments.split(" ");
 
-        if( args.length != 3 ){
-            source.sendMessage( Format.error( "You must provide a player name and channel, like /ch kick viveleroi g" ) );
+        if (args.length != 3) {
+            source.sendMessage(Format.error("You must provide a player name and channel, like /ch kick viveleroi g"));
             return Optional.absent();
         }
 
@@ -59,26 +59,27 @@ public class ChannelKickCommand implements CommandCallable {
 
         // Get the channel
         Channel channel = Darmok.getChannelRegistry().getChannel(args[2]);
-        if( channel == null ){
-            source.sendMessage( Format.error( "Channel '" + args[2] + "' does not exist." ) );
+        if (channel == null) {
+            source.sendMessage(Format.error("Channel '" + args[2] + "' does not exist."));
             return Optional.absent();
         }
 
         try {
-            ChannelPermissions.sourceCanKick( source, channel );
+            ChannelPermissions.sourceCanKick(source, channel);
         } catch (ChannelPermissionException e1) {
-            source.sendMessage( Format.error( e1.getMessage() ) );
+            source.sendMessage(Format.error(e1.getMessage()));
             return Optional.absent();
         }
 
         try {
-            Darmok.getPlayerRegistry().getPlayerChannels(player.get()).removeChannel( channel );
+            Darmok.getPlayerRegistry().getPlayerChannels(player.get()).removeChannel(channel);
         } catch (LeaveChannelException e) {
             // not really possible
         }
 
-        player.get().sendMessage( Format.error( "You have been kicked from the "+channel.getName()+" channel." ) );
-        source.sendMessage( Format.heading( "You have kicked "+player.get().getName()+" from the "+channel.getName()+" channel." ) );
+        player.get().sendMessage(Format.error("You have been kicked from the " + channel.getName() + " channel."));
+        source.sendMessage(Format.heading("You have kicked " + player.get().getName() + " from the "
+                + channel.getName() + " channel."));
 
         // @todo alert other players in this channel that they left
 

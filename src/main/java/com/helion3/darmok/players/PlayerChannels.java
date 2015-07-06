@@ -41,38 +41,34 @@ public class PlayerChannels {
      */
     private Player player;
 
-
     /**
      *
      */
     private ArrayList<String> channels = new ArrayList<String>();
-
 
     /**
      *
      */
     private String defaultChannel;
 
-
     /**
      *
      * @param player
      */
-    public PlayerChannels( Player player ){
+    public PlayerChannels(Player player) {
         this.player = player;
     }
-
 
     /**
      *
      * @return
      */
-    public ArrayList<Channel> getChannels(){
+    public ArrayList<Channel> getChannels() {
         ArrayList<Channel> playerChannels = new ArrayList<Channel>();
-        if(!channels.isEmpty()){
-            for(String alias : channels){
-                Channel c = Darmok.getChannelRegistry().getChannel( alias );
-                if( c != null ){
+        if (!channels.isEmpty()) {
+            for (String alias : channels) {
+                Channel c = Darmok.getChannelRegistry().getChannel(alias);
+                if (c != null) {
                     playerChannels.add(c);
                 }
             }
@@ -80,90 +76,87 @@ public class PlayerChannels {
         return playerChannels;
     }
 
-
     /**
      * Does not register the channel in the db, use this only when the user
-     * already has joined the channel. Primarily used when re/loading
-     * channel settings for a player.
+     * already has joined the channel. Primarily used when re/loading channel
+     * settings for a player.
+     * 
      * @param c
      */
-    public boolean addChannel( Channel c ){
+    public boolean addChannel(Channel c) {
         channels.add(c.getCommand());
         return true;
     }
 
-
     /**
      *
      * @return
      */
-    public Channel getDefault(){
-        if( defaultChannel != null ){
-            return Darmok.getChannelRegistry().getChannel( defaultChannel );
+    public Channel getDefault() {
+        if (defaultChannel != null) {
+            return Darmok.getChannelRegistry().getChannel(defaultChannel);
         }
         return null;
     }
 
-
     /**
      *
      * @param channel
      * @return
      */
-    public boolean setDefault( Channel channel ){
+    public boolean setDefault(Channel channel) {
         defaultChannel = channel.getCommand();
         return true;
     }
 
-
     /**
      *
      * @param channel
      * @return
      */
-    public boolean inChannel( Channel channel ){
-        return channels.contains( channel.getCommand() );
+    public boolean inChannel(Channel channel) {
+        return channels.contains(channel.getCommand());
     }
-
 
     /**
      * Subscribes a player to a channel.
+     * 
      * @param c
      * @throws JoinChannelException
      */
-    public void joinChannel( Channel c ) throws JoinChannelException{
+    public void joinChannel(Channel c) throws JoinChannelException {
 
         try {
-            ChannelPermissions.playerCanJoin( player, c );
-        } catch (ChannelPermissionException e){
-            throw new JoinChannelException( e.getMessage() );
+            ChannelPermissions.playerCanJoin(player, c);
+        } catch (ChannelPermissionException e) {
+            throw new JoinChannelException(e.getMessage());
         }
 
         addChannel(c);
 
     }
 
-
     /**
      * Removes a channel from the player's subscriptions.
+     * 
      * @param player
      * @return
      * @throws LeaveChannelException
      */
-    public boolean leaveChannel( Channel channel ) throws LeaveChannelException{
-        if( channel != null ){
+    public boolean leaveChannel(Channel channel) throws LeaveChannelException {
+        if (channel != null) {
 
             try {
-                ChannelPermissions.playerCanLeave( player, channel );
-            } catch (ChannelPermissionException e){
-                throw new LeaveChannelException( e.getMessage() );
+                ChannelPermissions.playerCanLeave(player, channel);
+            } catch (ChannelPermissionException e) {
+                throw new LeaveChannelException(e.getMessage());
             }
 
-            if( channel.getCommand().equals(defaultChannel) ){
-                if( channels.size() > 1 ){
+            if (channel.getCommand().equals(defaultChannel)) {
+                if (channels.size() > 1) {
                     // Find the first channel that isn't this one
-                    for( String alias : channels ){
-                        if( !alias.equals( channel.getCommand() ) ){
+                    for (String alias : channels) {
+                        if (!alias.equals(channel.getCommand())) {
                             defaultChannel = alias;
                             break;
                         }
@@ -172,24 +165,24 @@ public class PlayerChannels {
                     throw new LeaveChannelException("May not leave only subscribed channel.");
                 }
             }
-            removeChannel( channel );
+            removeChannel(channel);
 
         }
         return false;
     }
 
-
     /**
      * Removes a channel from a player without unsubscribing
+     * 
      * @param player
      * @return
      * @throws LeaveChannelException
      */
-    public void removeChannel( Channel channel ) throws LeaveChannelException{
-        if( channel != null ){
-            channels.remove( channel.getCommand() );
-            if( channels.size() > 0 ){
-                setDefault( Darmok.getChannelRegistry().getChannel( channels.get(0) ) );
+    public void removeChannel(Channel channel) throws LeaveChannelException {
+        if (channel != null) {
+            channels.remove(channel.getCommand());
+            if (channels.size() > 0) {
+                setDefault(Darmok.getChannelRegistry().getChannel(channels.get(0)));
             }
             return;
         }

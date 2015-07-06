@@ -52,10 +52,10 @@ public class ChannelListCommand implements CommandCallable {
         ArrayList<Channel> channels;
 
         // Load the channels
-        if( limitTo != null ){
-            PlayerChannels playerChannels = Darmok.getPlayerRegistry().getPlayerChannels( limitTo );
-            if( playerChannels == null ){
-                source.sendMessage( Format.error( "This player has no active channel subscriptions." ) );
+        if (limitTo != null) {
+            PlayerChannels playerChannels = Darmok.getPlayerRegistry().getPlayerChannels(limitTo);
+            if (playerChannels == null) {
+                source.sendMessage(Format.error("This player has no active channel subscriptions."));
                 return Optional.absent();
             }
             channels = playerChannels.getChannels();
@@ -63,14 +63,14 @@ public class ChannelListCommand implements CommandCallable {
             channels = Darmok.getChannelRegistry().getChannels();
         }
 
-        if( channels.isEmpty() ){
-            source.sendMessage( Format.error( "There are no channels." ) );
+        if (channels.isEmpty()) {
+            source.sendMessage(Format.error("There are no channels."));
             return Optional.absent();
         }
 
         // List them
-        source.sendMessage( Format.heading( "-- All Channels --" ) );
-        for ( Channel c : channels ){
+        source.sendMessage(Format.heading("-- All Channels --"));
+        for (Channel c : channels) {
 
             boolean youreBanned = Darmok.getPlayerRegistry().isPlayerBannedFromChannel(limitTo, c);
 
@@ -98,11 +98,9 @@ public class ChannelListCommand implements CommandCallable {
             Text yes = Texts.of(TextColors.GREEN, "Y");
             Text no = Texts.of(TextColors.RED, "N");
 
-            Text channelEntry = Texts.of(color, c.getName(), " /", c.getCommand(),
-                TextColors.WHITE, (youreBanned ? "You're Banned" : ""),
-                TextColors.GRAY, "Read: ", (canRead ? yes : no),
-                TextColors.GRAY, "Speak: ", (canSpeak ? yes : no)
-            );
+            Text channelEntry = Texts.of(color, c.getName(), " /", c.getCommand(), TextColors.WHITE,
+                    (youreBanned ? "You're Banned" : ""), TextColors.GRAY, "Read: ", (canRead ? yes : no),
+                    TextColors.GRAY, "Speak: ", (canSpeak ? yes : no));
 
             source.sendMessage(Format.message(channelEntry));
         }

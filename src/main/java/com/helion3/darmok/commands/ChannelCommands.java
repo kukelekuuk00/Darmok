@@ -43,10 +43,12 @@ import com.helion3.darmok.utils.Format;
 
 public class ChannelCommands {
 
-    private ChannelCommands() {}
+    private ChannelCommands() {
+    }
 
     /**
      * Build a complete command hierarchy
+     *
      * @return
      */
     public static CommandSpec getCommand(Game game) {
@@ -61,17 +63,14 @@ public class ChannelCommands {
         builder.put(ImmutableList.of("unban"), new ChannelUnbanCommand());
         builder.put(ImmutableList.of("help", "?"), new ChannelHelpCommand());
 
-        return CommandSpec.builder()
-            .executor(new CommandExecutor() {
-                @Override
-                public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-                    src.sendMessage(Texts.of(
-                        Format.heading(TextColors.GRAY, "By ", TextColors.GOLD, "viveleroi.\n"),
-                        TextColors.GRAY, "Help: ", TextColors.WHITE, "/ch ?\n",
-                        TextColors.GRAY, "IRC: ", TextColors.WHITE, "irc.esper.net #helion3"
-                    ));
-                    return CommandResult.empty();
-                }
-            }).children(builder.build()).build();
+        return CommandSpec.builder().executor(new CommandExecutor() {
+            @Override
+            public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+                src.sendMessage(Texts.of(Format.heading(TextColors.GRAY, "By ", TextColors.GOLD, "viveleroi.\n"),
+                        TextColors.GRAY, "Help: ", TextColors.WHITE, "/ch ?\n", TextColors.GRAY, "IRC: ",
+                        TextColors.WHITE, "irc.esper.net #helion3"));
+                return CommandResult.empty();
+            }
+        }).children(builder.build()).build();
     }
 }

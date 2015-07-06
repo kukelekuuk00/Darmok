@@ -45,35 +45,36 @@ public class ChannelBanCommand implements CommandCallable {
         String[] args = arguments.split(" ");
 
         if (args.length != 3) {
-            source.sendMessage(Format.error( "You must provide a player name and channel, like /ch ban viveleroi g" ) );
+            source.sendMessage(Format.error("You must provide a player name and channel, like /ch ban viveleroi g"));
             return Optional.absent();
         }
 
         // Get the player
         Optional<Player> player = Darmok.getGame().getServer().getPlayer(args[1]);
         if (!player.isPresent()) {
-            source.sendMessage( Format.error("Can't find a player with that name."));
+            source.sendMessage(Format.error("Can't find a player with that name."));
             return Optional.absent();
         }
 
         // Get the channel
         Channel channel = Darmok.getChannelRegistry().getChannel(args[2]);
-        if( channel == null ){
-            source.sendMessage( Format.error( "Channel '" + args[2] + "' does not exist." ) );
+        if (channel == null) {
+            source.sendMessage(Format.error("Channel '" + args[2] + "' does not exist."));
             return Optional.absent();
         }
 
         try {
             ChannelPermissions.sourceCanBan(source, channel);
         } catch (ChannelPermissionException e) {
-            source.sendMessage( Format.error( e.getMessage() ) );
+            source.sendMessage(Format.error(e.getMessage()));
             return Optional.absent();
         }
 
         Darmok.getPlayerRegistry().banFromChannel(player.get(), channel);
 
-        player.get().sendMessage(Format.error( "You have been banned from the "+channel.getName()+" channel." ));
-        source.sendMessage(Format.heading( "You have banned "+player.get().getName()+" from the "+channel.getName()+" channel." ));
+        player.get().sendMessage(Format.error("You have been banned from the " + channel.getName() + " channel."));
+        source.sendMessage(Format.heading("You have banned " + player.get().getName() + " from the "
+                + channel.getName() + " channel."));
 
         return Optional.of(CommandResult.success());
     }

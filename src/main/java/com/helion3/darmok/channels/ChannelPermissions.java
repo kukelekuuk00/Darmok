@@ -30,7 +30,8 @@ import com.helion3.darmok.Darmok;
 import com.helion3.darmok.exceptions.ChannelPermissionException;
 
 public class ChannelPermissions {
-    private ChannelPermissions() {}
+    private ChannelPermissions() {
+    }
 
     /**
      *
@@ -39,9 +40,9 @@ public class ChannelPermissions {
      * @return
      * @throws ChannelPermissionException
      */
-    public static boolean playerCanAutoJoin( Player player, Channel channel ) throws ChannelPermissionException{
+    public static boolean playerCanAutoJoin(Player player, Channel channel) throws ChannelPermissionException {
         String permPrefix = "darmok.channel." + channel.getName().toLowerCase() + ".";
-        if( player.hasPermission( permPrefix + "autojoin" ) && player.hasPermission( permPrefix + "read" ) ){
+        if (player.hasPermission(permPrefix + "autojoin") && player.hasPermission(permPrefix + "read")) {
             return true;
         }
         throw new ChannelPermissionException("Insufficient permission to auto-join this channel.");
@@ -54,14 +55,14 @@ public class ChannelPermissions {
      * @return
      * @throws ChannelPermissionException
      */
-    public static boolean sourceCanBan( CommandSource source, Channel channel ) throws ChannelPermissionException {
+    public static boolean sourceCanBan(CommandSource source, Channel channel) throws ChannelPermissionException {
         if (!(source instanceof Player)) {
             return true;
         }
 
         Player player = (Player) source;
         String permPrefix = "darmok.channel." + channel.getName().toLowerCase() + ".";
-        if( player.hasPermission( permPrefix + "ban" ) || player.hasPermission( "darmok.mod" ) ){
+        if (player.hasPermission(permPrefix + "ban") || player.hasPermission("darmok.mod")) {
             return true;
         }
 
@@ -75,16 +76,16 @@ public class ChannelPermissions {
      * @return
      * @throws ChannelPermissionException
      */
-    public static boolean playerCanDefaultTo( Player player, Channel channel ) throws ChannelPermissionException{
+    public static boolean playerCanDefaultTo(Player player, Channel channel) throws ChannelPermissionException {
 
         // Perms?
         String permPrefix = "darmok.channel." + channel.getName().toLowerCase() + ".";
-        if( !player.hasPermission( permPrefix + "read" ) && !player.hasPermission( permPrefix + "speak" ) ){
+        if (!player.hasPermission(permPrefix + "read") && !player.hasPermission(permPrefix + "speak")) {
             throw new ChannelPermissionException("Insufficient permission to read or speak in this channel.");
         }
 
         // Banned?
-        if( Darmok.getPlayerRegistry().isPlayerBannedFromChannel(player, channel) ){
+        if (Darmok.getPlayerRegistry().isPlayerBannedFromChannel(player, channel)) {
             throw new ChannelPermissionException("Player has been banned from this channel.");
         }
 
@@ -94,18 +95,19 @@ public class ChannelPermissions {
 
     /**
      * Can the player force another user to change channels
+     * 
      * @param player
      * @param channel
      * @return
      * @throws ChannelPermissionException
      */
-    public static boolean sourceCanForce(CommandSource source, Channel channel ) throws ChannelPermissionException {
+    public static boolean sourceCanForce(CommandSource source, Channel channel) throws ChannelPermissionException {
         if (!(source instanceof Player)) {
             return true;
         }
 
         Player player = (Player) source;
-        if( !player.hasPermission( "darmok.mod" ) ){
+        if (!player.hasPermission("darmok.mod")) {
             throw new ChannelPermissionException("Insufficient permission to force a player into this channel.");
         }
         return false;
@@ -118,15 +120,15 @@ public class ChannelPermissions {
      * @return
      * @throws ChannelPermissionException
      */
-    public static boolean playerCanJoin( Player player, Channel channel ) throws ChannelPermissionException{
+    public static boolean playerCanJoin(Player player, Channel channel) throws ChannelPermissionException {
         // Perms?
         String permPrefix = "darmok.channel." + channel.getName().toLowerCase() + ".";
-        if( !player.hasPermission( permPrefix + "read" ) && !player.hasPermission( permPrefix + "speak" ) ){
+        if (!player.hasPermission(permPrefix + "read") && !player.hasPermission(permPrefix + "speak")) {
             throw new ChannelPermissionException("Insufficient permission to read or speak in this channel.");
         }
 
         // Banned?
-        if( Darmok.getPlayerRegistry().isPlayerBannedFromChannel(player, channel) ){
+        if (Darmok.getPlayerRegistry().isPlayerBannedFromChannel(player, channel)) {
             throw new ChannelPermissionException("Player has been banned from this channel.");
         }
 
@@ -135,19 +137,21 @@ public class ChannelPermissions {
 
     /**
      * They have to be allowed to join if they have read or speak perms.
+     * 
      * @param player
      * @param channel
      * @return
      * @throws ChannelPermissionException
      */
-    public static boolean sourceCanKick( CommandSource source, Channel channel ) throws ChannelPermissionException {
+    public static boolean sourceCanKick(CommandSource source, Channel channel) throws ChannelPermissionException {
         if (!(source instanceof Player)) {
             return true;
         }
 
         Player player = (Player) source;
         String permPrefix = "darmok.channel." + channel.getName().toLowerCase() + ".";
-        if( player.hasPermission( permPrefix + "kick" ) || player.hasPermission( permPrefix + "ban" ) || player.hasPermission( "darmok.mod" ) ){
+        if (player.hasPermission(permPrefix + "kick") || player.hasPermission(permPrefix + "ban")
+                || player.hasPermission("darmok.mod")) {
             return true;
         }
         throw new ChannelPermissionException("Insufficient permission to kick a player from this channel.");
@@ -160,9 +164,9 @@ public class ChannelPermissions {
      * @return
      * @throws ChannelPermissionException
      */
-    public static boolean playerCanLeave( Player player, Channel channel ) throws ChannelPermissionException{
+    public static boolean playerCanLeave(Player player, Channel channel) throws ChannelPermissionException {
         String permPrefix = "darmok.channel." + channel.getName().toLowerCase() + ".";
-        if( player.hasPermission( permPrefix + "leave" ) ){
+        if (player.hasPermission(permPrefix + "leave")) {
             return true;
         }
         throw new ChannelPermissionException("Insufficient permission to leave this channel.");
@@ -170,20 +174,21 @@ public class ChannelPermissions {
 
     /**
      * Can't speak without reading, so speak grants read perms.
+     * 
      * @param player
      * @param channel
      * @return
      * @throws ChannelPermissionException
      */
-    public static boolean playerCanRead(Player player, Channel channel) throws ChannelPermissionException{
+    public static boolean playerCanRead(Player player, Channel channel) throws ChannelPermissionException {
         // Perms?
         String permPrefix = "darmok.channel." + channel.getName().toLowerCase() + ".";
-        if( !player.hasPermission( permPrefix + "read" ) && !player.hasPermission( permPrefix + "speak" ) ){
+        if (!player.hasPermission(permPrefix + "read") && !player.hasPermission(permPrefix + "speak")) {
             throw new ChannelPermissionException("Insufficient permission to read this channel.");
         }
 
         // Banned?
-        if( Darmok.getPlayerRegistry().isPlayerBannedFromChannel(player, channel) ){
+        if (Darmok.getPlayerRegistry().isPlayerBannedFromChannel(player, channel)) {
             throw new ChannelPermissionException("Player has been banned from this channel.");
         }
 
@@ -197,15 +202,15 @@ public class ChannelPermissions {
      * @return
      * @throws ChannelPermissionException
      */
-    public static boolean playerCanSpeak(Player player, Channel channel) throws ChannelPermissionException{
+    public static boolean playerCanSpeak(Player player, Channel channel) throws ChannelPermissionException {
         // Perms?
         String permPrefix = "darmok.channel." + channel.getName().toLowerCase() + ".";
-        if( !player.hasPermission( permPrefix + "speak" ) ){
+        if (!player.hasPermission(permPrefix + "speak")) {
             throw new ChannelPermissionException("Insufficient permission to speak this channel.");
         }
 
         // Banned?
-        if( Darmok.getPlayerRegistry().isPlayerBannedFromChannel(player, channel) ){
+        if (Darmok.getPlayerRegistry().isPlayerBannedFromChannel(player, channel)) {
             throw new ChannelPermissionException("Player has been banned from this channel.");
         }
 

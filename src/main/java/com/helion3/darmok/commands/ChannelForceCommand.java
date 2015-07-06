@@ -44,36 +44,38 @@ public class ChannelForceCommand implements CommandCallable {
     public Optional<CommandResult> process(CommandSource source, String arguments) throws CommandException {
         String[] args = arguments.split(" ");
 
-        if (args.length != 3 ) {
-            source.sendMessage( Format.error( "You must provide a player name and channel, like /ch force viveleroi g" ) );
+        if (args.length != 3) {
+            source.sendMessage(Format.error("You must provide a player name and channel, like /ch force viveleroi g"));
             return Optional.absent();
         }
 
         // Get the player
         Optional<Player> player = Darmok.getGame().getServer().getPlayer(args[1]);
-        if (!player.isPresent()){
+        if (!player.isPresent()) {
             source.sendMessage(Format.error("Can't find a player with that name."));
             return Optional.absent();
         }
 
         // Get the channel
         Channel channel = Darmok.getChannelRegistry().getChannel(args[2]);
-        if( channel == null ){
-            source.sendMessage(Format.error( "Channel '" + args[2] + "' does not exist."));
+        if (channel == null) {
+            source.sendMessage(Format.error("Channel '" + args[2] + "' does not exist."));
             return Optional.absent();
         }
 
         try {
             ChannelPermissions.sourceCanForce(source, channel);
         } catch (ChannelPermissionException e1) {
-            source.sendMessage( Format.error( e1.getMessage() ) );
+            source.sendMessage(Format.error(e1.getMessage()));
             return Optional.absent();
         }
 
-        Darmok.getPlayerRegistry().getPlayerChannels(player.get()).setDefault( channel );
+        Darmok.getPlayerRegistry().getPlayerChannels(player.get()).setDefault(channel);
 
-        player.get().sendMessage(Format.error( "A moderator has forced you into the "+channel.getName()+" channel."));
-        source.sendMessage( Format.heading( "You have forced "+player.get().getName()+" into the "+channel.getName()+" channel."));
+        player.get()
+                .sendMessage(Format.error("A moderator has forced you into the " + channel.getName() + " channel."));
+        source.sendMessage(Format.heading("You have forced " + player.get().getName() + " into the "
+                + channel.getName() + " channel."));
 
         return Optional.of(CommandResult.success());
     }

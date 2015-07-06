@@ -45,7 +45,7 @@ public class ChannelUnbanCommand implements CommandCallable {
         String[] args = arguments.split(" ");
 
         if (args.length != 3) {
-            source.sendMessage( Format.error( "You must provide a player name and channel, like /ch unban viveleroi g" ) );
+            source.sendMessage(Format.error("You must provide a player name and channel, like /ch unban viveleroi g"));
             return Optional.absent();
         }
 
@@ -58,22 +58,23 @@ public class ChannelUnbanCommand implements CommandCallable {
 
         // Get the channel
         Channel channel = Darmok.getChannelRegistry().getChannel(args[2]);
-        if( channel == null ){
-            source.sendMessage( Format.error( "Channel '" + args[2] + "' does not exist." ) );
+        if (channel == null) {
+            source.sendMessage(Format.error("Channel '" + args[2] + "' does not exist."));
             return Optional.absent();
         }
 
         try {
             ChannelPermissions.sourceCanBan(source, channel);
         } catch (ChannelPermissionException e) {
-            source.sendMessage( Format.error( e.getMessage() ) );
+            source.sendMessage(Format.error(e.getMessage()));
             return Optional.absent();
         }
 
-        Darmok.getPlayerRegistry().unbanFromChannel(player.get(), channel );
+        Darmok.getPlayerRegistry().unbanFromChannel(player.get(), channel);
 
-        player.get().sendMessage( Format.error( "You have been unbanned from the "+channel.getName()+" channel." ) );
-        source.sendMessage( Format.heading( "You have unbanned "+player.get().getName()+" from the "+channel.getName()+" channel." ) );
+        player.get().sendMessage(Format.error("You have been unbanned from the " + channel.getName() + " channel."));
+        source.sendMessage(Format.heading("You have unbanned " + player.get().getName() + " from the "
+                + channel.getName() + " channel."));
         return Optional.of(CommandResult.success());
     }
 

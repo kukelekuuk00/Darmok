@@ -36,6 +36,7 @@ public class Configuration {
 
     /**
      * Loads (creates new if needed) Prism configuration file.
+     * 
      * @param defaultConfig
      * @param configManager
      */
@@ -109,7 +110,7 @@ public class Configuration {
             // Save
             try {
                 configManager.save(rootNode);
-            } catch(IOException e) {
+            } catch (IOException e) {
                 // @todo handle properly
                 e.printStackTrace();
             }

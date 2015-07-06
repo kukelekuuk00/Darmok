@@ -32,14 +32,14 @@ public class ChannelRegistry {
     /**
      *
      */
-    private HashMap<String,Channel> channels = new HashMap<String,Channel>();
+    private HashMap<String, Channel> channels = new HashMap<String, Channel>();
 
     /**
      *
      * @param command
      * @return
      */
-    public Channel getChannel(String command){
+    public Channel getChannel(String command) {
         return channels.get(command);
     }
 
@@ -47,10 +47,10 @@ public class ChannelRegistry {
      *
      * @return
      */
-    public ArrayList<Channel> getChannels(){
+    public ArrayList<Channel> getChannels() {
         ArrayList<Channel> returnChannels = new ArrayList<Channel>();
-        for (Entry<String,Channel> entry : channels.entrySet()){
-            returnChannels.add( entry.getValue() );
+        for (Entry<String, Channel> entry : channels.entrySet()) {
+            returnChannels.add(entry.getValue());
         }
         return returnChannels;
     }
@@ -59,7 +59,7 @@ public class ChannelRegistry {
      *
      * @param c
      */
-    public void registerChannel( Channel c ){
+    public void registerChannel(Channel c) {
         channels.put(c.getCommand(), c);
     }
 }

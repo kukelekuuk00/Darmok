@@ -53,7 +53,8 @@ public class PlayerConfiguration {
 
             if (!playerConf.exists()) {
                 playerConf.createNewFile();
-                Darmok.getLogger().info("Creating new player config file at mods/Darmok/players/" + playerID.toString() + ".conf");
+                Darmok.getLogger().info(
+                        "Creating new player config file at mods/Darmok/players/" + playerID.toString() + ".conf");
                 fileCreated = true;
             }
 
@@ -87,7 +88,7 @@ public class PlayerConfiguration {
     public void save() {
         try {
             configLoader.save(rootNode);
-        } catch(IOException e) {
+        } catch (IOException e) {
             // @todo handle properly
             e.printStackTrace();
         }
