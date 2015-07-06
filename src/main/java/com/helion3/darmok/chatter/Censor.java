@@ -33,126 +33,126 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.Texts;
 
 public class Censor {
-	protected HashMap<String,String> leet = new HashMap<String,String>();
-	private final List<String> rejectWords;
-	private final List<String> censorWords;
+    protected HashMap<String,String> leet = new HashMap<String,String>();
+    private final List<String> rejectWords;
+    private final List<String> censorWords;
 
 
-	/**
-	 *
-	 * @param plugin
-	 * @throws SQLException
-	 */
-	public Censor( List<String> rejectWords, List<String> censorWords ){
-		this.rejectWords = rejectWords;
-		this.censorWords = censorWords;
+    /**
+     *
+     * @param plugin
+     * @throws SQLException
+     */
+    public Censor( List<String> rejectWords, List<String> censorWords ){
+        this.rejectWords = rejectWords;
+        this.censorWords = censorWords;
 
-		// Build some basic "leetspeak" conversion
-		leet.put("1", "l");
-		leet.put("1", "i");
-		leet.put("2", "z");
-		leet.put("2", "r");
-		leet.put("3", "e");
-		leet.put("4", "h");
-		leet.put("4", "a");
-		leet.put("5", "s");
-		leet.put("6", "g");
-		leet.put("7", "l");
-		leet.put("8", "a");
-		leet.put("9", "p");
-		leet.put("9", "g");
-		leet.put("0", "o");
-		leet.put("13", "b");
-		leet.put("44", "m");
-	}
+        // Build some basic "leetspeak" conversion
+        leet.put("1", "l");
+        leet.put("1", "i");
+        leet.put("2", "z");
+        leet.put("2", "r");
+        leet.put("3", "e");
+        leet.put("4", "h");
+        leet.put("4", "a");
+        leet.put("5", "s");
+        leet.put("6", "g");
+        leet.put("7", "l");
+        leet.put("8", "a");
+        leet.put("9", "p");
+        leet.put("9", "g");
+        leet.put("0", "o");
+        leet.put("13", "b");
+        leet.put("44", "m");
+    }
 
-	/**
-	 *
-	 * @param msg
-	 * @return
-	 */
-	public Text filterCaps(Text msg, int minLength, int capsPercent ){
-	    String msgString = Texts.toPlain(msg);
-		if( msgString.length() < minLength ){
-			return msg;
-		}
-		if( capsPercentage(msgString) > capsPercent ){
-		    msgString = msgString.toLowerCase();
-		}
-		return Texts.of(msgString);
-	}
+    /**
+     *
+     * @param msg
+     * @return
+     */
+    public Text filterCaps(Text msg, int minLength, int capsPercent ){
+        String msgString = Texts.toPlain(msg);
+        if( msgString.length() < minLength ){
+            return msg;
+        }
+        if( capsPercentage(msgString) > capsPercent ){
+            msgString = msgString.toLowerCase();
+        }
+        return Texts.of(msgString);
+    }
 
-	/**
-	 *
-	 * @param msg
-	 * @return
-	 */
-	protected double capsPercentage(String msg){
-		int count = 0;
-		for (char ch : msg.toCharArray()){
-			if (Character.isUpperCase(ch)){
-				count++;
-			}
-		}
-		return (count > 0 ? (( (double)count / (double)msg.length()) * 100) : 100);
-	}
+    /**
+     *
+     * @param msg
+     * @return
+     */
+    protected double capsPercentage(String msg){
+        int count = 0;
+        for (char ch : msg.toCharArray()){
+            if (Character.isUpperCase(ch)){
+                count++;
+            }
+        }
+        return (count > 0 ? (( (double)count / (double)msg.length()) * 100) : 100);
+    }
 
-	/**
-	 *
-	 * @param msg
-	 * @return
-	 */
-	protected boolean containsSuspectedProfanity(Text msg){
-		// ensure lower case
-		String _tmp = Texts.toPlain(msg).toLowerCase();
+    /**
+     *
+     * @param msg
+     * @return
+     */
+    protected boolean containsSuspectedProfanity(Text msg){
+        // ensure lower case
+        String _tmp = Texts.toPlain(msg).toLowerCase();
 
-		// replace all invalid characters
-		_tmp = _tmp.replaceAll("[^a-z0-9]", "");
+        // replace all invalid characters
+        _tmp = _tmp.replaceAll("[^a-z0-9]", "");
 
-		// get possible leet versions
-		List<String> variations = convertLeetSpeak(_tmp);
+        // get possible leet versions
+        List<String> variations = convertLeetSpeak(_tmp);
 
-		for(String variation : variations){
-			// scan for illegal words
-			for(String w : rejectWords){
-				if(variation.contains(w)){
-					return true;
-				}
-			}
-		}
+        for(String variation : variations){
+            // scan for illegal words
+            for(String w : rejectWords){
+                if(variation.contains(w)){
+                    return true;
+                }
+            }
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	/**
-	 *
-	 * @return
-	 */
-	public Text replaceCensoredWords(Text msg){
-	    String msgString = Texts.toPlain(msg);
-		for(String w : censorWords){
-		    msgString = msgString.replaceAll("(?i)"+w, "*****");
-		}
-		return Texts.of(msgString);
-	}
+    /**
+     *
+     * @return
+     */
+    public Text replaceCensoredWords(Text msg){
+        String msgString = Texts.toPlain(msg);
+        for(String w : censorWords){
+            msgString = msgString.replaceAll("(?i)"+w, "*****");
+        }
+        return Texts.of(msgString);
+    }
 
-	/**
-	 *
-	 * @param msg
-	 * @return
-	 */
-	protected List<String> convertLeetSpeak( String msg ){
-		// Begin list of all variations, including original
-		List<String> _variations = new ArrayList<String>();
-		_variations.add(msg);
+    /**
+     *
+     * @param msg
+     * @return
+     */
+    protected List<String> convertLeetSpeak( String msg ){
+        // Begin list of all variations, including original
+        List<String> _variations = new ArrayList<String>();
+        _variations.add(msg);
 
-		for (Entry<String, String> entry : leet.entrySet()){
-			if(msg.contains( entry.getKey() )){
-				// entry.getValue()
-				_variations.add( msg.replace(entry.getKey(), entry.getValue()) );
-			}
-		}
+        for (Entry<String, String> entry : leet.entrySet()){
+            if(msg.contains( entry.getKey() )){
+                // entry.getValue()
+                _variations.add( msg.replace(entry.getKey(), entry.getValue()) );
+            }
+        }
 
-		return _variations;
-	}
+        return _variations;
+    }
 }

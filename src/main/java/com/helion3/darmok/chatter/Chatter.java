@@ -36,100 +36,100 @@ import com.helion3.darmok.exceptions.ChannelPermissionException;
 import com.helion3.darmok.utils.Format;
 
 public class Chatter {
-	/**
-	 *
-	 * @param player
-	 * @param channel
-	 * @param msg
-	 */
+    /**
+     *
+     * @param player
+     * @param channel
+     * @param msg
+     */
     public void send(Player player, Channel channel, Text msg) {
-		try {
-			ChannelPermissions.playerCanSpeak( player, channel );
-		} catch (ChannelPermissionException e1) {
-			player.sendMessage(Format.error(e1.getMessage()));
-			return;
-		}
+        try {
+            ChannelPermissions.playerCanSpeak( player, channel );
+        } catch (ChannelPermissionException e1) {
+            player.sendMessage(Format.error(e1.getMessage()));
+            return;
+        }
 
-		// Muted?
-		if (isPlayerMuted(player)) {
-			player.sendMessage(Format.error("You've been muted in this channel."));
-			return;
-		}
+        // Muted?
+        if (isPlayerMuted(player)) {
+            player.sendMessage(Format.error("You've been muted in this channel."));
+            return;
+        }
 
-		/**
-		 * Apply censors
-		 */
-		// Caps limits
-		if (Darmok.getConfig().getNode("censors", "caps", "enabled").getBoolean()) {
-		    int minLength = Darmok.getConfig().getNode("censors", "caps", "min-length").getInt();
-		    int minPercent = Darmok.getConfig().getNode("censors", "caps", "min-percentage").getInt();
-			msg = Darmok.getCensor().filterCaps(msg, minLength, minPercent);
-		}
+        /**
+         * Apply censors
+         */
+        // Caps limits
+        if (Darmok.getConfig().getNode("censors", "caps", "enabled").getBoolean()) {
+            int minLength = Darmok.getConfig().getNode("censors", "caps", "min-length").getInt();
+            int minPercent = Darmok.getConfig().getNode("censors", "caps", "min-percentage").getInt();
+            msg = Darmok.getCensor().filterCaps(msg, minLength, minPercent);
+        }
 
-		// Profanity
-		if (Darmok.getConfig().getNode("censors", "profanity", "enabled").getBoolean()){
-			if (Darmok.getCensor().containsSuspectedProfanity(msg)) {
-				player.sendMessage(Format.error("Profanity or trying to bypass the censor is not allowed. Sorry if this is a false catch."));
-				return;
-			} else {
-				// scan for words we censor
-				msg = Darmok.getCensor().replaceCensoredWords(msg);
-			}
-		}
+        // Profanity
+        if (Darmok.getConfig().getNode("censors", "profanity", "enabled").getBoolean()){
+            if (Darmok.getCensor().containsSuspectedProfanity(msg)) {
+                player.sendMessage(Format.error("Profanity or trying to bypass the censor is not allowed. Sorry if this is a false catch."));
+                return;
+            } else {
+                // scan for words we censor
+                msg = Darmok.getCensor().replaceCensoredWords(msg);
+            }
+        }
 
-		// Format the final message
-		try {
+        // Format the final message
+        try {
             msg = channel.formatMessage(player, msg);
         } catch (TextMessageException e1) {
             e1.printStackTrace();
         }
 
-		/**
-		 * Build a list of all players we think we should be
-		 * messaging.
-		 */
-		List<Player> playersToMessage = Darmok.getPlayerRegistry().getPlayersInChannel(channel);
+        /**
+         * Build a list of all players we think we should be
+         * messaging.
+         */
+        List<Player> playersToMessage = Darmok.getPlayerRegistry().getPlayersInChannel(channel);
 
-		// Message players if in range
-		for (Player pl : playersToMessage) {
-			int range = channel.getRange();
+        // Message players if in range
+        for (Player pl : playersToMessage) {
+            int range = channel.getRange();
 
-			// Does range matter?
-			if( range > -1 ){
-				// if 0, check worlds match
-				if( range == 0 && !player.getWorld().equals( pl.getWorld() ) ){
-					continue;
-				}
-				// otherwise, it's a distance
-				else if( !player.getWorld().equals( pl.getWorld() ) || player.getLocation().getPosition().distance( pl.getLocation().getPosition() ) > range ){
-					continue;
-				}
-			}
+            // Does range matter?
+            if( range > -1 ){
+                // if 0, check worlds match
+                if( range == 0 && !player.getWorld().equals( pl.getWorld() ) ){
+                    continue;
+                }
+                // otherwise, it's a distance
+                else if( !player.getWorld().equals( pl.getWorld() ) || player.getLocation().getPosition().distance( pl.getLocation().getPosition() ) > range ){
+                    continue;
+                }
+            }
 
-			// Player is in range.
+            // Player is in range.
 
-			// Ensure they have permission to READ
-			try {
-				ChannelPermissions.playerCanRead( player, channel );
-			} catch (ChannelPermissionException e) {
-				return;
-			}
+            // Ensure they have permission to READ
+            try {
+                ChannelPermissions.playerCanRead( player, channel );
+            } catch (ChannelPermissionException e) {
+                return;
+            }
 
-			// All checks are GO for launch
-			pl.sendMessage(msg);
-		}
+            // All checks are GO for launch
+            pl.sendMessage(msg);
+        }
 
-		// log to console
-		Darmok.getGame().getServer().getConsole().sendMessage(msg);
-	}
+        // log to console
+        Darmok.getGame().getServer().getConsole().sendMessage(msg);
+    }
 
-	/**
-	 *
-	 * @param player
-	 * @return
-	 */
-	private boolean isPlayerMuted( Player player ){
-	    // @todo until essentials works, this won't
-		return false;
-	}
+    /**
+     *
+     * @param player
+     * @return
+     */
+    private boolean isPlayerMuted( Player player ){
+        // @todo until essentials works, this won't
+        return false;
+    }
 }

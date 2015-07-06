@@ -32,130 +32,130 @@ import org.spongepowered.api.text.Texts;
 import org.spongepowered.api.util.TextMessageException;
 
 public class Channel {
-	private final String name;
-	private final String command;
-	private final String color;
-	private final String format;
-	private final int range;
-	private final String context;
-	private boolean isDefault = false;
-	private boolean isMuted = false;
+    private final String name;
+    private final String command;
+    private final String color;
+    private final String format;
+    private final int range;
+    private final String context;
+    private boolean isDefault = false;
+    private boolean isMuted = false;
 
-	/**
-	 *
-	 * @param command
-	 */
-	public Channel( String name, String command, String color, String format, int range, String context ){
-		this.name = name;
-		this.command = command;
-		this.color = color;
-		this.format = format;
-		this.range = range;
-		this.context = context;
-	}
+    /**
+     *
+     * @param command
+     */
+    public Channel( String name, String command, String color, String format, int range, String context ){
+        this.name = name;
+        this.command = command;
+        this.color = color;
+        this.format = format;
+        this.range = range;
+        this.context = context;
+    }
 
-	/**
-	 *
-	 * @return
-	 */
-	public String getName(){
-		return name;
-	}
+    /**
+     *
+     * @return
+     */
+    public String getName(){
+        return name;
+    }
 
-	/**
-	 *
-	 * @return
-	 */
-	public String getCommand(){
-		return command;
-	}
+    /**
+     *
+     * @return
+     */
+    public String getCommand(){
+        return command;
+    }
 
-	/**
-	 *
-	 * @return
-	 */
-	public String getColor(){
-		return color;
-	}
+    /**
+     *
+     * @return
+     */
+    public String getColor(){
+        return color;
+    }
 
-	/**
-	 *
-	 * @return
-	 */
-	public String getFormat(){
-		return format;
-	}
+    /**
+     *
+     * @return
+     */
+    public String getFormat(){
+        return format;
+    }
 
-	/**
-	 *
-	 * @return
-	 */
-	public int getRange(){
-		return range;
-	}
+    /**
+     *
+     * @return
+     */
+    public int getRange(){
+        return range;
+    }
 
-	/**
-	 *
-	 * @return
-	 */
-	public String getContext(){
-		return context;
-	}
+    /**
+     *
+     * @return
+     */
+    public String getContext(){
+        return context;
+    }
 
-	/**
-	 *
-	 * @return
-	 */
-	public boolean isDefault(){
-		return isDefault;
-	}
+    /**
+     *
+     * @return
+     */
+    public boolean isDefault(){
+        return isDefault;
+    }
 
-	/**
-	 *
-	 * @return
-	 */
-	public void setDefault( boolean isDefault ){
-		this.isDefault = isDefault;
-	}
+    /**
+     *
+     * @return
+     */
+    public void setDefault( boolean isDefault ){
+        this.isDefault = isDefault;
+    }
 
-	/**
-	 *
-	 * @return
-	 */
-	public void setMuted( boolean isMuted ){
-		this.isMuted = isMuted;
-	}
+    /**
+     *
+     * @return
+     */
+    public void setMuted( boolean isMuted ){
+        this.isMuted = isMuted;
+    }
 
-	/**
-	 *
-	 * @return
-	 */
-	public boolean isMuted(){
-		return isMuted;
-	}
+    /**
+     *
+     * @return
+     */
+    public boolean isMuted(){
+        return isMuted;
+    }
 
-	/**
-	 *
-	 * @param msg
-	 * @return
-	 * @throws TextMessageException
-	 */
-	@SuppressWarnings("deprecation")
+    /**
+     *
+     * @param msg
+     * @return
+     * @throws TextMessageException
+     */
+    @SuppressWarnings("deprecation")
     public Text formatMessage(Player player, Text msg) throws TextMessageException {
-		Hashtable<String,String> tokens = new Hashtable<String,String>();
-		tokens.put("color", color);
-		tokens.put("command", command);
-		tokens.put("msg", Texts.toPlain(msg));
-		tokens.put("player", player.getName());
+        Hashtable<String,String> tokens = new Hashtable<String,String>();
+        tokens.put("color", color);
+        tokens.put("command", command);
+        tokens.put("msg", Texts.toPlain(msg));
+        tokens.put("player", player.getName());
 
-		// Not used currently
-		tokens.put("prefix", "");
-		tokens.put("suffix", "");
+        // Not used currently
+        tokens.put("prefix", "");
+        tokens.put("suffix", "");
 
-		return Texts.legacy().from(getString(format, tokens));
-	}
+        return Texts.legacy().from(getString(format, tokens));
+    }
 
-	/**
+    /**
      *
      * @param key
      * @param replacer
@@ -170,11 +170,11 @@ public class Channel {
         return msg;
     }
 
-	/**
-	 *
-	 */
-	@Override
+    /**
+     *
+     */
+    @Override
     public Channel clone() throws CloneNotSupportedException {
-		return (Channel) super.clone();
-	}
+        return (Channel) super.clone();
+    }
 }

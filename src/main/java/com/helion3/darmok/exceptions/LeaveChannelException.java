@@ -24,16 +24,16 @@
 package com.helion3.darmok.exceptions;
 
 public class LeaveChannelException extends Exception {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -7124771485626925739L;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -7124771485626925739L;
 
-	/**
-	 * 
-	 * @param message
-	 */
-	public LeaveChannelException(String message) {
+    /**
+     * 
+     * @param message
+     */
+    public LeaveChannelException(String message) {
         super(message);
     }
 }
