@@ -200,7 +200,7 @@ final public class Darmok {
         File profanityConf = new File(parentDir.getAbsolutePath() + "/profanity.conf");
 
         if (!profanityConf.exists()) {
-            URL jarConfigFile = this.getClass().getResource("profanity.conf");
+            URL jarConfigFile = this.getClass().getResource("/com/helion3/darmok/profanity.conf");
             return HoconConfigurationLoader.builder().setURL(jarConfigFile).build().load();
         } else {
             return HoconConfigurationLoader.builder().setFile(profanityConf).build().load();

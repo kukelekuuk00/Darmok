@@ -35,8 +35,8 @@ public class Configuration {
     private ConfigurationNode rootNode = null;
 
     /**
-     * Loads (creates new if needed) Prism configuration file.
-     * 
+     * Loads (creates new if needed) configuration file.
+     *
      * @param defaultConfig
      * @param configManager
      */
@@ -47,7 +47,7 @@ public class Configuration {
                 defaultConfig.getParentFile().mkdirs();
                 defaultConfig.createNewFile();
                 rootNode = configManager.createEmptyNode(ConfigurationOptions.defaults());
-                Darmok.getLogger().info("Creating new config at mods/Oracle/Oracle.conf");
+                Darmok.getLogger().info("Creating new config at mods/Darmok/Darmok.conf");
             } else {
                 rootNode = configManager.load();
             }
@@ -63,23 +63,23 @@ public class Configuration {
             }
 
             // Caps censor
-            ConfigurationNode censorCaps = rootNode.getNode("censor", "caps", "enabled");
+            ConfigurationNode censorCaps = rootNode.getNode("censors", "caps", "enabled");
             if (censorCaps.isVirtual()) {
                 censorCaps.setValue(false);
             }
 
-            ConfigurationNode censorCapsLength = rootNode.getNode("censor", "caps", "min-length");
+            ConfigurationNode censorCapsLength = rootNode.getNode("censors", "caps", "min-length");
             if (censorCapsLength.isVirtual()) {
                 censorCapsLength.setValue(15);
             }
 
-            ConfigurationNode censorCapsPerc = rootNode.getNode("censor", "caps", "min-percentage");
+            ConfigurationNode censorCapsPerc = rootNode.getNode("censors", "caps", "min-percentage");
             if (censorCapsPerc.isVirtual()) {
                 censorCapsPerc.setValue(30);
             }
 
             // Profanity censor
-            ConfigurationNode profanity = rootNode.getNode("censor", "profanity", "enabled");
+            ConfigurationNode profanity = rootNode.getNode("censors", "profanity", "enabled");
             if (profanity.isVirtual()) {
                 profanity.setValue(true);
             }

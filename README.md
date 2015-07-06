@@ -1,8 +1,6 @@
 #Darmok
 
-Darmok is an *extremely* light-weight chat channel management and filtering plugin. Designed to address the needs of both large and small servers; it offers fully configurable channels, a better profanity filtering system (optional), additional permissions to better control channel access/use/management, and a lot more.
-
-Darmok was designed to feel very similar to existing chat plugins, but it packs a lot more "bang for the buck".
+Darmok is a light-weight chat channel management and filtering plugin for Sponge servers. Designed to address the needs of both large and small servers; it offers fully configurable channels, a profanity filtering system (optional), additional permissions to better control channel access/use/management, and more.
 
 ## Features
 
@@ -10,23 +8,19 @@ Darmok was designed to feel very similar to existing chat plugins, but it packs 
 - Define any number of channels - with configurable colors, message formats, etc
 - Per-channel permissions for read and speak let you control who sees and who can talk to a channel.
 - Permissions to allow players to auto-join, or have channels automatically set as default
-- Abides by the Essentials /mute command
-- Towny integration (optional). Duplicates the town chat or nation chat commands
 - Players may join/leave a channel if the channel permissions allow it
+- Range-based channels
 - Moderators may force players into a specific channel
 - Moderators may kick players from a channel
 - Moderators may ban/unban players from a specific channel
-- Smart profanity filter (optional) - catches most "leet-speak", ignores characters meant to bypass, etc
+- Smart profanity filter (optional) - catches "leet-speak", ignores characters meant to bypass, etc
 - Caps-lock filter (optional) - Limit capital letters in a sentence to a percentage, with a minimum string length
-- Permission node to use color/text codes in chat
-- List available channels, or channels you're currently in
+- List available channels
 
 
 ## Install
 
-Move the darmok.jar file to your plugins folder.
-
-**Vault necessary if you wish to have permissions prefix/suffixes in chat messages.**
+Move the darmok.jar file to your mods folder.
 
 Darmok comes with default channels you're likely familiar with.
 
@@ -39,7 +33,6 @@ Modify the configuration if you wish, but it comes with sensible defaults.
 - `darmok.channel.CHANNEL_NAME_HERE.leave` - Player may leave channel
 - `darmok.channel.CHANNEL_NAME_HERE.autojoin` - Players will auto-join this channel unless they have settings otherwise.
 - `darmok.list` - List all available channels, or list channels you're subscribed to
-- `darmok.chatcolor` - Use chat color codes or text formatting codes in messages
 - `darmok.channel.CHANNEL_NAME_HERE.kick` - Permission to kick players from any channel
 - `darmok.channel.CHANNEL_NAME_HERE.ban` - Permission to ban players from any channel
 - `darmok.mod` - Gives force/kick/ban capabilities for every channel
@@ -58,32 +51,25 @@ Modify the configuration if you wish, but it comes with sensible defaults.
 
 ## Links
 
-[File-A-Bug](https://snowy-evening.com/botsko/darmok )
-
 [Source](https://github.com/prism/Darmok )
-
 
 
 ## Get Help
 
-IRC: irc.esper.net #prism
+IRC: irc.esper.net #helion3
 
 
 ## License 
 
-Attribution-NonCommercial-ShareAlike 3.0 United States
-
-http://creativecommons.org/licenses/by-nc-sa/3.0/us/
+See LICENSE.txt.
 
 ## Credits
 
-Designed to solve specific needs for our Minecraft server, DHMC.
+Designed for DHMC.
 
 - viveleroi (*Creator, Lead Dev*)
-- nasonfish, Ollie2000, YeaItsMe (*Alpha Testers*)
+- nasonfish, Ollie2000, YeaItsMe (*Alpha Testers on 1.0*)
 - Everyone on DHMC in March 2013 and after
-- [Metrics](http://mcstats.org) class Copyright 2013 Tyler Blair. All rights reserved.
-
 
 ## Donate to Vive
 

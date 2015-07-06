@@ -4,7 +4,7 @@ Ensure your code compiles:
 
     ./gradlew
 	
-Prism is available under the MIT license. The license can be found in LICENSE.txt.
+This project is available under the MIT license. The license can be found in LICENSE.txt.
 
 Contributions must be licensed under the MIT license.
 
