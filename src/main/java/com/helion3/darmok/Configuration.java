@@ -107,6 +107,69 @@ public class Configuration {
                 gFormat.setValue("");
             }
 
+            // Local
+            ConfigurationNode lCmd = rootNode.getNode("channels", "local", "command");
+            if (lCmd.isVirtual()) {
+                lCmd.setValue("l");
+            }
+
+            ConfigurationNode lRange = rootNode.getNode("channels", "local", "range");
+            if (lRange.isVirtual()) {
+                lRange.setValue(100);
+            }
+
+            ConfigurationNode lColor = rootNode.getNode("channels", "local", "color");
+            if (lColor.isVirtual()) {
+                lColor.setValue("§f");
+            }
+
+            ConfigurationNode lFormat = rootNode.getNode("channels", "local", "format");
+            if (lFormat.isVirtual()) {
+                lFormat.setValue("");
+            }
+
+            // Staff
+            ConfigurationNode sCmd = rootNode.getNode("channels", "staff", "command");
+            if (sCmd.isVirtual()) {
+                sCmd.setValue("s");
+            }
+
+            ConfigurationNode sRange = rootNode.getNode("channels", "staff", "range");
+            if (sRange.isVirtual()) {
+                sRange.setValue(-1);
+            }
+
+            ConfigurationNode sColor = rootNode.getNode("channels", "staff", "color");
+            if (sColor.isVirtual()) {
+                sColor.setValue("§a");
+            }
+
+            ConfigurationNode sFormat = rootNode.getNode("channels", "staff", "format");
+            if (sFormat.isVirtual()) {
+                sFormat.setValue("");
+            }
+
+            // Admin
+            ConfigurationNode aCmd = rootNode.getNode("channels", "admin", "command");
+            if (aCmd.isVirtual()) {
+                aCmd.setValue("a");
+            }
+
+            ConfigurationNode aRange = rootNode.getNode("channels", "admin", "range");
+            if (aRange.isVirtual()) {
+                aRange.setValue(-1);
+            }
+
+            ConfigurationNode aColor = rootNode.getNode("channels", "admin", "color");
+            if (aColor.isVirtual()) {
+                aColor.setValue("§e");
+            }
+
+            ConfigurationNode aFormat = rootNode.getNode("channels", "admin", "format");
+            if (aFormat.isVirtual()) {
+                aFormat.setValue("");
+            }
+
             // Save
             try {
                 configManager.save(rootNode);
