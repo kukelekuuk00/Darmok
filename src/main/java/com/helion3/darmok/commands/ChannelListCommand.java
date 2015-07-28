@@ -46,7 +46,7 @@ import com.helion3.darmok.utils.Format;
 
 public class ChannelListCommand implements CommandCallable {
     @Override
-    public Optional<CommandResult> process(CommandSource source, String arguments) throws CommandException {
+    public CommandResult process(CommandSource source, String arguments) throws CommandException {
         Player limitTo = (Player) source;
 
         ArrayList<Channel> channels;
@@ -56,7 +56,7 @@ public class ChannelListCommand implements CommandCallable {
             PlayerChannels playerChannels = Darmok.getPlayerRegistry().getPlayerChannels(limitTo);
             if (playerChannels == null) {
                 source.sendMessage(Format.error("This player has no active channel subscriptions."));
-                return Optional.absent();
+                return CommandResult.empty();
             }
             channels = playerChannels.getChannels();
         } else {
@@ -65,7 +65,7 @@ public class ChannelListCommand implements CommandCallable {
 
         if (channels.isEmpty()) {
             source.sendMessage(Format.error("There are no channels."));
-            return Optional.absent();
+            return CommandResult.empty();
         }
 
         // List them
@@ -104,7 +104,7 @@ public class ChannelListCommand implements CommandCallable {
 
             source.sendMessage(Format.message(channelEntry));
         }
-        return Optional.of(CommandResult.success());
+        return CommandResult.success();
     }
 
     @Override

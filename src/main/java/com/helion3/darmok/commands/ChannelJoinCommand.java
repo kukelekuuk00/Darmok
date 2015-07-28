@@ -40,7 +40,7 @@ import com.helion3.darmok.utils.Format;
 
 public class ChannelJoinCommand implements CommandCallable {
     @Override
-    public Optional<CommandResult> process(CommandSource source, String arguments) throws CommandException {
+    public CommandResult process(CommandSource source, String arguments) throws CommandException {
         String[] args = arguments.split(" ");
 
         // @todo make sure this is ever a player
@@ -48,26 +48,26 @@ public class ChannelJoinCommand implements CommandCallable {
 
         if (args.length != 2) {
             source.sendMessage(Format.error("You must provide a channel to join, like /ch leave g"));
-            return Optional.absent();
+            return CommandResult.empty();
         }
 
         // Get the channel
         Channel channel = Darmok.getChannelRegistry().getChannel(args[1]);
         if (channel == null) {
             source.sendMessage(Format.error("Channel '" + args[1] + "' does not exist."));
-            return Optional.absent();
+            return CommandResult.empty();
         }
 
         try {
             Darmok.getPlayerRegistry().getPlayerChannels(player).joinChannel(channel);
         } catch (JoinChannelException e) {
             source.sendMessage(Format.error(e.getMessage()));
-            return Optional.absent();
+            return CommandResult.empty();
         }
 
         source.sendMessage(Format.heading("Joined " + channel.getName() + " channel."));
 
-        return Optional.of(CommandResult.success());
+        return CommandResult.success();
     }
 
     @Override

@@ -42,33 +42,33 @@ import com.helion3.darmok.utils.Format;
 
 public class ChannelKickCommand implements CommandCallable {
     @Override
-    public Optional<CommandResult> process(CommandSource source, String arguments) throws CommandException {
+    public CommandResult process(CommandSource source, String arguments) throws CommandException {
         String[] args = arguments.split(" ");
 
         if (args.length != 3) {
             source.sendMessage(Format.error("You must provide a player name and channel, like /ch kick viveleroi g"));
-            return Optional.absent();
+            return CommandResult.empty();
         }
 
         // Get the player
         Optional<Player> player = Darmok.getGame().getServer().getPlayer(args[1]);
         if (!player.isPresent()) {
             source.sendMessage(Format.error("Can't find a player with that name."));
-            return Optional.absent();
+            return CommandResult.empty();
         }
 
         // Get the channel
         Channel channel = Darmok.getChannelRegistry().getChannel(args[2]);
         if (channel == null) {
             source.sendMessage(Format.error("Channel '" + args[2] + "' does not exist."));
-            return Optional.absent();
+            return CommandResult.empty();
         }
 
         try {
             ChannelPermissions.sourceCanKick(source, channel);
         } catch (ChannelPermissionException e1) {
             source.sendMessage(Format.error(e1.getMessage()));
-            return Optional.absent();
+            return CommandResult.empty();
         }
 
         try {
@@ -83,7 +83,7 @@ public class ChannelKickCommand implements CommandCallable {
 
         // @todo alert other players in this channel that they left
 
-        return Optional.of(CommandResult.success());
+        return CommandResult.success();
     }
 
     @Override

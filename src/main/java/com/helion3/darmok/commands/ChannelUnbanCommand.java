@@ -41,33 +41,33 @@ import com.helion3.darmok.utils.Format;
 
 public class ChannelUnbanCommand implements CommandCallable {
     @Override
-    public Optional<CommandResult> process(CommandSource source, String arguments) throws CommandException {
+    public CommandResult process(CommandSource source, String arguments) throws CommandException {
         String[] args = arguments.split(" ");
 
         if (args.length != 3) {
             source.sendMessage(Format.error("You must provide a player name and channel, like /ch unban viveleroi g"));
-            return Optional.absent();
+            return CommandResult.empty();
         }
 
         // Get the player
         Optional<Player> player = Darmok.getGame().getServer().getPlayer(args[1]);
         if (!player.isPresent()) {
             source.sendMessage(Format.error("Can't find a player with that name."));
-            return Optional.absent();
+            return CommandResult.empty();
         }
 
         // Get the channel
         Channel channel = Darmok.getChannelRegistry().getChannel(args[2]);
         if (channel == null) {
             source.sendMessage(Format.error("Channel '" + args[2] + "' does not exist."));
-            return Optional.absent();
+            return CommandResult.empty();
         }
 
         try {
             ChannelPermissions.sourceCanBan(source, channel);
         } catch (ChannelPermissionException e) {
             source.sendMessage(Format.error(e.getMessage()));
-            return Optional.absent();
+            return CommandResult.empty();
         }
 
         Darmok.getPlayerRegistry().unbanFromChannel(player.get(), channel);
@@ -75,7 +75,7 @@ public class ChannelUnbanCommand implements CommandCallable {
         player.get().sendMessage(Format.error("You have been unbanned from the " + channel.getName() + " channel."));
         source.sendMessage(Format.heading("You have unbanned " + player.get().getName() + " from the "
                 + channel.getName() + " channel."));
-        return Optional.of(CommandResult.success());
+        return CommandResult.success();
     }
 
     @Override
