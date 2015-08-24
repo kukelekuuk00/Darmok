@@ -1,11 +1,14 @@
-name: darmok
-main: me.botsko.darmok.Darmok
-version: ${describe}
-softdepend: [Vault,Essentials,Towny]
+name: fancychat
+main: com.radthorne.fancychat.FancyChat
+version: 1.0
+depend: [PlaceholderAPI]
+softdepend: [Vault]
 commands:
-   darmok:
-      description: Darmok
-      usage: /darmok ?
-   ch:
-      description: Channel commands
-      usage: /ch ?
+  fancychat:
+    description: fancychat
+    usage: /<command>
+    aliases: [fc]
+  channel:
+    description: Channel commands
+    usage: /<command>
+    aliases: [ch]

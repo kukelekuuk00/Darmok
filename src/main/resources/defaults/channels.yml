@@ -1,7 +1,7 @@
 global:
     command: g
     range: -1
-    color: '&6'
+    color: '&f'
     format: ''
 help:
     command: h
@@ -23,15 +23,3 @@ admin:
     range: -1
     color: '&e'
     format: ''
-town:
-    command: tc
-    range: -1
-    color: '&b'
-    format: ''
-    context: towny-town
-nation:
-    command: n
-    range: -1
-    color: '&9'
-    format: ''
-    context: towny-nation

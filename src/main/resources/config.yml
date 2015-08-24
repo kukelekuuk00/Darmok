@@ -1,0 +1,20 @@
+fancychat:
+  debug: false
+  language: "en-us"
+  channel:
+    default-format: "{color}[{shortname}] {vault_prefix} [hover-text={player_name}]{player_displayname}[/hover-text]{vault_suffix}{color}: {msg}"
+    default-channel: g
+  conversation:
+    format: "{vault_prefix_color}{player_name}:&d {msg}"
+    to-prefix: "&8To "
+    from-prefix: "&8From "
+  spam-prevention:
+    enabled: true
+    min-seconds-between-msg: 1
+  censors:
+    caps:
+      enabled: true
+      min-length: 5
+      min-percentage: 30
+    profanity:
+      enabled: true
